@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>customer-name</groupId>
+        <artifactId>application-parent</artifactId>
+        <version>1</version>
+        <relativePath>parent/pom.xml</relativePath>
+    </parent>
+    <packaging>pom</packaging>
+
+    <artifactId>application-id</artifactId>
+
+    <description>
+        This pom does the following:
+        * Aggregation of application modules
+        * Distribution of the application to an ftp server via mvn target "wagon:upload-single"
+    </description>
+
+    <modules>
+        <module>parent</module>
+        <module>runtime-cli</module>
+    </modules>
+
+    <properties>
+        <distribution-server>ftp.example.com</distribution-server>
+        <distribution-url>ftp://${distribution-server}/foo/bar/${project.groupId}</distribution-url>
+    </properties>
+
+    <build>
+        <finalName>${project.parent.build.finalName}</finalName>
+        <plugins>
+            <!-- upload the generated zip to the customer ftp -->
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>wagon-maven-plugin</artifactId>
+                <version>1.0</version>
+                <configuration>
+                    <goal>upload-single</goal>
+                    <!-- see main/pom.xml for further details -->
+                    <serverId>ftp-distribution-server</serverId>
+                    <fromFile>runtime-cli/target/${project.parent.build.finalName}.zip
+                    </fromFile>
+                    <url>${distribution-url}</url>
+                    <toFile>${project.build.finalName}.zip</toFile>
+                </configuration>
+            </plugin>
+        </plugins>
+        <extensions>
+            <!-- uploading the final product to ftp -->
+            <extension>
+                <groupId>org.apache.maven.wagon</groupId>
+                <artifactId>wagon-ftp</artifactId>
+                <version>${org.apache.maven.wagon.wagon-ftp.version}</version>
+            </extension>
+        </extensions>
+    </build>
+</project>

@@ -1,0 +1,15 @@
+##############################################################################
+# Welcome, this is the default configuration file for the Application.
+#
+# This configuration defines how the program will run.
+# The file is written in the "YAML" - format, which is a great style for expressing properties.
+#
+# In YAML different levels of indentation indicate different levels in the hierarchy of properties.
+# Always keep 2 spaces per level and DO NOT USE TABS for indentation
+# use '/' as path separator
+# paths without leading separator resolve locally to %APPLICATION_HOME%
+# alternatively, specify fully qualified path (e.g. C:/Temp/Data)
+# Comments are prefixed with '#'
+# Blank lines are skipped
+##############################################################################
+

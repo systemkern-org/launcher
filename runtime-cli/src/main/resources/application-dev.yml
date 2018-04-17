@@ -1,0 +1,11 @@
+##############################################################################
+# This is the DEVELOPER configuration file for the Systemkern Application.
+# Values in this configuration file override values of the application.yml configuration
+#
+# This profile can be activated in two ways
+# 1. setting the property spring.profiles.active in application.properties
+# 2. adding the following command line switch: --spring.profiles.active=dev.
+# for more information see: https://docs.spring.io/spring-boot/docs/current/reference/html/boot-features-profiles.html
+#
+##############################################################################
+
