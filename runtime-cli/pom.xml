@@ -24,24 +24,28 @@
         <start.class>systemkern.CliEntryPointKt</start.class>
     </properties>
 
+
     <dependencies>
+        <!-- Project Internal dependencies
+        -->
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>default</artifactId>
+        </dependency>
+
         <!-- External dependencies
         -->
         <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-web</artifactId>
+            <groupId>com.fasterxml.jackson.module</groupId>
+            <artifactId>jackson-module-kotlin</artifactId>
         </dependency>
-
         <dependency>
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-core</artifactId>
         </dependency>
-
-        <!-- External Testing Dependencies -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-test</artifactId>
-            <scope>test</scope>
+            <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
     </dependencies>
 
@@ -52,9 +56,10 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <configuration>
-                    <!-- this file name is also used in the run.sh and run.bat -->
-                    <finalName>${project.parent.name}-${project.parent.version}</finalName>
                     <mainClass>${start.class}</mainClass>
+                    <!-- this file name is also used in the run.sh and run.bat -->
+                    <finalName>${project.parent.name}</finalName>
+                    <classifier>${project.parent.version}</classifier>
                 </configuration>
                 <executions>
                     <execution>
@@ -71,6 +76,7 @@
                 <artifactId>maven-assembly-plugin</artifactId>
                 <version>3.1.0</version>
                 <configuration>
+                    <finalName>${project.parent.name}-${project.parent.version}</finalName>
                     <descriptors>
                         <descriptor>src/assembly/cli-assembly.xml</descriptor>
                     </descriptors>

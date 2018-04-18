@@ -20,6 +20,7 @@
 
     <modules>
         <module>default</module>
+        <module>integrationtests</module>
         <module>parent</module>
         <module>runtime-cli</module>
         <module>runtime-gae-standard</module>
