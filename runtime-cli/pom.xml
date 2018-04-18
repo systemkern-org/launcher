@@ -21,7 +21,7 @@
     </description>
 
     <properties>
-        <start.class>systemkern.EntryPointKt</start.class>
+        <start.class>systemkern.CliEntryPointKt</start.class>
     </properties>
 
     <dependencies>
@@ -29,8 +29,9 @@
         -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter</artifactId>
+            <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
+
         <dependency>
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-core</artifactId>
@@ -45,7 +46,6 @@
     </dependencies>
 
     <build>
-        <finalName>${project.parent.build.finalName}</finalName>
         <plugins>
             <!-- create the jar file which includes the dependencies -->
             <plugin>
@@ -53,7 +53,7 @@
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <configuration>
                     <!-- this file name is also used in the run.sh and run.bat -->
-                    <!--finalName>systemkern</finalName-->
+                    <finalName>${project.parent.name}-${project.parent.version}</finalName>
                     <mainClass>${start.class}</mainClass>
                 </configuration>
                 <executions>
@@ -66,7 +66,7 @@
                 </executions>
             </plugin>
 
-            <!-- create the dist zip file in deploy stage-->
+            <!-- create the dist zip file -->
             <plugin>
                 <artifactId>maven-assembly-plugin</artifactId>
                 <version>3.1.0</version>

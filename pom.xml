@@ -19,8 +19,10 @@
     </description>
 
     <modules>
+        <module>default</module>
         <module>parent</module>
         <module>runtime-cli</module>
+        <module>runtime-gae-standard</module>
     </modules>
 
     <properties>
@@ -29,7 +31,7 @@
     </properties>
 
     <build>
-        <finalName>${project.parent.build.finalName}</finalName>
+        <finalName>${project.parent.name}-${project.parent.version}</finalName>
         <plugins>
             <!-- upload the generated zip to the customer ftp -->
             <plugin>
@@ -39,8 +41,8 @@
                 <configuration>
                     <goal>upload-single</goal>
                     <!-- see main/pom.xml for further details -->
-                    <serverId>ftp-distribution-server</serverId>
-                    <fromFile>runtime-cli/target/${project.parent.build.finalName}.zip
+                    <serverId>launcher-ftp-distribution-server</serverId>
+                    <fromFile>runtime-cli/target/${project.build.finalName}.zip
                     </fromFile>
                     <url>${distribution-url}</url>
                     <toFile>${project.build.finalName}.zip</toFile>
