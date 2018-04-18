@@ -78,6 +78,16 @@
 
     <dependencyManagement>
         <dependencies>
+        <!-- project internal dependencies
+        -->
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>default</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+
+        <!-- external dependencies -->
             <dependency>
                 <groupId>com.amazonaws</groupId>
                 <artifactId>aws-java-sdk-ses</artifactId>
