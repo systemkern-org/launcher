@@ -33,6 +33,7 @@
 
     <build>
         <finalName>${project.parent.name}-${project.parent.version}</finalName>
+        <defaultGoal>clean verify</defaultGoal>
         <plugins>
             <!-- upload the generated zip to the customer ftp -->
             <plugin>
@@ -41,7 +42,6 @@
                 <version>1.0</version>
                 <configuration>
                     <goal>upload-single</goal>
-                    <!-- see main/pom.xml for further details -->
                     <serverId>launcher-ftp-distribution-server</serverId>
                     <fromFile>runtime-cli/target/${project.build.finalName}.zip
                     </fromFile>

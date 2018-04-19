@@ -23,6 +23,7 @@
                 <include>**</include>
             </includes>
             <excludes>
+                <exclude>application-dev.yml</exclude>
                 <exclude>application-test.yml</exclude>
                 <exclude>banner.txt</exclude>
                 <exclude>logback.xml</exclude>
@@ -32,7 +33,7 @@
             <outputDirectory>.</outputDirectory>
             <directory>target</directory>
             <includes>
-                <include>${project.build.finalName}.jar</include>
+                <include>${project.parent.name}-${project.parent.version}.jar</include>
             </includes>
         </fileSet>
         <fileSet>
