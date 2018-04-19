@@ -12,7 +12,7 @@
     <groupId>customer-name</groupId>
     <artifactId>application-parent</artifactId>
     <name>CustomApplicationName</name>
-    <version>1</version>
+    <version>0.1</version>
 
     <description>
         The Systemkern Parent POM provides a prepackaged opinionated default set of technologies
