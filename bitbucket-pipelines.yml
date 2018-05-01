@@ -1,0 +1,13 @@
+# This is a sample build configuration for Java with Maven.
+# You can find official guides at https://confluence.atlassian.com/x/zd-5Mw.
+# -----
+# You can specify a custom docker image from Docker Hub as your build environment.
+image: maven:3.3.9
+
+pipelines:
+  default:
+    - step:
+        caches:
+          - maven
+        script:
+          - mvn -B verify # -B batch mode makes Maven less verbose
