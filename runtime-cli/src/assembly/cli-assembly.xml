@@ -43,5 +43,12 @@
                 <exclude>*/**</exclude>
             </excludes>
         </fileSet>
+        <fileSet>
+            <outputDirectory>.</outputDirectory>
+            <directory>${project.basedir}/../integrationtests/${project.build.directory}/generated-docs</directory>
+            <includes>
+                <include>*</include>
+            </includes>
+        </fileSet>
     </fileSets>
 </assembly>

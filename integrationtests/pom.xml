@@ -65,6 +65,12 @@
                         <configuration>
                             <backend>html</backend>
                             <doctype>book</doctype>
+                            <attributes>
+                                <!-- see readme.adoc -->
+                                <project-name>${project.parent.name}</project-name>
+                                <project-version>${project.version}</project-version>
+                                <final-name>${project.parent.name}-${project.parent.version}</final-name>
+                            </attributes>
                         </configuration>
                     </execution>
                 </executions>

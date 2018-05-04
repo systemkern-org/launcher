@@ -1,0 +1,51 @@
+= {project-name} Documentation
+Systemkern <office@systemkern.com>
+VERSION, {localdate} {localtime}
+:doctype: book
+:icons: font
+:source-highlighter: highlightjs
+:highlightjs-theme: github
+:toc: left
+:toclevels: 4
+:sectlinks:
+:sectnums:
+
+= Application Start
+To start {project-name} open your Unix shell or Windows command prompt, navigate to the {project-name} application
+directory and type or copy the following command:
+
+[subs="attributes+"]
+```
+java -jar {final-name}.jar
+```
+
+
+== Configuration and Startup
+The application is configured via two different configuration files. The Technical `application.properties` and
+the business oriented `application.yml`. The configuration for the so called default profile is called "application.yml".
+This is most likely the only configuration file that you will need to modify.
+
+== Multiple execution profiles
+This application supports multiple profiles which can be activated during startup.
+They are configured in separate configuration files which are named `application-PROFILENAME.yml`.
+If you want to use a profile called "myprofile2" you make a copy of application.yml named `application-myprofile2.yml` and start the application as follows:
+[subs="attributes+"]
+```
+java -jar {final-name}.jar --spring.profiles.active=myprofile2
+```
+For more information please refer to the https://docs.spring.io/spring-boot/docs/current/reference/html/howto-properties-and-configuration.html#howto-set-active-spring-profiles[Spring Boot Documentation].
+
+
+= API Requests
+== Additional API Requests
+
+=== Echo
+Echo is a sample post request which returns exactly the same object as the one provided.
+It can be used to test Json Object mapper implementations
+
+operation::echo[snippets='curl-request,http-request,http-response,response-fields']
+
+=== Ping
+As simple ping signal which returns the current system timestamp
+
+operation::ping[snippets='curl-request,http-request,http-response,response-fields']
