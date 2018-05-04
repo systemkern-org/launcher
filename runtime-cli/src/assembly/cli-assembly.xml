@@ -6,6 +6,7 @@
         <format>zip</format>
     </formats>
     <fileSets>
+        <!-- Readme, License and Notice -->
         <fileSet>
             <outputDirectory>.</outputDirectory>
             <directory>${project.basedir}</directory>
@@ -15,8 +16,9 @@
                 <include>NOTICE*</include>
             </includes>
         </fileSet>
+
+        <!-- main resources -->
         <fileSet>
-            <!-- main resources -->
             <outputDirectory>.</outputDirectory>
             <directory>${project.basedir}/src/main/resources/</directory>
             <includes>
@@ -29,6 +31,8 @@
                 <exclude>logback.xml</exclude>
             </excludes>
         </fileSet>
+
+        <!-- main application jar file -->
         <fileSet>
             <outputDirectory>.</outputDirectory>
             <directory>target</directory>
@@ -36,6 +40,17 @@
                 <include>${project.parent.name}-${project.parent.version}.jar</include>
             </includes>
         </fileSet>
+
+        <!-- run scripts-->
+        <fileSet>
+            <outputDirectory>./bin</outputDirectory>
+            <directory>target/bin</directory>
+            <includes>
+                <include>*</include>
+            </includes>
+        </fileSet>
+
+        <!-- log directory -->
         <fileSet>
             <outputDirectory>logs</outputDirectory>
             <directory>.</directory>
@@ -43,6 +58,8 @@
                 <exclude>*/**</exclude>
             </excludes>
         </fileSet>
+
+        <!-- documentation -->
         <fileSet>
             <outputDirectory>.</outputDirectory>
             <directory>${project.basedir}/../integrationtests/${project.build.directory}/generated-docs</directory>

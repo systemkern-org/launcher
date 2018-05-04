@@ -51,6 +51,41 @@
 
     <build>
         <plugins>
+            <!-- rewrite run scripts with correct application jar name-->
+            <plugin>
+                <groupId>com.google.code.maven-replacer-plugin</groupId>
+                <artifactId>replacer</artifactId>
+                <executions>
+                    <execution>
+                        <id>replace-for-documentation</id>
+                        <phase>prepare-package</phase>
+                        <goals>
+                            <goal>replace</goal>
+                        </goals>
+                        <configuration>
+                            <preserveDir>true</preserveDir>
+                            <basedir>${basedir}/src/assembly/bin</basedir>
+                            <outputBasedir>${project.build.directory}</outputBasedir>
+                            <outputDir>bin</outputDir>
+                            <ignoreErrors>true</ignoreErrors>
+                            <regex>false</regex>
+                            <delimiters>
+                                <delimiter>@</delimiter>
+                            </delimiters>
+                            <filesToInclude>
+                                *.*
+                            </filesToInclude>
+                            <replacements>
+                                <replacement>
+                                    <token>finalName</token>
+                                    <value>${project.parent.name}-${project.parent.version}</value>
+                                </replacement>
+                            </replacements>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
             <!-- create the jar file which includes the dependencies -->
             <plugin>
                 <groupId>org.springframework.boot</groupId>
