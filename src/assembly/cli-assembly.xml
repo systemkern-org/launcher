@@ -6,21 +6,10 @@
         <format>zip</format>
     </formats>
     <fileSets>
-        <!-- Readme, License and Notice -->
-        <fileSet>
-            <outputDirectory>.</outputDirectory>
-            <directory>${project.basedir}</directory>
-            <includes>
-                <include>README*</include>
-                <include>LICENSE*</include>
-                <include>NOTICE*</include>
-            </includes>
-        </fileSet>
-
         <!-- main resources -->
         <fileSet>
             <outputDirectory>.</outputDirectory>
-            <directory>${project.basedir}/src/main/resources/</directory>
+            <directory>runtime-cli/src/main/resources/</directory>
             <includes>
                 <include>**</include>
             </includes>
@@ -29,13 +18,14 @@
                 <exclude>application-test.yml</exclude>
                 <exclude>banner.txt</exclude>
                 <exclude>logback.xml</exclude>
+                <exclude>static/**</exclude>
             </excludes>
         </fileSet>
 
         <!-- main application jar file -->
         <fileSet>
             <outputDirectory>.</outputDirectory>
-            <directory>target</directory>
+            <directory>runtime-cli/${project.build.directory}</directory>
             <includes>
                 <include>${project.parent.name}-${project.parent.version}.jar</include>
             </includes>

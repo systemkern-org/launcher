@@ -51,41 +51,6 @@
 
     <build>
         <plugins>
-            <!-- rewrite run scripts with correct application jar name-->
-            <plugin>
-                <groupId>com.google.code.maven-replacer-plugin</groupId>
-                <artifactId>replacer</artifactId>
-                <executions>
-                    <execution>
-                        <id>replace-for-documentation</id>
-                        <phase>prepare-package</phase>
-                        <goals>
-                            <goal>replace</goal>
-                        </goals>
-                        <configuration>
-                            <preserveDir>true</preserveDir>
-                            <basedir>${basedir}/src/assembly/bin</basedir>
-                            <outputBasedir>${project.build.directory}</outputBasedir>
-                            <outputDir>bin</outputDir>
-                            <ignoreErrors>true</ignoreErrors>
-                            <regex>false</regex>
-                            <delimiters>
-                                <delimiter>@</delimiter>
-                            </delimiters>
-                            <filesToInclude>
-                                *.*
-                            </filesToInclude>
-                            <replacements>
-                                <replacement>
-                                    <token>finalName</token>
-                                    <value>${project.parent.name}-${project.parent.version}</value>
-                                </replacement>
-                            </replacements>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-
             <!-- create the jar file which includes the dependencies -->
             <plugin>
                 <groupId>org.springframework.boot</groupId>
@@ -101,29 +66,6 @@
                         <phase>package</phase>
                         <goals>
                             <goal>repackage</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-
-            <!-- create the dist zip file -->
-            <plugin>
-                <artifactId>maven-assembly-plugin</artifactId>
-                <version>3.1.0</version>
-                <configuration>
-                    <finalName>${project.parent.name}-${project.parent.version}</finalName>
-                    <descriptors>
-                        <descriptor>src/assembly/cli-assembly.xml</descriptor>
-                    </descriptors>
-                    <outputDirectory>target</outputDirectory>
-                    <appendAssemblyId>false</appendAssemblyId>
-                </configuration>
-                <executions>
-                    <execution>
-                        <id>make-assembly</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>single</goal>
                         </goals>
                     </execution>
                 </executions>
