@@ -43,7 +43,7 @@
 
         <!-- run scripts-->
         <fileSet>
-            <outputDirectory>./bin</outputDirectory>
+            <outputDirectory>.</outputDirectory>
             <directory>target/bin</directory>
             <includes>
                 <include>*</include>
