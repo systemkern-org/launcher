@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/systemkern/launcher.svg?branch=master)](https://travis-ci.org/systemkern/launcher)
+
 # Launcher
 > Launcher is a template for Java/Kotlin applications 
 
