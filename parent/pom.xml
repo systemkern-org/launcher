@@ -192,6 +192,12 @@
                     </dependency>
                 </dependencies>
             </plugin>
+
+            <!-- Failsafe plugin for Integration Tests -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-failsafe-plugin</artifactId>
+            </plugin>
         </plugins>
     </build>
 

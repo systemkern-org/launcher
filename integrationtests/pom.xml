@@ -35,21 +35,6 @@
 
     <build>
         <plugins>
-            <!-- configure failsafe so that integration tests will be run -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-failsafe-plugin</artifactId>
-                <version>2.18.1</version>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>integration-test</goal>
-                            <goal>verify</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-
             <!-- post processing of ascii snippets -->
             <plugin>
                 <groupId>org.asciidoctor</groupId>
