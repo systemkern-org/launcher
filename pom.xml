@@ -101,7 +101,7 @@
                 <configuration>
                     <goal>upload-single</goal>
                     <serverId>launcher-ftp-distribution-server</serverId>
-                    <fromFile>runtime-cli/target/${project.build.finalName}.zip
+                    <fromFile>target/${project.build.finalName}.zip
                     </fromFile>
                     <url>${distribution-url}</url>
                     <toFile>${project.build.finalName}.zip</toFile>
