@@ -1,26 +1,15 @@
 package systemkern
 
 import org.springframework.web.bind.annotation.*
-import sun.security.util.Password
 
 @RestController
 @RequestMapping("/users")
-class UserController(val usersRepository: UsersRepository) {
-
-    @GetMapping("/all")
-    fun all(): MutableIterable<User> = this.usersRepository.findAll()
-
-    @GetMapping("/{name}")
-    fun byName(@PathVariable(value = "name") name: String): List<User> {
-        val usersByname = this.usersRepository.findByName(name)
-        return usersByname
-    }
-    @GetMapping("/{name}/{password}")
-    fun byNameAndPassword(@PathVariable(value = "name") name: String,
-                          @PathVariable(value = "password") password: String): List<User>
+class UserController(val usersRepository: UsersRepository)
+{
+    @GetMapping("/id/{id}")
+    fun byId(@PathVariable(value = "id") id: Long): User
     {
-        val usersByname = this.usersRepository.findByNameAndPassword(name,password)
-        return usersByname
+        return this.usersRepository.findById(id).get()
     }
     @PostMapping("/createUser")
     fun createUser(@RequestBody InsertUserRequest:InsertUserRequest)

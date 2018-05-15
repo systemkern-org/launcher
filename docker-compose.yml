@@ -1,0 +1,18 @@
+version: '2'
+services:
+
+  mailsender:
+    image: djfarrelly/maildev
+    ports:
+      - '25:25'
+      - '4085:80'
+
+  database:
+    image: postgres:9.6.3-alpine
+    ports:
+      - '5432:5432'
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    volumes:
+      - ./setup-db.sql:/docker-entrypoint-initdb.d/setup-db.sql:ro
