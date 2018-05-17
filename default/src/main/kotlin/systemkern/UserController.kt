@@ -17,9 +17,4 @@ class UserController(val usersRepository: UsersRepository)
         val user = User(InsertUserRequest.name, InsertUserRequest.password)
         this.usersRepository.save(user)
     }
-    @PostMapping("/loginUser")
-    fun loginUser(@RequestBody loginRequest: LoginRequest):List<User>
-    {
-        return this.usersRepository.findByNameAndPassword(loginRequest.name, loginRequest.password)
-    }
 }
