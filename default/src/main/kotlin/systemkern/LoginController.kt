@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.*
 @RequestMapping("/usersLogin")
 class LoginController(val usersRepository: UsersRepository)
 {
-    @PostMapping("/")
+    @PostMapping
     fun loginUser(@RequestBody loginRequest: LoginRequest):List<User>
     {
         return this.usersRepository.findByNameAndPassword(loginRequest.name, loginRequest.password)

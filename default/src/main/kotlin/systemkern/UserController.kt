@@ -4,17 +4,27 @@ import org.springframework.web.bind.annotation.*
 
 @RestController
 @RequestMapping("/users")
-class UserController(val usersRepository: UsersRepository)
+internal class UserController(val userServ: UserService)
 {
     @GetMapping("{id}")
     fun byId(@PathVariable(value = "id") id: Long): User
     {
-        return this.usersRepository.findById(id).get()
+        return this.userServ.findbyId(id)
     }
     @PostMapping
-    fun createUser(@RequestBody InsertUserRequest:InsertUserRequest)
+    fun create(@RequestBody InsertUserRequest:InsertUserRequest)
     {
-        val user = User(InsertUserRequest.name, InsertUserRequest.password)
-        this.usersRepository.save(user)
+        this.userServ.create(InsertUserRequest)
+    }
+    @PutMapping("{id}")
+    fun update(@PathVariable(value = "id") id: Long,
+               @RequestBody updateUserRequest: updateUserRequest)
+    {
+        this.userServ.update(id,updateUserRequest)
+    }
+    @DeleteMapping("{id}")
+    fun delete(@PathVariable(value = "id") id: Long)
+    {
+        this.userServ.delete(id)
     }
 }
