@@ -8,23 +8,27 @@ import org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDO
 import org.springframework.http.MediaType
 import org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document
 import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get
-import org.springframework.restdocs.payload.PayloadDocumentation
-import org.springframework.restdocs.payload.PayloadDocumentation.*
+import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
+import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.junit4.SpringRunner
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
 @RunWith(SpringRunner::class)
-@ActiveProfiles("integrationtest")
+@ActiveProfiles("integration-test")
 @SpringBootTest(webEnvironment = RANDOM_PORT, classes = [CliEntryPoint::class])
 internal class PingControllerIT : IntegrationTest() {
 
     @Test fun `Can Ping Application`() {
         this.mockMvc.perform(get("/default/ping").accept(MediaType.APPLICATION_JSON))
             .andExpect(status().isOk)
-            .andDo(document("ping", responseFields(
-                fieldWithPath("timestamp").description("return timestamp")
-            )))
+            .andDo {
+                println(it.response.contentAsString)
+            }
+            .andDo(document("ping",
+                responseFields(
+                    fieldWithPath("timestamp").description("return timestamp")
+                )))
     }
 
 }

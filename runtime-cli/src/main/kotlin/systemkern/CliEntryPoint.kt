@@ -9,7 +9,7 @@ import org.springframework.context.annotation.ComponentScan
 @SpringBootApplication
 @EnableConfigurationProperties
 @ComponentScan(basePackages = ["systemkern"])
-class CliEntryPoint
+open class CliEntryPoint
 
 /**
  * Attention: Because of relative paths during app startup you might have to
