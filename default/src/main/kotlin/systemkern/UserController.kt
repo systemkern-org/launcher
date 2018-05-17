@@ -6,12 +6,12 @@ import org.springframework.web.bind.annotation.*
 @RequestMapping("/users")
 class UserController(val usersRepository: UsersRepository)
 {
-    @GetMapping("/id/{id}")
+    @GetMapping("{id}")
     fun byId(@PathVariable(value = "id") id: Long): User
     {
         return this.usersRepository.findById(id).get()
     }
-    @PostMapping("/createUser")
+    @PostMapping
     fun createUser(@RequestBody InsertUserRequest:InsertUserRequest)
     {
         val user = User(InsertUserRequest.name, InsertUserRequest.password)
