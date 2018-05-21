@@ -10,6 +10,7 @@
         <module name="integrationtests" />
         <module name="runtime-cli" />
         <module name="runtime-gae-standard" />
+        <module name="user-profile" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
@@ -19,6 +20,7 @@
       <module name="integrationtests" target="1.8" />
       <module name="runtime-cli" target="1.8" />
       <module name="runtime-gae-standard" target="1.8" />
+      <module name="user-profile" target="1.8" />
     </bytecodeTargetLevel>
   </component>
 </project>
