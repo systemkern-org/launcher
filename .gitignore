@@ -34,4 +34,4 @@ maven-wrapper.properties
 /.idea
 
 #.bak files
-.bak
+*.bak
