@@ -1,2 +1,5 @@
+# This is a sample build configuration for TravisCI
 language: java
-script: mvn clean verify
+
+# -B batch mode makes Maven less verbose
+script: mvn -B clean verify

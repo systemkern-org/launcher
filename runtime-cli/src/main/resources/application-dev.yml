@@ -1,5 +1,5 @@
 ##############################################################################
-# This is the DEVELOPER configuration file for the Systemkern Application.
+# This is the DEVELOPER configuration file for the Application.
 # Values in this configuration file override values of the application.yml configuration
 #
 # This profile can be activated in two ways
