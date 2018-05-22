@@ -5,6 +5,7 @@ how to modularise, implement and deploy such applications.
 
 It is to be used and applied on an 'as is' basis with no guarantee of functionality.
 
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/8272879ff37842b8b86efba5d165305f)](https://app.codacy.com/app/systemkern/launcher?utm_source=github.com&utm_medium=referral&utm_content=systemkern/launcher&utm_campaign=badger)
 [![Build Status](https://travis-ci.org/systemkern/launcher.svg?branch=master)](https://travis-ci.org/systemkern/launcher)
 
 
