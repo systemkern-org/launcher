@@ -28,6 +28,9 @@ internal class EchoControllerIT : IntegrationTest() {
             ))
             .contentType(APPLICATION_JSON)
             .accept(APPLICATION_JSON))
+            .andDo {
+                println(it.response.contentAsString)
+            }
             .andExpect(status().isOk)
             .andDo(document("echo",
                 requestFields(
@@ -41,9 +44,6 @@ internal class EchoControllerIT : IntegrationTest() {
                     fieldWithPath("timestamp").description("timestamp of the request").type(ARRAY)
                 )
             ))
-            .andDo {
-                println(it.response.contentAsString)
-            }
     }
 
 }

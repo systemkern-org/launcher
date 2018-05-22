@@ -29,3 +29,9 @@ hs_err_pid*
 # maven wrapper
 mvnw
 maven-wrapper.properties
+
+#Ignore .idea files
+/.idea
+
+#.bak files
+*.bak

@@ -24,6 +24,7 @@
         <module>parent</module>
         <module>runtime-cli</module>
         <module>runtime-gae-standard</module>
+        <module>user-profile</module>
     </modules>
 
     <properties>
