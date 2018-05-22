@@ -6,31 +6,45 @@ import org.springframework.web.bind.annotation.*
 @Component
 @RestController
 @RequestMapping("/users")
-internal class UserController(val userServ: UserService) {
+internal class UserController(
+    private val userServ: UserService
+) {
     @GetMapping("{id}")
     fun byId(@PathVariable(value = "id") id: Long): UserDTO {
-        return this.toDTO(this.userServ.findbyId(id))
+        val user = this.userServ.findbyId(id)
+        return user.toDTO(user)
     }
 
     @PostMapping
     fun create(@RequestBody userDTO: UserDTO) {
-        this.userServ.create(this.toEntity(userDTO))
+
+        this.userServ.create(userDTO.toEntity(userDTO))
     }
 
     @PutMapping("{id}")
-    fun update(@PathVariable(value = "id") id: Long, @RequestBody userDTO: UserDTO) {
-        this.userServ.update(id, this.toEntity(userDTO))
+    fun update(@PathVariable("id") id: Long, @RequestBody userDTO: UserDTO) {
+        this.userServ.update(id, userDTO.toEntity(userDTO))
     }
 
     @DeleteMapping("{id}")
-    fun delete(@PathVariable(value = "id") id: Long) {
+    fun delete(@PathVariable("id") id: Long) {
         this.userServ.delete(id)
     }
-
-    fun toDTO(user: User): UserDTO = UserDTO(name = user.name, password = user.password)
-    fun toEntity(userDTO: UserDTO) = User(name = userDTO.name, password = userDTO.password)
 }
+
+internal fun User.toDTO(user: User) =
+    UserDTO(
+        name = name,
+        password = password
+    )
+
+internal fun UserDTO.toEntity(userDTO: UserDTO) =
+    User(
+        name = name,
+        password = password
+    )
+
 data class UserDTO(
-    var name: String,
-    var password: String
+    val name: String,
+    val password: String
 )

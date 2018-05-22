@@ -1,9 +1,13 @@
 package systemkern.profile
 
+import org.springframework.data.repository.CrudRepository
+import org.springframework.stereotype.Repository
 import org.springframework.stereotype.Service
 
 @Service
-internal class UserService(private val repo: UsersRepository) {
+internal class UserService(
+    private val repo: UsersRepository
+) {
 
 
     fun findbyId(id: Long): User {
@@ -16,8 +20,8 @@ internal class UserService(private val repo: UsersRepository) {
 
     fun update(id: Long, user: User) {
         var userToUpdate = this.repo.findById(id).get()
-        userToUpdate.name = user.name
-        userToUpdate.password = user.password
+        //This was necessary because val doesnt let to change value of name or password
+        userToUpdate.copy(name = user.name, password = user.password)
 
         this.repo.save(userToUpdate)
     }
@@ -25,6 +29,9 @@ internal class UserService(private val repo: UsersRepository) {
     fun delete(id: Long) {
         this.repo.delete(this.repo.findById(id).get())
     }
+}
 
-
+@Repository
+internal interface UsersRepository : CrudRepository<User, Long> {
+    fun findByNameAndPassword(name: String, password: String): List<User>
 }

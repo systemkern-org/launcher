@@ -16,6 +16,7 @@ import org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document
 import org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration
 import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get
 import org.springframework.restdocs.payload.PayloadDocumentation
+import org.springframework.restdocs.payload.PayloadDocumentation.*
 import org.springframework.test.context.junit4.SpringRunner
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
@@ -47,8 +48,8 @@ internal class PingControllerIT {
     @Test fun `Can Ping Application`() {
         this.mockMvc.perform(get("/default/ping").accept(MediaType.APPLICATION_JSON))
             .andExpect(status().isOk)
-            .andDo(document("ping", PayloadDocumentation.responseFields(
-                PayloadDocumentation.fieldWithPath("timestamp").description("return timestamp")
+            .andDo(document("ping", responseFields(
+                fieldWithPath("timestamp").description("return timestamp")
             )))
     }
 
