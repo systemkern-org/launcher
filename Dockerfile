@@ -1,4 +1,4 @@
 FROM postgres:9.6.3-alpine
-ADD default/target/default-0.1.jar /var
+ADD runtime-cli/target/runtime-cli-0.1.jar /var
 EXPOSE 8085
-ENTRYPOINT ["java","-jar","default-0.1.jar"]
+ENTRYPOINT ["java","-jar","runtime-cli-0.1.jar"]
