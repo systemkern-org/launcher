@@ -1,5 +1,10 @@
+sudo: required
+
 # This is a sample build configuration for TravisCI
 language: java
+
+services:
+  - docker
 
 # -B batch mode makes Maven less verbose
 script: mvn -B clean verify

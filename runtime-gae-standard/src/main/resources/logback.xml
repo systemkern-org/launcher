@@ -13,10 +13,12 @@
     </appender>
 
     <logger name="javax.management" level="WARN"/>
+    <logger name="com.google.appengine.tools.development.DevAppServerModulesFilter" level="WARN"/>
+    <logger name="com.zaxxer.hikari" level="WARN"/>
     <logger name="org.apache" level="WARN"/>
     <logger name="org.hibernate" level="WARN"/>
+    <logger name="org.postgresql" level="WARN"/>
     <logger name="org.springframework" level="WARN"/>
-    <logger name="com.google.appengine.tools.development.DevAppServerModulesFilter" level="WARN"/>
 
     <root level="WARN">
         <appender-ref ref="CONSOLE_OUT"/>

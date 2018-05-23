@@ -7,8 +7,9 @@ import javax.persistence.Id
 
 @Entity
 internal data class User(
-    val name: String,
-    val password: String,
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    var id: Long = 0)
+    var id: Long = 0,
+    val name: String,
+    val password: String
+)

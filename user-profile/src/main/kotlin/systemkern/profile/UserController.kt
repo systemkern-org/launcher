@@ -44,7 +44,7 @@ internal fun UserDTO.toEntity(userDTO: UserDTO) =
         password = password
     )
 
-data class UserDTO(
+internal data class UserDTO(
     val name: String,
     val password: String
 )
