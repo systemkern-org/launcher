@@ -67,14 +67,6 @@
                     <finalName>${project.parent.name}</finalName>
                     <classifier>${project.parent.version}</classifier>
                 </configuration>
-                <executions>
-                    <execution>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>repackage</goal>
-                        </goals>
-                    </execution>
-                </executions>
             </plugin>
         </plugins>
     </build>

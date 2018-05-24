@@ -32,9 +32,6 @@ internal class EchoControllerIT : IntegrationTest() {
             ))
             .contentType(APPLICATION_JSON)
             .accept(APPLICATION_JSON))
-            .andDo {
-                println(it.response.contentAsString)
-            }
             .andExpect(status().isOk)
             .andDo(document("echo",
                 responseFields(
