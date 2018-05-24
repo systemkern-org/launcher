@@ -10,9 +10,9 @@
     </parent>
     <packaging>pom</packaging>
 
-    <groupId>customer-name</groupId>
-    <artifactId>application-parent</artifactId>
-    <name>CustomApplicationName</name>
+    <groupId>com.systemkern</groupId>
+    <artifactId>launcher-parent</artifactId>
+    <name>Systemkern-Launcher-Application-Name</name>
     <version>0.1</version>
 
     <properties>
@@ -58,8 +58,7 @@
 
     <dependencyManagement>
         <dependencies>
-        <!-- project internal dependencies
-        -->
+            <!-- project internal dependencies -->
             <dependency>
                 <groupId>${project.groupId}</groupId>
                 <artifactId>core</artifactId>
@@ -104,12 +103,7 @@
     </dependencyManagement>
 
     <build>
-        <!-- as of Apr.2018
-             adding the property finalName will break the runtime-gae-standard with the following message
-             [ERROR] Failed to execute goal com.google.cloud.tools:appengine-maven-plugin:1.3.1:run (default-cli)
-             on project runtime-gae-standard: Dev App Server does not support App Engine Flexible Environment applications.
-             <finalName>${project.name}-${project.version}</finalName>
-        -->
+        <finalName>${project.name}-${project.version}</finalName>
         <sourceDirectory>${project.basedir}/src/main/kotlin</sourceDirectory>
         <testSourceDirectory>${project.basedir}/src/test/kotlin</testSourceDirectory>
         <plugins>

@@ -15,7 +15,8 @@ import javax.validation.Valid
 internal class EchoController {
 
     @PostMapping
-    fun echo(@Valid @RequestBody value: EchoDTO) = value
+    fun echo(@Valid @RequestBody value: EchoDTO) =
+        value
 
 }
 

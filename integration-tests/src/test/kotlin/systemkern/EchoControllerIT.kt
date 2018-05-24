@@ -50,7 +50,7 @@ internal class EchoControllerIT : IntegrationTest() {
 }
 
 
-internal data class EchoDTO(
+private data class EchoDTO(
     val id: Int,
     val value: String,
     val timestamp: LocalDateTime? = LocalDateTime.now(),
