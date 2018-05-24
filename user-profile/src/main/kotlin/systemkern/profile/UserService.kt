@@ -10,25 +10,28 @@ internal class UserService(
 ) {
 
 
-    fun findbyId(id: Long): User {
-        return this.repo.findById(id).get()
-    }
+    fun findbyId(id: Long): User =
+        this.repo.findById(id).get()
 
-    fun create(user: User) {
+    fun findByNameAndPassword(name: String, password: String): User =
+        this.repo.findByNameAndPassword(name, password).last()
+
+    fun create(user: User): User =
         this.repo.save(user)
-    }
 
-    fun update(id: Long, user: User) {
-        var userToUpdate = this.repo.findById(id).get()
-        //This was necessary because val doesnt let to change value of name or password
-        userToUpdate.copy(name = user.name, password = user.password)
-
-        this.repo.save(userToUpdate)
+    fun update(id: Long, user: User): User {
+        val userToUpdate = this.repo.findById(id).get()
+        return this.repo.save(
+            userToUpdate.copy(
+                name = user.name,
+                password = user.password
+            ))
     }
 
     fun delete(id: Long) {
         this.repo.delete(this.repo.findById(id).get())
     }
+
 }
 
 @Repository
