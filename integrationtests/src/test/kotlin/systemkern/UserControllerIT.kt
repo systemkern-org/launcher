@@ -1,6 +1,5 @@
 package systemkern
 
-/*import org.json.JSONObject*/
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.springframework.boot.test.context.SpringBootTest
@@ -17,14 +16,13 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 @SpringBootTest(webEnvironment = RANDOM_PORT, classes = [CliEntryPoint::class])
 internal class UserControllerIT : IntegrationTest() {
 
-    var idUserCreated: String = ""
     @Test
     fun `Create user request`() {
         this.mockMvc.perform(RestDocumentationRequestBuilders.post("/users")
             .content(objectMapper.writeValueAsString(
                 UserDTO(
-                    name = "Andres Test 01",
-                    password = "AndresTest2018*01"
+                    name = "Test user to create",
+                    password = "*TestUser2018*"
                 )
             ))
             .contentType(APPLICATION_JSON)
@@ -32,17 +30,18 @@ internal class UserControllerIT : IntegrationTest() {
             .andDo {
                 println(it.response.contentAsString)
             }
-            .andExpect(status().isOk)
+            .andExpect(status().isCreated)
             .andDo(document("user_create",
                 requestFields(
-                    fieldWithPath("name").description("name used by user").type(STRING),
-                    fieldWithPath("password").description("password to access account").type(STRING)
-                )/*,
+                    fieldWithPath("name").description("Name used by user").type(STRING),
+                    fieldWithPath("password").description("Password to access account").type(STRING)
+                ),
                 responseFields(
-                    fieldWithPath("id").description("id of the user inserted").type(NUMBER),
-                    fieldWithPath("name").description("name of the user").type(STRING),
-                    fieldWithPath("password").description("password to access account").type(STRING)
-                )*/
+                    fieldWithPath("name").description("Name of the user").type(STRING),
+                    fieldWithPath("password").description("Password to access account").type(STRING),
+                    fieldWithPath("_links.self.href").description("Link to access the created user").type(STRING),
+                    fieldWithPath("_links.user.href").description("Link to access the created user").type(STRING)
+                )
             ))
 
     }
@@ -58,8 +57,10 @@ internal class UserControllerIT : IntegrationTest() {
             .andExpect(status().isOk)
             .andDo(document("user_read",
                 responseFields(
-                    fieldWithPath("name").description("name of the user requested").type(STRING),
-                    fieldWithPath("password").description("password of the user requested").type(STRING)
+                    fieldWithPath("name").description("Name of the user requested").type(STRING),
+                    fieldWithPath("password").description("Password of the user requested").type(STRING),
+                    fieldWithPath("_links.self.href").description("Link to access the requested user").type(STRING),
+                    fieldWithPath("_links.user.href").description("Link to access the requested user").type(STRING)
                 )
             ))
     }
@@ -69,8 +70,8 @@ internal class UserControllerIT : IntegrationTest() {
         this.mockMvc.perform(RestDocumentationRequestBuilders.put("/users/1")
             .content(objectMapper.writeValueAsString(
                 UserDTO(
-                    name = "AndresTest",
-                    password = "AndresTest2018"
+                    name = "Test user to update",
+                    password = "TestUserUpdate2018"
                 )
             ))
             .contentType(APPLICATION_JSON)
@@ -83,20 +84,22 @@ internal class UserControllerIT : IntegrationTest() {
                 requestFields(
 
                     fieldWithPath("name").description("name to update").type(STRING),
-                    fieldWithPath("password").description("password to update").type(STRING)
+                    fieldWithPath("password").description("password to update").type(STRING)/*,
+                    fieldWithPath("_links.self.href").description("Link to access the updated user").type(STRING),
+                    fieldWithPath("_links.user.href").description("Link to access the updated user").type(STRING)*/
                 )
             ))
     }
 
     @Test
     fun `Delete users request`() {
-        this.mockMvc.perform(RestDocumentationRequestBuilders.delete("/users/42")
+        this.mockMvc.perform(RestDocumentationRequestBuilders.delete("/users/52")
             .contentType(APPLICATION_JSON)
             .accept(APPLICATION_JSON))
             .andDo {
                 println(it.response.contentAsString)
             }
-            .andExpect(status().isOk)
+            .andExpect(status().isNoContent)
             .andDo(document("user_delete"
             ))
     }

@@ -12,6 +12,6 @@ internal data class User(
     @GeneratedValue(strategy = GenerationType.AUTO)
     val id: Long,
     val name: String,
-    @JsonIgnore val password: String
+    val password: String
 
 )

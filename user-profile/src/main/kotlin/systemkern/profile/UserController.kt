@@ -5,7 +5,7 @@ import org.springframework.web.bind.annotation.*
 
 @Component
 @RestController
-@RequestMapping("/users")
+@RequestMapping("/usersDeprecated")
 internal class UserController(
     private val userServ: UserService
 ) {
@@ -30,13 +30,6 @@ internal class UserController(
         this.userServ.delete(id)
     }
 }
-
-internal fun User.toDTO(user: User) =
-    UserDTO(
-        name = name,
-        password = password
-    )
-
 internal fun UserDTO.toEntity(userDTO: UserDTO) =
     User(
         id = -1,

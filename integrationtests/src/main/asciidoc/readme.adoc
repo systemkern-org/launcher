@@ -52,29 +52,38 @@ operation::ping[snippets='curl-request,http-request,http-response,response-field
 
 === User
 User is a module created to answer CRUD(Create,read,update and delete) requests,
-it does not always return a json, but a Http code that show if was successful.
-Next examples of http requests and responses are exposed
+it does not always return a json, but a Http code that show if was successful. The base url
+is http://host:[port]/users.
+Next examples of http requests and responses are exposed.
 
 ==== Create
-To work with creation of users, a post request is needed. It's body should contain the following
-data: "name" and "password".
+To create an user is required to send a POST request to the base url. The body of request should contain
+the following data: "name" and "password". If the request is right then status code of response should
+be 201 created, the body of response contains the data provided plus 2 links, which can be used to
+access the user that have been created.
 
 operation::user_create[snippets='curl-request,http-request,http-response']
 
 ==== Read
-To read users is not required body, just the "id" which is sent by GET http verb. This "id" should
-be in the URL at the end.
+The "id" of user should be added at the end of URL, the Http verb of request is GET but
+a body is not necessary.
+If the URL is correct and there is an user identified with the "id" provided,
+then web service sends 200 ok status code and the body of response contains the data of user.
 
 operation::user_read[snippets='curl-request,http-request,http-response,response-fields']
 
 ==== Update
 To update an user, the url is equal to the Read case. The difference is in the verb which is
-PUT http, and the body of the request should contain the new values of "name" and "password".
+PUT http, the body of the request should contain the new values of "name" and "password".
+If the request is right then the response contains; the data provided in the request and 2 links
+to access the user that have been updated, the status should be 200 ok.
+
 
 operation::user_update[snippets='curl-request,http-request,http-response']
 
 ==== Delete
-To delete an user is required it's "id" and the http verb is DELETE. The URL is equal to Read
-case.
+To delete an user, it's id must be added at the end of base url and http verb is DELETE.
+If every-thing is all-right so the web service sends an 204 No content status code,
+which means that request worked but there is not body in the response.
 
 operation::user_delete[snippets='curl-request,http-request,http-response']
