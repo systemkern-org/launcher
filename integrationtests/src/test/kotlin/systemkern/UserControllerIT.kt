@@ -30,7 +30,7 @@ internal class UserControllerIT : IntegrationTest() {
             .andExpect(status().isCreated)
             .andDo(document("user_create",
                 requestFields(
-                    fieldWithPath("name").description("Name of user to be created").type(STRING),
+                    fieldWithPath("name").description("Name of user").type(STRING),
                     fieldWithPath("password").description("Password of user to be created").type(STRING)
                 ),
                 responseFields(
