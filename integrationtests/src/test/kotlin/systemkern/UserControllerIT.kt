@@ -35,7 +35,6 @@ internal class UserControllerIT : IntegrationTest() {
                 ),
                 responseFields(
                     fieldWithPath("name").description("Name of the user").type(STRING),
-                    fieldWithPath("password").description("Password to access account").type(STRING),
                     fieldWithPath("_links.self.href").description("Link to access the created user").type(STRING),
                     fieldWithPath("_links.user.href").description("Link to access the created user").type(STRING)
                 )
@@ -52,7 +51,6 @@ internal class UserControllerIT : IntegrationTest() {
             .andDo(document("user_read",
                 responseFields(
                     fieldWithPath("name").description("Name of the user requested").type(STRING),
-                    fieldWithPath("password").description("Password of the user requested").type(STRING),
                     fieldWithPath("_links.self.href").description("Link to access the requested user").type(STRING),
                     fieldWithPath("_links.user.href").description("Link to access the requested user").type(STRING)
                 )
@@ -82,7 +80,7 @@ internal class UserControllerIT : IntegrationTest() {
 
     @Test
     fun `Delete users request`() {
-        this.mockMvc.perform(RestDocumentationRequestBuilders.delete("/users/52")
+        this.mockMvc.perform(RestDocumentationRequestBuilders.delete("/users/11")
             .contentType(APPLICATION_JSON)
             .accept(APPLICATION_JSON))
             .andExpect(status().isNoContent)
