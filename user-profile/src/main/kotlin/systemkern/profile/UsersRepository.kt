@@ -25,5 +25,4 @@ internal class UserEventHandler(
     fun handleUserCreate(user: User) {
         user.password = passwordEncoder.encode(user.password)
     }
-
 }
