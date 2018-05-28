@@ -1,7 +1,6 @@
 package systemkern
 
 
-import org.javamoney.moneta.Money
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.springframework.boot.test.context.SpringBootTest
@@ -16,7 +15,6 @@ import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
 import org.springframework.test.context.junit4.SpringRunner
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import java.time.LocalDateTime
-import javax.money.MonetaryAmount
 
 @RunWith(SpringRunner::class)
 @SpringBootTest(webEnvironment = RANDOM_PORT, classes = [CliEntryPoint::class])
