@@ -10,9 +10,8 @@ import java.time.LocalDateTime
 internal class PingController {
 
     @GetMapping
-    fun ping(): PongDTO {
-        return PongDTO()
-    }
+    fun ping(): PongDTO =
+        PongDTO()
 
 }
 

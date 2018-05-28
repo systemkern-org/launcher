@@ -32,9 +32,6 @@ internal class EchoControllerIT : IntegrationTest() {
             ))
             .contentType(APPLICATION_JSON)
             .accept(APPLICATION_JSON))
-            .andDo {
-                println(it.response.contentAsString)
-            }
             .andExpect(status().isOk)
             .andDo(document("echo",
                 responseFields(
@@ -50,7 +47,7 @@ internal class EchoControllerIT : IntegrationTest() {
 }
 
 
-internal data class EchoDTO(
+private data class EchoDTO(
     val id: Int,
     val value: String,
     val timestamp: LocalDateTime? = LocalDateTime.now(),

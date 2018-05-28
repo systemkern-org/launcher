@@ -22,9 +22,6 @@ internal class PingControllerIT : IntegrationTest() {
     @Test fun `Can Ping Application`() {
         this.mockMvc.perform(get("/default/ping").accept(MediaType.APPLICATION_JSON))
             .andExpect(status().isOk)
-            .andDo {
-                println(it.response.contentAsString)
-            }
             .andDo(document("ping",
                 responseFields(
                     fieldWithPath("timestamp").description("return timestamp")
