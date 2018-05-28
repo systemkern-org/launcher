@@ -9,9 +9,7 @@ class UserProfileTestDataCreator internal constructor(
     private val repo: UserRepository
 ) {
 
-    companion object {
-        lateinit var userId: UUID
-    }
+    lateinit var userId: UUID
 
     /** Creates one User entity in the database and publishes the Id to UserRepository#userId */
     fun persistTestData() {

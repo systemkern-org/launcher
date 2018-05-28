@@ -15,6 +15,7 @@ import org.springframework.test.context.junit4.SpringRunner
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import systemkern.CliEntryPoint
 import systemkern.IntegrationTest
+import java.util.*
 
 @RunWith(SpringRunner::class)
 @SpringBootTest(webEnvironment = RANDOM_PORT, classes = [CliEntryPoint::class])
@@ -35,14 +36,16 @@ internal class UserControllerIT : IntegrationTest() {
 
     @Autowired
     private lateinit var testDataCreator: UserProfileTestDataCreator
+    private lateinit var userId: UUID
 
     @Before
     fun setup() {
         testDataCreator.persistTestData()
+        this.userId = testDataCreator.userId
     }
 
     @Test
-    fun `Can Create a User`() {
+    fun `Can create a User`() {
         this.mockMvc.perform(RestDocumentationRequestBuilders.post(restUrl)
             .content(objectMapper.writeValueAsString(
                 TestUser(
@@ -60,8 +63,8 @@ internal class UserControllerIT : IntegrationTest() {
     }
 
     @Test
-    fun `Can Read single User`() {
-        this.mockMvc.perform(RestDocumentationRequestBuilders.get("$restUrl/${UserProfileTestDataCreator.userId}")
+    fun `Can read User`() {
+        this.mockMvc.perform(RestDocumentationRequestBuilders.get("$restUrl/$userId")
             .contentType(APPLICATION_JSON)
             .accept(APPLICATION_JSON))
             .andExpect(status().isOk)
@@ -71,8 +74,8 @@ internal class UserControllerIT : IntegrationTest() {
     }
 
     @Test
-    fun `Can update user`() {
-        this.mockMvc.perform(RestDocumentationRequestBuilders.put("$restUrl/${UserProfileTestDataCreator.userId}")
+    fun `Can update User`() {
+        this.mockMvc.perform(RestDocumentationRequestBuilders.put("$restUrl/$userId")
             .content(objectMapper.writeValueAsString(
                 TestUser(
                     name = "Test user to update",
@@ -89,8 +92,8 @@ internal class UserControllerIT : IntegrationTest() {
     }
 
     @Test
-    fun `Can delete Users`() {
-        this.mockMvc.perform(RestDocumentationRequestBuilders.delete("$restUrl/${UserProfileTestDataCreator.userId}")
+    fun `Can delete User`() {
+        this.mockMvc.perform(RestDocumentationRequestBuilders.delete("$restUrl/$userId")
             .contentType(APPLICATION_JSON)
             .accept(APPLICATION_JSON))
             .andExpect(status().isNoContent)

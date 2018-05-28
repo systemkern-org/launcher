@@ -1,8 +1,9 @@
 package systemkern.profile
 
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.context.properties.ConfigurationProperties
+import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
-import org.springframework.context.annotation.ImportResource
 import org.springframework.data.repository.CrudRepository
 import org.springframework.data.rest.core.annotation.HandleBeforeCreate
 import org.springframework.data.rest.core.annotation.RepositoryEventHandler
@@ -19,7 +20,6 @@ internal interface UserRepository : CrudRepository<User, UUID>
 
 
 @Component
-@ImportResource("classpath:spring-security.xml")
 @RepositoryEventHandler(User::class)
 internal class UserEventHandler(
     @Autowired
@@ -38,4 +38,15 @@ internal class RepositoryRestConfig : RepositoryRestConfigurer {
     override fun configureRepositoryRestConfiguration(config: RepositoryRestConfiguration) {
         config.exposeIdsFor(User::class.java)
     }
+}
+
+
+@Configuration
+@ConfigurationProperties("user-profile")
+internal class BCryptPasswordEncoderConfiguration {
+    var bcryptEncodeRounds: Long = 10
+
+    @Bean fun createBeanFoo() =
+        BCryptPasswordEncoder(10)
+
 }
