@@ -20,6 +20,17 @@ import systemkern.IntegrationTest
 @SpringBootTest(webEnvironment = RANDOM_PORT, classes = [CliEntryPoint::class])
 internal class UserControllerIT : IntegrationTest() {
 
+    val entityRequestFields = listOf(
+        fieldWithPath("name").description("Name of the user").type(STRING),
+        fieldWithPath("password").description("Password of user to be created").type(STRING)
+    )
+    val entityResponseFields = listOf(
+        fieldWithPath("id").description("The Id of the user entity").type(STRING),
+        fieldWithPath("name").description("Name of the user").type(STRING),
+        fieldWithPath("_links.self.href").description("Link to access the created user").type(STRING),
+        fieldWithPath("_links.user.href").description("Link to access the created user").type(STRING)
+    )
+
     @Autowired
     private lateinit var testDataCreator: UserProfileTestDataCreator
 
@@ -41,15 +52,8 @@ internal class UserControllerIT : IntegrationTest() {
             .accept(APPLICATION_JSON))
             .andExpect(status().isCreated)
             .andDo(document("user_create",
-                requestFields(
-                    fieldWithPath("name").description("Name of user").type(STRING),
-                    fieldWithPath("password").description("Password of user to be created").type(STRING)
-                ),
-                responseFields(
-                    fieldWithPath("name").description("Name of the user").type(STRING),
-                    fieldWithPath("_links.self.href").description("Link to access the created user").type(STRING),
-                    fieldWithPath("_links.user.href").description("Link to access the created user").type(STRING)
-                )
+                requestFields(entityRequestFields),
+                responseFields(entityResponseFields)
             ))
     }
 
@@ -60,11 +64,7 @@ internal class UserControllerIT : IntegrationTest() {
             .accept(APPLICATION_JSON))
             .andExpect(status().isOk)
             .andDo(document("user_read",
-                responseFields(
-                    fieldWithPath("name").description("Name of the user requested").type(STRING),
-                    fieldWithPath("_links.self.href").description("Link to access the requested user").type(STRING),
-                    fieldWithPath("_links.user.href").description("Link to access the requested user").type(STRING)
-                )
+                responseFields(entityResponseFields)
             ))
     }
 
@@ -81,15 +81,8 @@ internal class UserControllerIT : IntegrationTest() {
             .accept(APPLICATION_JSON))
             .andExpect(status().isOk)
             .andDo(document("user_update",
-                requestFields(
-                    fieldWithPath("name").description("name to update").type(STRING),
-                    fieldWithPath("password").description("password to update").type(STRING)
-                ),
-                responseFields(
-                    fieldWithPath("name").description("Name of the user requested").type(STRING),
-                    fieldWithPath("_links.self.href").description("Link to access the requested user").type(STRING),
-                    fieldWithPath("_links.user.href").description("Link to access the requested user").type(STRING)
-                )
+                requestFields(entityRequestFields),
+                responseFields(entityResponseFields)
             ))
     }
 
