@@ -4,6 +4,40 @@ you are putting your work into the public domain (see [unlicense](LICENSE))
 
 Push requests are of course always welcome.
 
+## Code Style
+This Project uss the IntelliJ default settings except:
+```
+code-style.kotlin.tabs-and-indents.continuation-indent = 4
+```
+
+
+## How to submit the Code - Workflow
+1.  Create a personal fork of the project on Github and clone it locally.
+    Your remote repo on Github is called origin.
+2.  Add the original repository as a remote called upstream.
+3.  Pull upstream changes into your local repository if there are any.
+4.  Create a new branch to work on! Branch from develop if it exists, else from master.
+5.  Implement/fix your feature, comment your code.
+6.  Follow the code style of the project, including indentation.
+7.  Run the tests! Write new ones and adapt them as needed.
+8.  Add or change the documentation.
+9.  Squash your commits into a single commit with git's interactive rebase.
+10. Push your branch to your fork on Github, the remote origin.
+11. From your fork open a pull request to the upstream repo.
+    Target the project's develop branch if there is one, else go for master!
+12. If the maintainer requests further changes just push them to your branch.
+    The PR will be updated automatically.
+13. Once the pull request is approved and merged you can pull the changes
+    from upstream to your local repo and delete your extra branch(es).
+14. Implement/fix your feature, comment your code.
+15. Run the tests! Adapt and write new ones as needed.
+16. Add or change the documentation as needed.
+17. Squash your commits into a single commit with git's interactive rebase. Create a new branch if necessary.
+18. Push to Github and open a pull request. Target the develop branch if there is one, else go for master.
+19. Answer questions and change requests during the reviewing phase
+20. If there are changes necessary just push them to your branch,
+    the Pull request will update automatically
+
 
 ## Version Control
 
@@ -21,117 +55,6 @@ Merging creates "merge commits" that pollute the project history.
 * Initiate a pull request
 
 ## Commit Messages
-
-**Why do good commit messages matter?**
-
-While browsing any random git repository you will often find its commit
-messages not following any pattern and ending up more or less in a mess.
-A good example for this are the early commit messages in the spring repo.
-
-**Can you easily identify each commit?**
-
-```
-$ git log --oneline -5 --author cbeams --before "Fri Mar 26 2009"
-
-e5f4b49 Re-adding ConfigurationPostProcessorTests after its brief removal
-in r814. @Ignore-ing the testCglibClassesAreLoadedJustInTimeForEnhancement()
-method as it turns out this was one of the culprits in the recent build
-breakage. The classloader hacking causes subtle downstream effects,
-breaking unrelated tests. The test method is still useful, but should
-only be run on a manual basis to ensure CGLIB is not prematurely
-classloaded, and should not be run as part of the automated build.
-2db0f12 fixed two build-breaking issues: + reverted ClassMetadataReading
-Visitor to revision 794 + eliminated ConfigurationPostProcessorTests
-until further investigation determines why it causes downstream tests to
- fail (such as the seemingly unrelated ClassPathXmlApplicationContextTests)
-147709f Tweaks to package-info.java files
-22b25e0 Consolidated Util and MutableAnnotationUtils classes into
-existing AsmUtils
-7f96f57 polishing
-```
-
-As compared to some more recent commits:
-
-```
-$ git log --oneline -5 --author pwebb --before "Sat Aug 30 2014"
-
-5ba3db6 Fix failing CompositePropertySourceTests
-84564a0 Rework @PropertySource early parsing logic
-e142fd1 Add tests for ImportSelector meta-data
-887815f Update docbook dependency and generate epub
-ac8326d Polish mockito usage
-```
-
-**Which one is easier to read?**
-
-The first example lacks any consistent form, lenght or style,
-the second is consisten and concise.
-The first one is what happens naturally if there is no system,
-the second is deliberately managed and enforced.
-
-
-### What is the purpose of commit message
-Since the diff of a commit easily shows you what has changed, the purpose
-of the commit message is to tell why it has changed. The message should
-establish a context of why the change was made. This makes it easier for
-your fellow developer (most likely yourselves) to understand the changes.
-
-A good commit message reduces wasteful work and ultimately shows if you
-the author are a good collaborator.
-
-### Benefits
-Think about tools like `git blame, `git reverse`, `git log` and
-`shortlog`.
-
-Of course you can use these with any repository in any
-style but since they are practicyally uselsess it is very unlikely that
-anyone will actually do this.
-
-But in a well formatted, well cared for repo these commands can deliver
-their full potential and become worth using. Understanding why something
-happened some months or years ago becomes not only possible but can be
-done independently without the help of the original developer.
-
-### Shower Thoughts
-
-If a project becomes a long term success is highly dependent on how
-maintainable its codebase is. A maintainer has few tools that are more
-powerfull than VCS log. This makes it worth the time to care for it.
-Ultimately it is a source of productivity.
-
-## Style
-Almost every programming language, IDE and even most projects well-establised
-conventions on how to write and structure code, name variables, and
-organize atrefacts. Even if there is disagreement on which style to choose
-almost every developer agrees that it is far better to choose any standard
-and sticking to it, than to endure the chaos that ensues when everyone
-does their own thing.
-
-**Content:** What kind of information must be present in a commit message,
-what kind of indormation can be presen. Also equally important what kind
-of information _must not_ be present.
-
-**Syntax and Grammar:** To reduce guesswork about markups, line lenghts, captialization,
-punctuation and grammar should be well defined in a simple manner. This
-ensures uniformity and reduces (or even eliminates) guesswork.
-The result will be a suprisingly consistent log which can be read.
-A log that can be read is a log that will be read on a regular basis.
-
-**Metadata:** How should external information like issue numbers, pull request ids,
-etc. be included?
-
-
-## Rules
-Please keep in mind, this is nothing new, this is not invented by me, it
-has been said before and it will be said again
-> * [tbaggery](http://tbaggery.com/2008/04/19/a-note-about-git-commit-messages.html)
-> * [git-scm](https://www.git-scm.com/book/en/v2/Distributed-Git-Contributing-to-a-Project#_commit_guidelines)
-> * [Thorvalds](https://github.com/torvalds/subsurface-for-dirk/blob/master/README#L92-L120)
-> * [who-t](http://who-t.blogspot.co.at/2009/12/on-commit-messages.html)
-> * [Github](https://github.com/erlang/otp/wiki/writing-good-commit-messages)
-> * [Spring Framework](https://github.com/spring-projects/spring-framework/blob/30bce7/CONTRIBUTING.md#format-commit-messages)
-> * [Chris Beams](https://chris.beams.io/posts/git-commit/)
-
 
 1. Start the subject line with the ticket number followed by an uppercase
 2. Limit the length of the subject line to 50 characters
