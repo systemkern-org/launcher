@@ -17,6 +17,7 @@ import java.util.*
 
 @RepositoryRestResource
 internal interface UserRepository : CrudRepository<User, UUID>
+//First push, it is done just to create the #2-add-spring-security branch in remote repository.
 
 
 @Component
