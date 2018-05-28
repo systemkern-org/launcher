@@ -2,16 +2,17 @@ package systemkern.profile
 
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.annotation.JsonProperty.Access.WRITE_ONLY
+import java.util.*
 import javax.persistence.Entity
 import javax.persistence.GeneratedValue
-import javax.persistence.GenerationType.*
+import javax.persistence.GenerationType.AUTO
 import javax.persistence.Id
 
 @Entity
-internal data class User(
+data class User(
     @Id
     @GeneratedValue(strategy = AUTO)
-    val id: Long,
+    val id: UUID = UUID.randomUUID(),
     val name: String,
 
     @JsonProperty(access = WRITE_ONLY)

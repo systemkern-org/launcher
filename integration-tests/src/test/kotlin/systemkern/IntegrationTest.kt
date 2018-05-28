@@ -33,6 +33,7 @@ internal abstract class IntegrationTest {
 
     @Before
     fun setUp() {
+
         this.mockMvc = MockMvcBuilders.webAppContextSetup(this.context)
             .apply<DefaultMockMvcBuilder>(MockMvcRestDocumentation.documentationConfiguration(this.restDocumentation))
             .build()
