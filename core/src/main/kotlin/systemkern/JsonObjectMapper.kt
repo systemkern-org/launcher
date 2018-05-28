@@ -10,6 +10,9 @@ import com.fasterxml.jackson.module.kotlin.KotlinModule
 import org.springframework.stereotype.Component
 import org.zalando.jackson.datatype.money.MoneyModule
 
+/**
+ * This class is deliberatly left public so it is availible to all RestControllers in all modules on the classpath
+ */
 @Component
 class JsonObjectMapper : ObjectMapper() {
 
@@ -17,6 +20,7 @@ class JsonObjectMapper : ObjectMapper() {
         this.registerModule(KotlinModule())
         // The java time module maps time as an array instead of as an object
         this.registerModule(JavaTimeModule())
+        this.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false)
         //Zalando money offers easier mapping for Money datatypes (CCY, Amount) than the standard mapping
         this.registerModule(MoneyModule())
         this.setSerializationInclusion(JsonInclude.Include.NON_NULL)

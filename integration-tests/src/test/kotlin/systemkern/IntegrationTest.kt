@@ -17,7 +17,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders
 import org.springframework.web.context.WebApplicationContext
 
 @RunWith(SpringRunner::class)
-@ActiveProfiles("integrationtest")
+@ActiveProfiles("integration-test")
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, classes = [CliEntryPoint::class])
 internal abstract class IntegrationTest {
 

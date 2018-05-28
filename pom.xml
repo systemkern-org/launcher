@@ -3,8 +3,8 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <groupId>customer-name</groupId>
-        <artifactId>application-parent</artifactId>
+        <groupId>com.systemkern</groupId>
+        <artifactId>launcher-parent</artifactId>
         <version>0.1</version>
         <relativePath>parent/pom.xml</relativePath>
     </parent>
@@ -19,21 +19,21 @@
     </description>
 
     <modules>
-        <module>default</module>
-        <module>integrationtests</module>
+        <module>core</module>
         <module>parent</module>
+        <module>integration-tests</module>
         <module>runtime-cli</module>
         <module>runtime-gae-standard</module>
         <module>user-profile</module>
     </modules>
 
     <properties>
-        <distribution-server>ftp.example.com</distribution-server>
-        <distribution-url>ftp://${distribution-server}/foo/bar/${project.groupId}</distribution-url>
+        <distribution-server>ftp.systemkern.com</distribution-server>
+        <distribution-url>ftp://${distribution-server}/kunden/</distribution-url>
     </properties>
 
     <build>
-        <finalName>${project.parent.name}-${project.parent.version}</finalName>
+        <finalName>${project.parent.build.finalName}</finalName>
         <defaultGoal>clean verify</defaultGoal>
         <plugins>
             <!-- rewrite run scripts with correct application jar name -->
@@ -63,7 +63,7 @@
                             <replacements>
                                 <replacement>
                                     <token>finalName</token>
-                                    <value>${project.parent.name}-${project.parent.version}</value>
+                                    <value>${parent.build.finalName}</value>
                                 </replacement>
                             </replacements>
                         </configuration>
@@ -74,13 +74,10 @@
             <!-- assemble the dist zip file -->
             <plugin>
                 <artifactId>maven-assembly-plugin</artifactId>
-                <version>3.1.0</version>
                 <configuration>
-                    <finalName>${project.parent.name}-${project.parent.version}</finalName>
                     <descriptors>
                         <descriptor>src/assembly/cli-assembly.xml</descriptor>
                     </descriptors>
-                    <outputDirectory>target</outputDirectory>
                     <appendAssemblyId>false</appendAssemblyId>
                 </configuration>
                 <executions>
@@ -102,7 +99,7 @@
                 <configuration>
                     <goal>upload-single</goal>
                     <serverId>launcher-ftp-distribution-server</serverId>
-                    <fromFile>target/${project.build.finalName}.zip
+                    <fromFile>${project.build.directory}/${project.build.finalName}.zip
                     </fromFile>
                     <url>${distribution-url}</url>
                     <toFile>${project.build.finalName}.zip</toFile>

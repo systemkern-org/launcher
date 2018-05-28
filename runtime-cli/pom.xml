@@ -3,8 +3,8 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
-        <artifactId>application-parent</artifactId>
-        <groupId>customer-name</groupId>
+        <groupId>com.systemkern</groupId>
+        <artifactId>launcher-parent</artifactId>
         <version>0.1</version>
         <relativePath>../parent/pom.xml</relativePath>
     </parent>
@@ -24,22 +24,19 @@
         <start.class>systemkern.CliEntryPointKt</start.class>
     </properties>
 
-
     <dependencies>
         <!-- Project Internal dependencies
         -->
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>default</artifactId>
+            <artifactId>core</artifactId>
         </dependency>
-
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>user-profile</artifactId>
         </dependency>
 
-        <!-- External dependencies
-        -->
+        <!-- External dependencies-->
         <dependency>
             <groupId>com.fasterxml.jackson.module</groupId>
             <artifactId>jackson-module-kotlin</artifactId>
@@ -51,6 +48,10 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
         </dependency>
     </dependencies>
 
@@ -66,14 +67,6 @@
                     <finalName>${project.parent.name}</finalName>
                     <classifier>${project.parent.version}</classifier>
                 </configuration>
-                <executions>
-                    <execution>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>repackage</goal>
-                        </goals>
-                    </execution>
-                </executions>
             </plugin>
         </plugins>
     </build>

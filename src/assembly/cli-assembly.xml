@@ -27,14 +27,14 @@
             <outputDirectory>.</outputDirectory>
             <directory>runtime-cli/${project.build.directory}</directory>
             <includes>
-                <include>${project.parent.name}-${project.parent.version}.jar</include>
+                <include>${project.parent.build.finalName}.jar</include>
             </includes>
         </fileSet>
 
         <!-- run scripts-->
         <fileSet>
             <outputDirectory>.</outputDirectory>
-            <directory>target/bin</directory>
+            <directory>${project.build.directory}/bin</directory>
             <includes>
                 <include>*</include>
             </includes>
@@ -52,7 +52,7 @@
         <!-- documentation -->
         <fileSet>
             <outputDirectory>.</outputDirectory>
-            <directory>${project.basedir}/../integrationtests/${project.build.directory}/generated-docs</directory>
+            <directory>${project.basedir}/integration-tests/${project.build.directory}/generated-docs</directory>
             <includes>
                 <include>*</include>
             </includes>
