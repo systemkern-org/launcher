@@ -20,11 +20,13 @@ import systemkern.IntegrationTest
 @SpringBootTest(webEnvironment = RANDOM_PORT, classes = [CliEntryPoint::class])
 internal class UserControllerIT : IntegrationTest() {
 
-    val entityRequestFields = listOf(
+    private val restUrl = "/users"
+
+    private val entityRequestFields = listOf(
         fieldWithPath("name").description("Name of the user").type(STRING),
         fieldWithPath("password").description("Password of user to be created").type(STRING)
     )
-    val entityResponseFields = listOf(
+    private val entityResponseFields = listOf(
         fieldWithPath("id").description("The Id of the user entity").type(STRING),
         fieldWithPath("name").description("Name of the user").type(STRING),
         fieldWithPath("_links.self.href").description("Link to access the created user").type(STRING),
@@ -41,7 +43,7 @@ internal class UserControllerIT : IntegrationTest() {
 
     @Test
     fun `Can Create a User`() {
-        this.mockMvc.perform(RestDocumentationRequestBuilders.post("/users")
+        this.mockMvc.perform(RestDocumentationRequestBuilders.post(restUrl)
             .content(objectMapper.writeValueAsString(
                 TestUser(
                     name = "Test User",
@@ -59,7 +61,7 @@ internal class UserControllerIT : IntegrationTest() {
 
     @Test
     fun `Can Read single User`() {
-        this.mockMvc.perform(RestDocumentationRequestBuilders.get("/users/${UserProfileTestDataCreator.userId}")
+        this.mockMvc.perform(RestDocumentationRequestBuilders.get("$restUrl/${UserProfileTestDataCreator.userId}")
             .contentType(APPLICATION_JSON)
             .accept(APPLICATION_JSON))
             .andExpect(status().isOk)
@@ -70,7 +72,7 @@ internal class UserControllerIT : IntegrationTest() {
 
     @Test
     fun `Can update user`() {
-        this.mockMvc.perform(RestDocumentationRequestBuilders.put("/users/${UserProfileTestDataCreator.userId}")
+        this.mockMvc.perform(RestDocumentationRequestBuilders.put("$restUrl/${UserProfileTestDataCreator.userId}")
             .content(objectMapper.writeValueAsString(
                 TestUser(
                     name = "Test user to update",
@@ -88,7 +90,7 @@ internal class UserControllerIT : IntegrationTest() {
 
     @Test
     fun `Can delete Users`() {
-        this.mockMvc.perform(RestDocumentationRequestBuilders.delete("/users/${UserProfileTestDataCreator.userId}")
+        this.mockMvc.perform(RestDocumentationRequestBuilders.delete("$restUrl/${UserProfileTestDataCreator.userId}")
             .contentType(APPLICATION_JSON)
             .accept(APPLICATION_JSON))
             .andExpect(status().isNoContent)

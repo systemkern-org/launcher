@@ -15,7 +15,7 @@ import java.util.*
 
 
 @RepositoryRestResource
-internal interface UsersRepository : CrudRepository<User, UUID>
+internal interface UserRepository : CrudRepository<User, UUID>
 
 
 @Component
@@ -24,7 +24,7 @@ internal interface UsersRepository : CrudRepository<User, UUID>
 internal class UserEventHandler(
     @Autowired
     internal val passwordEncoder: BCryptPasswordEncoder,
-    internal val userRepository: UsersRepository
+    internal val userRepository: UserRepository
 ) {
     @HandleBeforeCreate
     fun handleUserCreate(user: User) {
@@ -34,7 +34,7 @@ internal class UserEventHandler(
 
 
 @Configuration
-class RepositoryRestConfig : RepositoryRestConfigurer {
+internal class RepositoryRestConfig : RepositoryRestConfigurer {
     override fun configureRepositoryRestConfiguration(config: RepositoryRestConfiguration) {
         config.exposeIdsFor(User::class.java)
     }
