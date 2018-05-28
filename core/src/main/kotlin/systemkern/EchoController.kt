@@ -23,7 +23,6 @@ internal class EchoController {
 internal data class EchoDTO(
     val id: Int,
     val value: String,
-    val timestamp: LocalDateTime? = LocalDateTime.now(),
-    val money: MonetaryAmount = Money.of(0, "EUR")
+    val timestamp: LocalDateTime? = LocalDateTime.now()
 )
 

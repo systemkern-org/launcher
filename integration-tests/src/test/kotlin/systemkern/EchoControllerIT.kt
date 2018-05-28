@@ -26,8 +26,8 @@ internal class EchoControllerIT : IntegrationTest() {
         this.mockMvc.perform(RestDocumentationRequestBuilders.post("/default/echo")
             .content(objectMapper.writeValueAsString(
                 EchoDTO(
-                    value = "foo",
-                    id = 1
+                    id = 1,
+                    value = "foo"
                 )
             ))
             .contentType(APPLICATION_JSON)
@@ -37,19 +37,15 @@ internal class EchoControllerIT : IntegrationTest() {
                 responseFields(
                     fieldWithPath("id").description("Id of the request sent").type(NUMBER),
                     fieldWithPath("value").description("Some arbitrary end2end value").type(STRING),
-                    fieldWithPath("timestamp").description("Time of the request").type(STRING),
-                    fieldWithPath("money.amount").description("The value of the monetary amount").type(NUMBER),
-                    fieldWithPath("money.currency").description("The currency of the monetary amount").type(STRING)
+                    fieldWithPath("timestamp").description("Time of the request").type(STRING)
                 )
             ))
     }
 
 }
 
-
 private data class EchoDTO(
     val id: Int,
     val value: String,
-    val timestamp: LocalDateTime? = LocalDateTime.now(),
-    val money: MonetaryAmount = Money.of(0,"EUR")
+    val timestamp: LocalDateTime? = LocalDateTime.now()
 )
