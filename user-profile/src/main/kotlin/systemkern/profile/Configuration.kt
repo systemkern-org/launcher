@@ -23,10 +23,12 @@ internal class UserEventHandler(
     internal val passwordEncoder: BCryptPasswordEncoder,
     internal val userRepository: UserRepository
 ) {
+
     @HandleBeforeCreate
     fun handleUserCreate(user: User) {
         user.password = passwordEncoder.encode(user.password)
     }
+
 }
 
 
@@ -42,9 +44,10 @@ internal class RepositoryRestConfig : RepositoryRestConfigurer {
 @ConfigurationProperties("user-profile")
 internal class BCryptPasswordEncoderConfiguration {
 
-    @Bean
-    fun createBeanFoo() =
-        BCryptPasswordEncoder(10)
+    var bcryptEncryptionRounds: Int = 20
+
+    @Bean fun createBCryptPasswordEncoder() =
+        BCryptPasswordEncoder(bcryptEncryptionRounds)
 
 }
 

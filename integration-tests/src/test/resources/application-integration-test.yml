@@ -8,4 +8,4 @@
 ##############################################################################
 
 user-profile:
-  bcrypt-encode-rounds: 20
+    bcrypt-encryption-rounds: 5
