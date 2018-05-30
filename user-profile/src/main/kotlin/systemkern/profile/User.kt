@@ -16,5 +16,6 @@ data class User(
     val name: String,
 
     @JsonProperty(access = WRITE_ONLY)
-    var password: String /*This attribute is var because of how repository event handler works*/
+    var password: String, /*This attribute is var because of how repository event handler works*/
+    val username: String
 )
