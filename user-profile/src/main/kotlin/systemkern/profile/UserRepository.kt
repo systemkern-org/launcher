@@ -58,7 +58,8 @@ interface UserRepository : CrudRepository<User, UUID>, JpaRepository<User, UUID>
 {
  /*   @Query("SELECT id FROM user WHERE username = :username AND password = :password")
     fun findByUsernameAndPassword(@Param("username") username : String,
-                                  @Param("password") password : String) : UUID*/
+                                  @Param("password") password : String) : UUID
+*/
 
     fun findByUsername(username: String): User
 }

@@ -25,9 +25,11 @@ class CustomWebSecurityConfigurerAdapter : WebSecurityConfigurerAdapter() {
             .anonymous()
             .antMatchers(HttpMethod.PUT, "/users/{id}")
             .authenticated()
-            .antMatchers(HttpMethod.DELETE, "/users", "/users/","/users/{id}")
+            .antMatchers(HttpMethod.DELETE, "/users", "/users/", "/users/{id}")
             .denyAll()
-            .antMatchers(HttpMethod.POST, "/login", "/login/")
+            .antMatchers(HttpMethod.POST, "/auth/login", "/auth/login/")
             .anonymous()
+            .and()
+            .httpBasic()
     }
 }
