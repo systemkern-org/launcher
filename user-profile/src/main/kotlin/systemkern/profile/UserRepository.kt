@@ -1,23 +1,64 @@
 package systemkern.profile
 
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.context.properties.ConfigurationProperties
+import org.springframework.context.annotation.Bean
+import org.springframework.context.annotation.Configuration
+import org.springframework.data.jpa.repository.JpaRepository
+import org.springframework.data.jpa.repository.Query
 import org.springframework.data.repository.CrudRepository
+import org.springframework.data.repository.query.Param
+import org.springframework.data.rest.core.annotation.HandleBeforeCreate
+import org.springframework.data.rest.core.annotation.RepositoryEventHandler
 import org.springframework.data.rest.core.annotation.RepositoryRestResource
-//import org.springframework.security.access.annotation.Secured
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.data.rest.core.config.RepositoryRestConfiguration
+import org.springframework.data.rest.webmvc.config.RepositoryRestConfigurer
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
+import org.springframework.stereotype.Component
 import java.util.*
 
+@Component
+@RepositoryEventHandler(User::class)
+internal class UserEventHandler(
+    @Autowired
+    internal val passwordEncoder: BCryptPasswordEncoder,
+    internal val userRepository: UserRepository
+) {
 
-@RepositoryRestResource
-internal interface UserRepository : CrudRepository<User, UUID> {
+    @HandleBeforeCreate
+    fun handleUserCreate(user: User) {
+        user.password = passwordEncoder.encode(user.password)
+    }
 
-    @Override
-    fun findByNameAndPassword(name: String, password: String): List<User>
+}
 
-    //@Secured("ROLE_USER")
-    @GetMapping("{id}")
-    override fun findById(Id: UUID): Optional<User>
 
-/*    @PostMapping
-    fun findByUsernameAndPassword(username:String,password: String): Optional<User>*/
+@Configuration
+internal class RepositoryRestConfig : RepositoryRestConfigurer {
+    override fun configureRepositoryRestConfiguration(config: RepositoryRestConfiguration) {
+        config.exposeIdsFor(User::class.java)
+    }
+}
+
+
+@Configuration
+@ConfigurationProperties("user-profile")
+internal class BCryptPasswordEncoderConfiguration {
+
+    var bcryptEncryptionRounds: Int = 20
+
+    @Bean
+    fun createBCryptPasswordEncoder() =
+        BCryptPasswordEncoder(bcryptEncryptionRounds)
+
+}
+
+@RepositoryRestResource(path = "/users")
+interface UserRepository : CrudRepository<User, UUID>, JpaRepository<User, UUID>
+{
+    @Query("SELECT id FROM user WHERE username = :username AND password = :password")
+    fun findByUsernameAndPassword(@Param("username") username : String,
+                                  @Param("password") password : String) : UUID
+
+    fun findByUsername(username: String): User
 }

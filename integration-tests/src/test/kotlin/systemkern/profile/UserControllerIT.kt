@@ -24,12 +24,15 @@ internal class UserControllerIT : IntegrationTest() {
     private val restUrl = "/users"
 
     private val entityRequestFields = listOf(
+
         fieldWithPath("name").description("Name of the user").type(STRING),
+        fieldWithPath("username").description("Username of the user").type(STRING),
         fieldWithPath("password").description("Password of user to be created").type(STRING)
     )
     private val entityResponseFields = listOf(
         fieldWithPath("id").description("The Id of the user entity").type(STRING),
         fieldWithPath("name").description("Name of the user").type(STRING),
+        fieldWithPath("username").description("Username to log in").type(STRING),
         fieldWithPath("_links.self.href").description("Link to access the created user").type(STRING),
         fieldWithPath("_links.user.href").description("Link to access the created user").type(STRING)
     )
@@ -49,8 +52,9 @@ internal class UserControllerIT : IntegrationTest() {
         this.mockMvc.perform(RestDocumentationRequestBuilders.post(restUrl)
             .content(objectMapper.writeValueAsString(
                 TestUser(
-                    name = "Test User",
-                    password = "*TestUser2018*"
+                    username = "AndresAusecha09",
+                    name = "Andres Ausecha",
+                    password = "AndresAusecha09*"
                 )
             ))
             .contentType(APPLICATION_JSON)
@@ -78,6 +82,7 @@ internal class UserControllerIT : IntegrationTest() {
         this.mockMvc.perform(RestDocumentationRequestBuilders.put("$restUrl/$userId")
             .content(objectMapper.writeValueAsString(
                 TestUser(
+                    username = "Test user to update",
                     name = "Test user to update",
                     password = "TestUserUpdate2018"
                 )
@@ -102,6 +107,7 @@ internal class UserControllerIT : IntegrationTest() {
 }
 
 private data class TestUser(
+    val username: String,
     val name: String,
     val password: String
 )

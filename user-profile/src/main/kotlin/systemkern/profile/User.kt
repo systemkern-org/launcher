@@ -2,20 +2,26 @@ package systemkern.profile
 
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.annotation.JsonProperty.Access.WRITE_ONLY
+import org.springframework.web.bind.annotation.Mapping
 import java.util.*
-import javax.persistence.Entity
-import javax.persistence.GeneratedValue
+import javax.persistence.*
 import javax.persistence.GenerationType.AUTO
-import javax.persistence.Id
 
-@Entity
+@Entity(name="user")
+//@Table(name="user", schema = "public")
+
 data class User(
     @Id
-    @GeneratedValue(strategy = AUTO)
+    @Column(name = "id")
     val id: UUID = UUID.randomUUID(),
+
+    @Column(name = "name")
     val name: String,
 
+    @Column(name = "password")
     @JsonProperty(access = WRITE_ONLY)
     var password: String, /*This attribute is var because of how repository event handler works*/
+
+    @Column(name = "username")
     val username: String
 )

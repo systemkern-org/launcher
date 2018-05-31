@@ -20,6 +20,7 @@ class UserProfileTestDataCreator internal constructor(
 
 internal fun createTestUser() =
     User(
+        id = UUID.randomUUID(),
         name = "Test User",
         password = "s3cret",
         username = "TestUser"
