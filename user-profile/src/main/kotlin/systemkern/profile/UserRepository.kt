@@ -45,7 +45,7 @@ internal class RepositoryRestConfig : RepositoryRestConfigurer {
 @ConfigurationProperties("user-profile")
 internal class BCryptPasswordEncoderConfiguration {
 
-    var bcryptEncryptionRounds: Int = 20
+    var bcryptEncryptionRounds: Int = 5
 
     @Bean
     fun createBCryptPasswordEncoder() =
@@ -54,12 +54,7 @@ internal class BCryptPasswordEncoderConfiguration {
 }
 
 @RepositoryRestResource(path = "/users")
-interface UserRepository : CrudRepository<User, UUID>, JpaRepository<User, UUID>
+interface UserRepository : CrudRepository<User, UUID>
 {
- /*   @Query("SELECT id FROM user WHERE username = :username AND password = :password")
-    fun findByUsernameAndPassword(@Param("username") username : String,
-                                  @Param("password") password : String) : UUID
-*/
-
     fun findByUsername(username: String): User
 }
