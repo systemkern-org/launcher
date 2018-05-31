@@ -9,10 +9,9 @@ import java.util.*
 @RestController
 class LoginController(val repo: UserRepository) {
     @PostMapping("/login")
-    fun login(@RequestBody loginData: LoginData): UUID {
+    fun login(@RequestBody loginData: LoginData): Boolean{
         val passwordEncoder: BCryptPasswordEncoder = BCryptPasswordEncoder()
-        return repo.findByUsernameAndPassword(loginData.username, loginData.password)
-
+        return passwordEncoder.matches(loginData.password,repo.findByUsername(loginData.username).password)
     }
 
 }
