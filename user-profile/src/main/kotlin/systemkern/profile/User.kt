@@ -5,9 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty.Access.WRITE_ONLY
 import java.util.*
 import javax.persistence.*
 
-@Entity(name="user")
-//@Table(name="user", schema = "public")
-
+@Entity
 data class User(
     @Id
     val id: UUID = UUID.randomUUID(),

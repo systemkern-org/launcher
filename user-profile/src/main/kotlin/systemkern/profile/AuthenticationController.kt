@@ -17,19 +17,15 @@ class AuthenticationController(val repo: UserRepository) {
         val passwordEncoder = BCryptPasswordEncoder()
         val user = repo.findByUsername(loginData.username)
 
-        if(passwordEncoder.matches(loginData.password, user.password))
-        {
-            return AuthenticationResponse(
-                token = UUID.randomUUID(),
-                username = user.username,
-                userId = user.id,
-                validUntil = LocalDateTime.MAX
-            )
-
-        }else
-        {
+        if(!passwordEncoder.matches(loginData.password, user.password))
             throw UserNotFoundException("UserNotFoundException")
-        }
+
+
+        return AuthenticationResponse(
+            username = user.username,
+            userId = user.id,
+            validUntil = LocalDateTime.MAX //TODO: Add real time and register it
+        )
     }
 
 }
@@ -41,7 +37,6 @@ data class LoginData(
 
 class AuthenticationResponse
 (
-    val token: UUID,
     val username: String,
     val userId: UUID,
     val validUntil: LocalDateTime

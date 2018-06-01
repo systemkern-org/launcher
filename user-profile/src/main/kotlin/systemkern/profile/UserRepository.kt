@@ -4,10 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
-import org.springframework.data.jpa.repository.JpaRepository
-import org.springframework.data.jpa.repository.Query
 import org.springframework.data.repository.CrudRepository
-import org.springframework.data.repository.query.Param
 import org.springframework.data.rest.core.annotation.HandleBeforeCreate
 import org.springframework.data.rest.core.annotation.RepositoryEventHandler
 import org.springframework.data.rest.core.annotation.RepositoryRestResource
@@ -31,7 +28,6 @@ internal class UserEventHandler(
     }
 
 }
-
 
 @Configuration
 internal class RepositoryRestConfig : RepositoryRestConfigurer {
