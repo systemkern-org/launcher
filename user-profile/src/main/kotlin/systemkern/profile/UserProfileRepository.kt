@@ -13,26 +13,30 @@ import org.springframework.data.rest.webmvc.config.RepositoryRestConfigurer
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.stereotype.Component
 import java.util.*
+import javax.persistence.PrePersist
+
+
+@RepositoryRestResource(path = "user-profiles")
+internal interface UserProfileRepository : CrudRepository<UserProfile, UUID>
+
 
 @Component
-@RepositoryEventHandler(User::class)
-internal class UserEventHandler(
-    @Autowired
-    internal val passwordEncoder: BCryptPasswordEncoder,
-    internal val userRepository: UserRepository
+internal class UserProfileEntiyListener(
+    internal val passwordEncoder: BCryptPasswordEncoder = BCryptPasswordEncoder()
 ) {
 
-    @HandleBeforeCreate
-    fun handleUserCreate(user: User) {
-        user.password = passwordEncoder.encode(user.password)
+    @PrePersist
+    fun handleUserCreate(userProfile: UserProfile) {
+        userProfile.password = passwordEncoder.encode(userProfile.password)
     }
 
 }
 
+
 @Configuration
 internal class RepositoryRestConfig : RepositoryRestConfigurer {
     override fun configureRepositoryRestConfiguration(config: RepositoryRestConfiguration) {
-        config.exposeIdsFor(User::class.java)
+        config.exposeIdsFor(UserProfile::class.java)
     }
 }
 
@@ -40,17 +44,9 @@ internal class RepositoryRestConfig : RepositoryRestConfigurer {
 @Configuration
 @ConfigurationProperties("user-profile")
 internal class BCryptPasswordEncoderConfiguration {
+    var bcryptEncodeRounds: Long = 10
 
-    var bcryptEncryptionRounds: Int = 5
+    @Bean fun createBeanFoo() =
+        BCryptPasswordEncoder(10)
 
-    @Bean
-    fun createBCryptPasswordEncoder() =
-        BCryptPasswordEncoder(bcryptEncryptionRounds)
-
-}
-
-@RepositoryRestResource(path = "/users")
-interface UserRepository : CrudRepository<User, UUID>
-{
-    fun findByUsername(username: String): User
 }

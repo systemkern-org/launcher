@@ -3,12 +3,19 @@ package systemkern.profile
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.annotation.JsonProperty.Access.WRITE_ONLY
 import java.util.*
+
 import javax.persistence.*
+import java.util.UUID.randomUUID
+import javax.persistence.*
+import javax.persistence.GenerationType.AUTO
+
 
 @Entity
-data class User(
+@EntityListeners(UserProfileEntiyListener::class)
+data class UserProfile(
     @Id
-    val id: UUID = UUID.randomUUID(),
+    @GeneratedValue(strategy = AUTO)
+    val id: UUID = randomUUID(),
     val name: String,
 
     @JsonProperty(access = WRITE_ONLY)
