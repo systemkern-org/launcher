@@ -15,28 +15,29 @@ import org.springframework.stereotype.Component
 import java.util.*
 
 
-@RepositoryRestResource
-internal interface UserRepository : CrudRepository<User, UUID>
+@RepositoryRestResource(path = "user-profiles")
+internal interface UserProfileRepository : CrudRepository<UserProfile, UUID>
 
 
 @Component
-@RepositoryEventHandler(User::class)
+@RepositoryEventHandler(UserProfile::class)
 internal class UserEventHandler(
     @Autowired
-    internal val passwordEncoder: BCryptPasswordEncoder,
-    internal val userRepository: UserRepository
+    internal val passwordEncoder: BCryptPasswordEncoder
 ) {
+
     @HandleBeforeCreate
-    fun handleUserCreate(user: User) {
-        user.password = passwordEncoder.encode(user.password)
+    fun handleUserCreate(userProfile: UserProfile) {
+        userProfile.password = passwordEncoder.encode(userProfile.password)
     }
+
 }
 
 
 @Configuration
 internal class RepositoryRestConfig : RepositoryRestConfigurer {
     override fun configureRepositoryRestConfiguration(config: RepositoryRestConfiguration) {
-        config.exposeIdsFor(User::class.java)
+        config.exposeIdsFor(UserProfile::class.java)
     }
 }
 

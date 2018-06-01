@@ -6,12 +6,12 @@ import java.util.*
 /** Helper class to create persisted test data for Unit Tests */
 @Component
 class UserProfileTestDataCreator internal constructor(
-    private val repo: UserRepository
+    private val repo: UserProfileRepository
 ) {
 
     lateinit var userId: UUID
 
-    /** Creates one User entity in the database and publishes the Id to UserRepository#userId */
+    /** Creates one UserProfile entity in the database and publishes the Id to UserProfileRepository#userId */
     fun persistTestData() {
         userId = repo.save(createTestUser()).id
     }
@@ -19,7 +19,7 @@ class UserProfileTestDataCreator internal constructor(
 }
 
 internal fun createTestUser() =
-    User(
+    UserProfile(
         name = "Test User",
         password = "s3cret"
     )

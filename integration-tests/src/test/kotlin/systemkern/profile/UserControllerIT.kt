@@ -21,7 +21,7 @@ import java.util.*
 @SpringBootTest(webEnvironment = RANDOM_PORT, classes = [CliEntryPoint::class])
 internal class UserControllerIT : IntegrationTest() {
 
-    private val restUrl = "/users"
+    private val restUrl = "/user-profiles"
 
     private val entityRequestFields = listOf(
         fieldWithPath("name").description("Name of the user").type(STRING),
@@ -31,7 +31,7 @@ internal class UserControllerIT : IntegrationTest() {
         fieldWithPath("id").description("The Id of the user entity").type(STRING),
         fieldWithPath("name").description("Name of the user").type(STRING),
         fieldWithPath("_links.self.href").description("Link to access the created user").type(STRING),
-        fieldWithPath("_links.user.href").description("Link to access the created user").type(STRING)
+        fieldWithPath("_links.userProfile.href").description("Link to access the created user").type(STRING)
     )
 
     @Autowired
@@ -76,7 +76,8 @@ internal class UserControllerIT : IntegrationTest() {
     @Test
     fun `Can update User`() {
         this.mockMvc.perform(RestDocumentationRequestBuilders.put("$restUrl/$userId")
-            .content(objectMapper.writeValueAsString(
+            .content(
+                objectMapper.writeValueAsString(
                 TestUser(
                     name = "Test user to update",
                     password = "TestUserUpdate2018"
