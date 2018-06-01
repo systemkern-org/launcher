@@ -4,12 +4,11 @@ import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.annotation.JsonProperty.Access.WRITE_ONLY
 import java.util.*
 import java.util.UUID.randomUUID
-import javax.persistence.Entity
-import javax.persistence.GeneratedValue
+import javax.persistence.*
 import javax.persistence.GenerationType.AUTO
-import javax.persistence.Id
 
 @Entity
+@EntityListeners(UserProfileEntiyListener::class)
 data class UserProfile(
     @Id
     @GeneratedValue(strategy = AUTO)

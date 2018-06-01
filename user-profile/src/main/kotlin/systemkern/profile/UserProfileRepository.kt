@@ -13,6 +13,7 @@ import org.springframework.data.rest.webmvc.config.RepositoryRestConfigurer
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.stereotype.Component
 import java.util.*
+import javax.persistence.PrePersist
 
 
 @RepositoryRestResource(path = "user-profiles")
@@ -20,13 +21,11 @@ internal interface UserProfileRepository : CrudRepository<UserProfile, UUID>
 
 
 @Component
-@RepositoryEventHandler(UserProfile::class)
-internal class UserEventHandler(
-    @Autowired
-    internal val passwordEncoder: BCryptPasswordEncoder
+internal class UserProfileEntiyListener(
+    internal val passwordEncoder: BCryptPasswordEncoder = BCryptPasswordEncoder()
 ) {
 
-    @HandleBeforeCreate
+    @PrePersist
     fun handleUserCreate(userProfile: UserProfile) {
         userProfile.password = passwordEncoder.encode(userProfile.password)
     }
