@@ -20,6 +20,7 @@ class UserProfileTestDataCreator internal constructor(
 
 internal fun createTestUser() =
     UserProfile(
+        username = "userTest",
         name = "Test User",
         password = "s3cret"
     )

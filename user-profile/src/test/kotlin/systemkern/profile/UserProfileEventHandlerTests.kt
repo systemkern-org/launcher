@@ -29,6 +29,7 @@ class UserEventHandlerTest {
     @Test fun `User Passwords are encrypted`() {
         val persistedUser = repo.save(
             UserProfile(
+                username = "userTest",
                 name = "Test User",
                 password = "password"
             ))

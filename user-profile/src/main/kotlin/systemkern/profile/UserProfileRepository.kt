@@ -18,7 +18,9 @@ import javax.persistence.PrePersist
 
 @RepositoryRestResource(path = "user-profiles")
 internal interface UserProfileRepository : CrudRepository<UserProfile, UUID>
-
+{
+    fun findByUsername(username: String): UserProfile
+}
 
 @Component
 internal class UserProfileEntiyListener(

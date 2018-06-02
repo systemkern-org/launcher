@@ -10,7 +10,7 @@ import java.time.LocalDateTime
 import java.util.UUID
 
 @RestController
-class AuthenticationController(val repo: UserRepository) {
+internal class AuthenticationController(val repo: UserProfileRepository) {
 
     @PostMapping("/login")
     fun login(@RequestBody loginData: LoginData): AuthenticationResponse {
