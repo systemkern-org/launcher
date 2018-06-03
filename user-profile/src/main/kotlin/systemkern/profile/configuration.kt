@@ -39,7 +39,7 @@ class CustomWebSecurityConfigurerAdapter : WebSecurityConfigurerAdapter() {
             .denyAll()
             .antMatchers(HttpMethod.PUT, "/user-profiles")
             .authenticated()
-            .antMatchers(HttpMethod.PUT, "/user-profiles")
+            .antMatchers(HttpMethod.GET, "/user-profiles")
             .authenticated()
             .and()
             .addFilterBefore(TokenAccessFilter(), UsernamePasswordAuthenticationFilter::class.java)
