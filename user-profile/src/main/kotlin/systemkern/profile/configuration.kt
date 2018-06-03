@@ -30,6 +30,7 @@ class CustomWebSecurityConfigurerAdapter : WebSecurityConfigurerAdapter() {
             .antMatchers(HttpMethod.POST, "/login")
             .antMatchers(HttpMethod.POST, "/user-profiles")
     }
+
     @Throws(Exception::class)
     override fun configure(http: HttpSecurity) {
         http.csrf()
@@ -37,9 +38,9 @@ class CustomWebSecurityConfigurerAdapter : WebSecurityConfigurerAdapter() {
             .authorizeRequests()
             .antMatchers(HttpMethod.DELETE, "/user-profiles")
             .denyAll()
-            .antMatchers(HttpMethod.PUT, "/user-profiles")
+            .antMatchers(HttpMethod.PUT, "/user-profiles", "/user-profiles/*")
             .authenticated()
-            .antMatchers(HttpMethod.GET, "/user-profiles")
+            .antMatchers(HttpMethod.GET, "/user-profiles/**")
             .authenticated()
             .and()
             .addFilterBefore(TokenAccessFilter(), UsernamePasswordAuthenticationFilter::class.java)
@@ -54,26 +55,29 @@ class TokenAccessFilter : GenericFilterBean() {
         request as HttpServletRequest
         response as HttpServletResponse
 
-        if(request.method.toLowerCase().equals("put")
-            || request.method.toLowerCase().equals("get"))
-        {
+
+        if (request.method.toLowerCase().equals("put")
+            || request.method.toLowerCase().equals("get")) {
             response.setContentType("application/json;charset=UTF-8")
-            val token: String = request.getHeader("Authorization")
-            if(AuthenticationService.tokens.containsKey(UUID.fromString(token)))
-            {
-                response.status = HttpStatus.ACCEPTED.value()
-                print(token)
-            }else
-            {
+            try {
+                val token: String = request.getHeader("Authorization")
+                if (AuthenticationService.tokens.containsKey(UUID.fromString(token))) {
+                    response.status = HttpStatus.ACCEPTED.value()
+                    print(token)
+                } else {
+                    SecurityContextHolder.getContext().authentication = null
+                    response.status = HttpStatus.FORBIDDEN.value()
+                }
+
+            }catch (E: IllegalStateException) {
                 SecurityContextHolder.getContext().authentication = null
                 response.status = HttpStatus.FORBIDDEN.value()
-                throw ForbiddenException("Forbidden")
             }
         }
-
         filter.doFilter(request, response)
 
     }
 }
+
 @ResponseStatus(value = HttpStatus.FORBIDDEN)
 class ForbiddenException(message: String?) : RuntimeException(message)
