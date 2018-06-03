@@ -1,6 +1,8 @@
 package systemkern.profile
 
 import org.springframework.http.HttpStatus
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
+import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
@@ -20,8 +22,11 @@ internal class AuthenticationController(val repo: UserProfileRepository) {
         if(!passwordEncoder.matches(loginData.password, user.password))
             throw UserNotFoundException("UserNotFoundException")
 
-
+        val token: UUID = UUID.randomUUID()
+        AuthenticationService.tokens.put(token,user.username)
+        SecurityContextHolder.getContext().authentication = UsernamePasswordAuthenticationToken(token,user.username)
         return AuthenticationResponse(
+            token = token,
             username = user.username,
             userId = user.id,
             validUntil = LocalDateTime.MAX //TODO: Add real time and register it
@@ -37,6 +42,7 @@ data class LoginData(
 
 class AuthenticationResponse
 (
+    val token : UUID,
     val username: String,
     val userId: UUID,
     val validUntil: LocalDateTime

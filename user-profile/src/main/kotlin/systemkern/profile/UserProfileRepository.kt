@@ -14,6 +14,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.stereotype.Component
 import java.util.*
 import javax.persistence.PrePersist
+import javax.persistence.PreUpdate
 
 
 @RepositoryRestResource(path = "user-profiles")
@@ -31,7 +32,10 @@ internal class UserProfileEntiyListener(
     fun handleUserCreate(userProfile: UserProfile) {
         userProfile.password = passwordEncoder.encode(userProfile.password)
     }
-
+    @PreUpdate
+    fun handleUserUpdate(userProfile: UserProfile) {
+        userProfile.password = passwordEncoder.encode(userProfile.password)
+    }
 }
 
 
