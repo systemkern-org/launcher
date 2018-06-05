@@ -2,29 +2,29 @@ package systemkern.profile
 
 import org.springframework.http.HttpStatus
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
+import org.springframework.security.core.Authentication
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.ResponseStatus
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
 import java.time.LocalDateTime
 import java.util.UUID
+import kotlin.reflect.jvm.internal.ReflectProperties
 
 @RestController
 internal class AuthenticationController(val repo: UserProfileRepository) {
 
     @PostMapping("/login")
-    fun login(@RequestBody loginData: LoginData): AuthenticationResponse {
+    fun login(@RequestHeader password: String,
+              auth: Authentication): AuthenticationResponse {
+
         val passwordEncoder = BCryptPasswordEncoder()
-        val user = repo.findByUsername(loginData.username)
+        val user = repo.findByUsername(auth.principal.toString())
 
-        if(!passwordEncoder.matches(loginData.password, user.password))
+        if (!passwordEncoder.matches(password, user.password))
             throw UserNotFoundException("UserNotFoundException")
+        val token: UUID = UUID.fromString(auth.credentials.toString())
+        AuthenticationService.tokens.put(token, user.username)
 
-        val token: UUID = UUID.randomUUID()
-        AuthenticationService.tokens.put(token,user.username)
-        SecurityContextHolder.getContext().authentication = UsernamePasswordAuthenticationToken(token,user.username)
         return AuthenticationResponse(
             token = token,
             username = user.username,
@@ -42,7 +42,7 @@ data class LoginData(
 
 class AuthenticationResponse
 (
-    val token : UUID,
+    val token: UUID,
     val username: String,
     val userId: UUID,
     val validUntil: LocalDateTime

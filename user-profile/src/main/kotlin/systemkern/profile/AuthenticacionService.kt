@@ -5,8 +5,7 @@ import java.util.*
 import kotlin.collections.HashMap
 
 @Service
-
-internal class AuthenticationService {
+internal class AuthenticationService(val repo: UserProfileRepository) {
 
     companion object {
         @JvmStatic

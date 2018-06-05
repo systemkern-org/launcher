@@ -1,12 +1,10 @@
 package systemkern.profile
 
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.data.jpa.repository.Query
 import org.springframework.data.repository.CrudRepository
-import org.springframework.data.rest.core.annotation.HandleBeforeCreate
-import org.springframework.data.rest.core.annotation.RepositoryEventHandler
 import org.springframework.data.rest.core.annotation.RepositoryRestResource
 import org.springframework.data.rest.core.config.RepositoryRestConfiguration
 import org.springframework.data.rest.webmvc.config.RepositoryRestConfigurer
@@ -18,8 +16,7 @@ import javax.persistence.PreUpdate
 
 
 @RepositoryRestResource(path = "user-profiles")
-internal interface UserProfileRepository : CrudRepository<UserProfile, UUID>
-{
+internal interface UserProfileRepository : CrudRepository<UserProfile, UUID> {
     fun findByUsername(username: String): UserProfile
 }
 
@@ -32,6 +29,7 @@ internal class UserProfileEntiyListener(
     fun handleUserCreate(userProfile: UserProfile) {
         userProfile.password = passwordEncoder.encode(userProfile.password)
     }
+
     @PreUpdate
     fun handleUserUpdate(userProfile: UserProfile) {
         userProfile.password = passwordEncoder.encode(userProfile.password)
@@ -52,7 +50,8 @@ internal class RepositoryRestConfig : RepositoryRestConfigurer {
 internal class BCryptPasswordEncoderConfiguration {
     var bcryptEncodeRounds: Long = 10
 
-    @Bean fun createBeanFoo() =
+    @Bean
+    fun createBeanFoo() =
         BCryptPasswordEncoder(10)
 
 }
