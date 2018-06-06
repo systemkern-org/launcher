@@ -9,7 +9,7 @@ internal class AuthenticationService(val repo: UserProfileRepository) {
 
     companion object {
         @JvmStatic
-        val tokens: HashMap<UUID,String> = HashMap()
+        val tokens: HashMap<UUID, String> = HashMap()
     }
 }
 

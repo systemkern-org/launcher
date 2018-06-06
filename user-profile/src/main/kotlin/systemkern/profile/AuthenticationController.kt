@@ -1,14 +1,11 @@
 package systemkern.profile
 
 import org.springframework.http.HttpStatus
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.Authentication
-import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.web.bind.annotation.*
 import java.time.LocalDateTime
 import java.util.UUID
-import kotlin.reflect.jvm.internal.ReflectProperties
 
 @RestController
 internal class AuthenticationController(val repo: UserProfileRepository) {
