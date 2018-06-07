@@ -26,7 +26,7 @@ internal class AuthenticationController(val repo: UserProfileRepository) {
             token = token,
             username = user.username,
             userId = user.id,
-            validUntil = LocalDateTime.MAX //TODO: Add real time and register it
+            validUntil = LocalDateTime.MAX
         )
     }
 
@@ -37,7 +37,7 @@ data class LoginData(
     val password: String
 )
 
-class AuthenticationResponse
+data class AuthenticationResponse
 (
     val token: UUID,
     val username: String,

@@ -3,11 +3,9 @@ package systemkern.profile
 import org.springframework.context.annotation.Configuration
 import org.springframework.http.HttpMethod
 import org.springframework.http.HttpStatus
-import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.authentication.AuthenticationProvider
 import org.springframework.security.authentication.InternalAuthenticationServiceException
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter
@@ -19,7 +17,6 @@ import javax.servlet.http.HttpServletRequest
 import org.springframework.security.config.annotation.web.builders.WebSecurity
 import org.springframework.security.core.Authentication
 import org.springframework.security.core.context.SecurityContextHolder
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter
 import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter
 import org.springframework.web.bind.annotation.ResponseStatus
@@ -58,10 +55,9 @@ class CustomWebSecurityConfigurerAdapter : WebSecurityConfigurerAdapter() {
             .addFilterBefore(AuthenticationFilter(UPAuthenticationProvider()),
                 BasicAuthenticationFilter::class.java)
     }
-
 }
-
-internal class AuthenticationFilter(val authenticationManager: UPAuthenticationProvider) : GenericFilterBean() {
+internal class AuthenticationFilter(val authenticationProvider: UPAuthenticationProvider)
+    : GenericFilterBean() {
 
     override fun doFilter(request: ServletRequest,
                           response: ServletResponse,
@@ -97,7 +93,7 @@ internal class AuthenticationFilter(val authenticationManager: UPAuthenticationP
 
     private fun tryToAuthenticate(requestAuthentication: Authentication): Authentication {
         val responseAuthentication: Authentication =
-            authenticationManager.authenticate(requestAuthentication)
+            authenticationProvider.authenticate(requestAuthentication)
         if (responseAuthentication == null || !responseAuthentication.isAuthenticated()) {
             throw InternalAuthenticationServiceException("Unable to authenticate Domain User for provided credentials")
         }
@@ -115,7 +111,8 @@ internal class UPAuthenticationProvider : AuthenticationProvider {
     override fun authenticate(auth: Authentication?): Authentication {
 
         if (auth?.principal.toString().isNotBlank() && auth?.credentials.toString().isNotBlank()) {
-            val authRes: Authentication = PreAuthenticatedAuthenticationToken(auth?.principal.toString(), UUID.randomUUID())
+            val authRes: Authentication = PreAuthenticatedAuthenticationToken(auth?.principal.toString(),
+                UUID.randomUUID())
             authRes.isAuthenticated = true
             return authRes
         }

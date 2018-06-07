@@ -3,12 +3,9 @@ package systemkern.profile
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.annotation.JsonProperty.Access.WRITE_ONLY
 import java.util.*
-
 import javax.persistence.*
 import java.util.UUID.randomUUID
-import javax.persistence.*
 import javax.persistence.GenerationType.AUTO
-
 
 @Entity
 @EntityListeners(UserProfileEntiyListener::class)

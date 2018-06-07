@@ -3,7 +3,6 @@ package systemkern.profile
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
-import org.springframework.data.jpa.repository.Query
 import org.springframework.data.repository.CrudRepository
 import org.springframework.data.rest.core.annotation.RepositoryRestResource
 import org.springframework.data.rest.core.config.RepositoryRestConfiguration
@@ -11,8 +10,7 @@ import org.springframework.data.rest.webmvc.config.RepositoryRestConfigurer
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.stereotype.Component
 import java.util.*
-import javax.persistence.PrePersist
-import javax.persistence.PreUpdate
+import javax.persistence.*
 
 
 @RepositoryRestResource(path = "user-profiles")
@@ -39,7 +37,8 @@ internal class UserProfileEntiyListener(
 
 @Configuration
 internal class RepositoryRestConfig : RepositoryRestConfigurer {
-    override fun configureRepositoryRestConfiguration(config: RepositoryRestConfiguration) {
+    override fun configureRepositoryRestConfiguration(config:
+                                                      RepositoryRestConfiguration) {
         config.exposeIdsFor(UserProfile::class.java)
     }
 }
@@ -48,10 +47,10 @@ internal class RepositoryRestConfig : RepositoryRestConfigurer {
 @Configuration
 @ConfigurationProperties("user-profile")
 internal class BCryptPasswordEncoderConfiguration {
-    var bcryptEncodeRounds: Long = 10
+    var bcryptEncodeRounds: Int = 10
 
     @Bean
     fun createBeanFoo() =
-        BCryptPasswordEncoder(10)
+        BCryptPasswordEncoder(bcryptEncodeRounds)
 
 }
