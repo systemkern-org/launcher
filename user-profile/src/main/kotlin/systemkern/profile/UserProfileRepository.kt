@@ -12,7 +12,6 @@ import org.springframework.stereotype.Component
 import java.util.*
 import javax.persistence.*
 
-
 @RepositoryRestResource(path = "user-profiles")
 internal interface UserProfileRepository : CrudRepository<UserProfile, UUID> {
     fun findByUsername(username: String): UserProfile
