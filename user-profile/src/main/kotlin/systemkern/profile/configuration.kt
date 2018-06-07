@@ -20,6 +20,7 @@ import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter
 import org.springframework.web.bind.annotation.ResponseStatus
+import java.time.LocalDateTime
 import java.util.*
 import javax.servlet.http.HttpServletResponse
 
@@ -67,9 +68,11 @@ internal class AuthenticationFilter(val authenticationProvider: UPAuthentication
         response as HttpServletResponse
 
         try {
-            val token: String = request.getHeader("Authorization").split(" ").get(1)
 
-            if (!AuthenticationService.tokens.containsKey(UUID.fromString(token))) {
+            if (!AuthenticationService.isValidToken(UUID.fromString(
+                    request.getHeader("Authorization").split(" ")
+                        .get(1)))) {
+
                 throw InvalidCredentials("Unauthorized: invalid Credentials")
             }
 

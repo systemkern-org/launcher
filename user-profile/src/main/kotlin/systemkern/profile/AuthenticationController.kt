@@ -19,15 +19,16 @@ internal class AuthenticationController(val repo: UserProfileRepository) {
 
         if (!passwordEncoder.matches(password, user.password))
             throw UserNotFoundException("UserNotFoundException")
-        val token: UUID = UUID.fromString(auth.credentials.toString())
-        AuthenticationService.tokens.put(token, user.username)
 
-        return AuthenticationResponse(
+        val token: UUID = UUID.fromString(auth.credentials.toString())
+        val authResp = AuthenticationResponse(
             token = token,
             username = user.username,
             userId = user.id,
-            validUntil = LocalDateTime.MAX
+            validUntil = LocalDateTime.now().plusMinutes(1)
         )
+        AuthenticationService.saveToken(token,authResp)
+        return authResp
     }
 
 }

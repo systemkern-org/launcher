@@ -36,8 +36,8 @@ internal class UserProfileEntiyListener(
 
 @Configuration
 internal class RepositoryRestConfig : RepositoryRestConfigurer {
-    override fun configureRepositoryRestConfiguration(config:
-                                                      RepositoryRestConfiguration) {
+    override fun configureRepositoryRestConfiguration(
+        config:RepositoryRestConfiguration) {
         config.exposeIdsFor(UserProfile::class.java)
     }
 }
@@ -46,7 +46,7 @@ internal class RepositoryRestConfig : RepositoryRestConfigurer {
 @Configuration
 @ConfigurationProperties("user-profile")
 internal class BCryptPasswordEncoderConfiguration {
-    var bcryptEncodeRounds: Int = 10
+    val bcryptEncodeRounds: Int = 10
 
     @Bean
     fun createBeanFoo() =
