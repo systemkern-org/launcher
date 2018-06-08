@@ -9,7 +9,7 @@ import javax.persistence.GenerationType.AUTO
 
 @Entity
 @EntityListeners(UserProfileEntiyListener::class)
-data class UserProfile(
+internal data class UserProfile(
     @Id
     @GeneratedValue(strategy = AUTO)
     val id: UUID = randomUUID(),

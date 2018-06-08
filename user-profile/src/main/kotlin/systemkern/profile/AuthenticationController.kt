@@ -8,11 +8,13 @@ import java.time.LocalDateTime
 import java.util.UUID
 
 @RestController
-internal class AuthenticationController(val repo: UserProfileRepository) {
+internal class AuthenticationController(
+        val repo: UserProfileRepository
+) {
 
     @PostMapping("/login")
-    fun login(@RequestHeader password: String,
-              auth: Authentication): AuthenticationResponse {
+    internal fun login(@RequestHeader password: String,
+                       auth: Authentication): AuthenticationResponse {
 
         val passwordEncoder = BCryptPasswordEncoder()
         val user = repo.findByUsername(auth.principal.toString())
@@ -25,20 +27,20 @@ internal class AuthenticationController(val repo: UserProfileRepository) {
             token = token,
             username = user.username,
             userId = user.id,
-            validUntil = LocalDateTime.now().plusMinutes(1)
+            validUntil = LocalDateTime.now().plusMinutes(30)
         )
-        AuthenticationService.saveToken(token,authResp)
+        AuthenticationService.saveToken(token, authResp)
         return authResp
     }
 
 }
 
-data class LoginData(
+internal data class LoginData(
     val username: String,
     val password: String
 )
 
-data class AuthenticationResponse
+internal data class AuthenticationResponse
 (
     val token: UUID,
     val username: String,
@@ -47,4 +49,4 @@ data class AuthenticationResponse
 )
 
 @ResponseStatus(value = HttpStatus.NOT_FOUND)
-class UserNotFoundException(message: String?) : RuntimeException(message)
+internal class UserNotFoundException(message: String?) : RuntimeException(message)

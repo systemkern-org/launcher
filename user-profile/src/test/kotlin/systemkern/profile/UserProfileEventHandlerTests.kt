@@ -14,7 +14,7 @@ import org.springframework.test.context.junit4.SpringRunner
 @SpringBootTest(classes = [
     UserProfileRepository::class,
     UserProfileEntiyListener::class,
-    BCryptPasswordEncoderConfiguration::class,
+    UserProfileConfiguration::class,
     UserProfile::class
 ])
 @EntityScan("systemkern")

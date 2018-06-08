@@ -9,6 +9,7 @@ import org.springframework.data.rest.core.config.RepositoryRestConfiguration
 import org.springframework.data.rest.webmvc.config.RepositoryRestConfigurer
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.stereotype.Component
+//import java.time.Duration
 import java.util.*
 import javax.persistence.*
 
@@ -23,12 +24,12 @@ internal class UserProfileEntiyListener(
 ) {
 
     @PrePersist
-    fun handleUserCreate(userProfile: UserProfile) {
+    internal fun handleUserCreate(userProfile: UserProfile) {
         userProfile.password = passwordEncoder.encode(userProfile.password)
     }
 
     @PreUpdate
-    fun handleUserUpdate(userProfile: UserProfile) {
+    internal fun handleUserUpdate(userProfile: UserProfile) {
         userProfile.password = passwordEncoder.encode(userProfile.password)
     }
 }
@@ -37,7 +38,7 @@ internal class UserProfileEntiyListener(
 @Configuration
 internal class RepositoryRestConfig : RepositoryRestConfigurer {
     override fun configureRepositoryRestConfiguration(
-        config:RepositoryRestConfiguration) {
+        config: RepositoryRestConfiguration) {
         config.exposeIdsFor(UserProfile::class.java)
     }
 }
@@ -45,11 +46,12 @@ internal class RepositoryRestConfig : RepositoryRestConfigurer {
 
 @Configuration
 @ConfigurationProperties("user-profile")
-internal class BCryptPasswordEncoderConfiguration {
+internal class UserProfileConfiguration {
+    //val sessionTime: Duration = Duration.ofMinutes(30)
     val bcryptEncodeRounds: Int = 10
 
     @Bean
-    fun createBeanFoo() =
+    internal fun createBcryptPasswordEncoderBean() =
         BCryptPasswordEncoder(bcryptEncodeRounds)
 
 }

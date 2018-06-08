@@ -20,20 +20,21 @@ import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter
 import org.springframework.web.bind.annotation.ResponseStatus
-import java.util.*
+import java.util.UUID
 import javax.servlet.http.HttpServletResponse
 
 @Configuration
 @EnableWebSecurity
-class CustomWebSecurityConfigurerAdapter : WebSecurityConfigurerAdapter() {
+internal class CustomWebSecurityConfigurerAdapter(
+    val pattern: String = "/user-profiles",
+    val pattern1: String = "/user-profiles/",
+    val pattern2: String = "/user-profiles/{\\d+}") : WebSecurityConfigurerAdapter() {
 
     @Throws(Exception::class)
     override fun configure(webSecurity: WebSecurity) {
         webSecurity
-            // If .antMatchers(Pattern) added after .ignoring so
-            // the url that match in that pattern is ignored from filters
             .ignoring()
-            .antMatchers(HttpMethod.POST, "/user-profiles")
+            .antMatchers(HttpMethod.POST, pattern)
     }
 
     @Throws(Exception::class)
@@ -41,97 +42,99 @@ class CustomWebSecurityConfigurerAdapter : WebSecurityConfigurerAdapter() {
         http.csrf()
             .disable()
             .authorizeRequests()
-            .antMatchers(HttpMethod.DELETE, "/user-profiles", "/user-profiles/",
-                "/user-profiles/{\\d+}")
+            .antMatchers(HttpMethod.DELETE, pattern, pattern1,
+                pattern2)
             .denyAll()
 
-            .antMatchers(HttpMethod.PUT, "/user-profiles/{\\d+}")
+            .antMatchers(HttpMethod.PUT, pattern2)
             .authenticated()
-            .antMatchers(HttpMethod.PUT, "/user-profiles", "/user-profiles/")
+            .antMatchers(HttpMethod.PUT, pattern, pattern1)
             .denyAll()
 
-            .antMatchers(HttpMethod.GET, "/user-profiles/{\\d+}")
+            .antMatchers(HttpMethod.GET, pattern2)
             .authenticated()
-            .antMatchers(HttpMethod.GET, "/user-profiles", "/user-profiles/")
+            .antMatchers(HttpMethod.GET, pattern, pattern1)
             .denyAll()
 
             .and()
-            .addFilterBefore(AuthenticationFilter(UPAuthenticationProvider()),
+            .addFilterBefore(AuthenticationFilter(UPAuthenticationProvider(), AuthenticationService()),
                 BasicAuthenticationFilter::class.java)
     }
-}
-internal class AuthenticationFilter(val authenticationProvider: UPAuthenticationProvider)
-    : GenericFilterBean() {
 
-    override fun doFilter(request: ServletRequest,
-                          response: ServletResponse,
-                          filter: FilterChain) {
+    internal class AuthenticationFilter(val authenticationProvider: UPAuthenticationProvider,
+                                        val service: AuthenticationService)
+        : GenericFilterBean() {
 
-        request as HttpServletRequest
-        response as HttpServletResponse
+        override fun doFilter(request: ServletRequest,
+                              response: ServletResponse,
+                              filter: FilterChain) {
 
-        try {
+            request as HttpServletRequest
+            response as HttpServletResponse
 
-            if (!AuthenticationService.isValidToken(UUID.fromString(
-                    request.getHeader("Authorization").split(" ")
-                        .get(1)))) {
+            try {
 
-                throw InvalidCredentials("Unauthorized: invalid Credentials")
+                if (!AuthenticationService.isValidToken(UUID.fromString(
+                        request.getHeader("Authorization").split(" ")
+                            .get(1)))) {
+
+                    throw InvalidCredentials("Unauthorized: invalid Credentials")
+                }
+
+            } catch (E: IllegalStateException) {
+
+                processUsernamePasswordAuthentication(response, request.getHeader("username"),
+                    request.getHeader("password"))
             }
-
-        } catch (E: IllegalStateException) {
-
-            processUsernamePasswordAuthentication(response,request.getHeader("username"),
-                request.getHeader("password"))
+            filter.doFilter(request, response)
         }
-        filter.doFilter(request, response)
-    }
 
-    fun processUsernamePasswordAuthentication(httpResponse: HttpServletResponse, username: String,
-                                              password: String) {
-        val resultOfAuthentication: Authentication =
-            tryToAuthenticateWithUsernameAndPassword(username, password)
-        SecurityContextHolder.getContext().setAuthentication(resultOfAuthentication);
-        httpResponse.setStatus(HttpServletResponse.SC_OK);
-    }
-
-    private fun tryToAuthenticate(requestAuthentication: Authentication): Authentication {
-        val responseAuthentication: Authentication =
-            authenticationProvider.authenticate(requestAuthentication)
-        if (responseAuthentication == null || !responseAuthentication.isAuthenticated()) {
-            throw InternalAuthenticationServiceException(
-                "Unable to authenticate Domain User for provided credentials")
+        private fun processUsernamePasswordAuthentication(httpResponse: HttpServletResponse, username: String,
+                                                  password: String) {
+            val resultOfAuthentication: Authentication =
+                tryToAuthenticateWithUsernameAndPassword(username, password)
+            SecurityContextHolder.getContext().setAuthentication(resultOfAuthentication);
+            httpResponse.setStatus(HttpServletResponse.SC_OK)
         }
-        return responseAuthentication
-    }
 
-    private fun tryToAuthenticateWithUsernameAndPassword(username: String,
-                                                         password: String
-    ): Authentication {
-        val requestAuthentication = UsernamePasswordAuthenticationToken(username, password)
-        return tryToAuthenticate(requestAuthentication)
-    }
-}
-
-internal class UPAuthenticationProvider : AuthenticationProvider {
-
-    override fun authenticate(auth: Authentication?): Authentication {
-
-        if (auth?.principal.toString().isNotBlank() &&
-            auth?.credentials.toString().isNotBlank()) {
-
-            val authRes: Authentication =
-                PreAuthenticatedAuthenticationToken(auth?.principal.toString(),
-                UUID.randomUUID())
-            authRes.isAuthenticated = true
-
-            return authRes
+        private fun tryToAuthenticate(requestAuthentication: Authentication): Authentication {
+            val responseAuthentication: Authentication =
+                authenticationProvider.authenticate(requestAuthentication)
+            if (responseAuthentication == null || !responseAuthentication.isAuthenticated()) {
+                throw InternalAuthenticationServiceException(
+                    "Unable to authenticate Domain User for provided credentials")
+            }
+            return responseAuthentication
         }
-        throw MissingDataException("No login data found")
+
+        private fun tryToAuthenticateWithUsernameAndPassword(username: String,
+                                                             password: String
+        ): Authentication {
+            val requestAuthentication = UsernamePasswordAuthenticationToken(username, password)
+            return tryToAuthenticate(requestAuthentication)
+        }
     }
 
-    override fun supports(p0: Class<*>?): Boolean = true
+    internal class UPAuthenticationProvider : AuthenticationProvider {
 
+        override fun authenticate(auth: Authentication?): Authentication {
+
+            if (auth?.principal.toString().isNotBlank() &&
+                auth?.credentials.toString().isNotBlank()) {
+
+                val authRes: Authentication =
+                    PreAuthenticatedAuthenticationToken(auth?.principal.toString(),
+                        UUID.randomUUID())
+                authRes.isAuthenticated = true
+
+                return authRes
+            }
+            throw MissingDataException("No login data found")
+        }
+
+        override fun supports(p0: Class<*>?): Boolean = true
+
+    }
 }
 
 @ResponseStatus(value = HttpStatus.NOT_FOUND)
