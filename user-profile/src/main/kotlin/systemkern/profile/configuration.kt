@@ -20,8 +20,10 @@ import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter
 import org.springframework.web.bind.annotation.ResponseStatus
+import java.security.AccessController.getContext
 import java.util.UUID
 import javax.servlet.http.HttpServletResponse
+import javax.servlet.http.HttpSession
 
 @Configuration
 @EnableWebSecurity
@@ -57,12 +59,11 @@ internal class CustomWebSecurityConfigurerAdapter(
             .denyAll()
 
             .and()
-            .addFilterBefore(AuthenticationFilter(UPAuthenticationProvider(), AuthenticationService()),
+            .addFilterBefore(AuthenticationFilter(UPAuthenticationProvider()),
                 BasicAuthenticationFilter::class.java)
     }
 
-    internal class AuthenticationFilter(val authenticationProvider: UPAuthenticationProvider,
-                                        val service: AuthenticationService)
+    internal class AuthenticationFilter(val authenticationProvider: UPAuthenticationProvider)
         : GenericFilterBean() {
 
         override fun doFilter(request: ServletRequest,
@@ -71,44 +72,51 @@ internal class CustomWebSecurityConfigurerAdapter(
 
             request as HttpServletRequest
             response as HttpServletResponse
-
             try {
 
                 if (!AuthenticationService.isValidToken(UUID.fromString(
                         request.getHeader("Authorization").split(" ")
-                            .get(1)))) {
+                            .get(1)), request)) {
 
                     throw InvalidCredentials("Unauthorized: invalid Credentials")
                 }
 
             } catch (E: IllegalStateException) {
-
-                processUsernamePasswordAuthentication(response, request.getHeader("username"),
+                processUsernamePasswordAuthentication(request,
+                    response,
+                    request.getHeader("username"),
                     request.getHeader("password"))
             }
             filter.doFilter(request, response)
         }
 
-        private fun processUsernamePasswordAuthentication(httpResponse: HttpServletResponse, username: String,
-                                                  password: String) {
+        private fun processUsernamePasswordAuthentication(
+            request: HttpServletRequest,
+            httpResponse: HttpServletResponse, username: String,
+            password: String) {
+
             val resultOfAuthentication: Authentication =
-                tryToAuthenticateWithUsernameAndPassword(username, password)
-            SecurityContextHolder.getContext().setAuthentication(resultOfAuthentication);
+                authenticateUsernameAndPassword(username, password)
+
+            val sess: HttpSession = request.session
+            sess.setAttribute("token", resultOfAuthentication.credentials.toString())
+
+            SecurityContextHolder.getContext().setAuthentication(resultOfAuthentication)
             httpResponse.setStatus(HttpServletResponse.SC_OK)
         }
 
         private fun tryToAuthenticate(requestAuthentication: Authentication): Authentication {
             val responseAuthentication: Authentication =
                 authenticationProvider.authenticate(requestAuthentication)
-            if (responseAuthentication == null || !responseAuthentication.isAuthenticated()) {
+            if (!responseAuthentication.isAuthenticated()) {
                 throw InternalAuthenticationServiceException(
                     "Unable to authenticate Domain User for provided credentials")
             }
             return responseAuthentication
         }
 
-        private fun tryToAuthenticateWithUsernameAndPassword(username: String,
-                                                             password: String
+        private fun authenticateUsernameAndPassword(username: String,
+                                                    password: String
         ): Authentication {
             val requestAuthentication = UsernamePasswordAuthenticationToken(username, password)
             return tryToAuthenticate(requestAuthentication)

@@ -9,7 +9,7 @@ import java.util.UUID
 
 @RestController
 internal class AuthenticationController(
-        val repo: UserProfileRepository
+    val repo: UserProfileRepository
 ) {
 
     @PostMapping("/login")

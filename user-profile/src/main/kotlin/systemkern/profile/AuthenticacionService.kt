@@ -1,8 +1,10 @@
 package systemkern.profile
 
+
 import org.springframework.stereotype.Service
-import java.time.LocalDateTime
 import java.util.*
+import javax.servlet.http.HttpServletRequest
+import javax.servlet.http.HttpSession
 import kotlin.collections.HashMap
 
 @Service
@@ -11,18 +13,12 @@ internal class AuthenticationService {
     companion object {
         val tokens: HashMap<UUID, AuthenticationResponse> = HashMap()
 
-        internal fun isValidToken(token: UUID): Boolean {
+        internal fun isValidToken(token: UUID, request: HttpServletRequest): Boolean {
+            val sess: HttpSession = request.session
             if (tokens.containsKey(token)) {
-
-                val authResp: AuthenticationResponse = tokens[token] as AuthenticationResponse
-                if (authResp.validUntil.isEqual(LocalDateTime.now())
-                    || authResp.validUntil.isAfter(LocalDateTime.now())) {
-                    return true
-
-                } else {
-                    tokens.remove(token)
-                }
+                return (System.currentTimeMillis() - sess.lastAccessedTime) <= (sess.maxInactiveInterval * 1000)
             }
+            tokens.remove(token)
             return false
         }
 
