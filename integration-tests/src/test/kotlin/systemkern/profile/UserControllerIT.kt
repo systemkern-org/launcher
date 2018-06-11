@@ -22,6 +22,7 @@ import java.util.*
 internal class UserControllerIT : IntegrationTest() {
 
     private val restUrl = "/user-profiles"
+    private val restLogin = "/login"
 
     private val entityRequestFields = listOf(
 

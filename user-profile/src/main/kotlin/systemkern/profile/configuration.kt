@@ -37,6 +37,7 @@ internal class CustomWebSecurityConfigurerAdapter(
         webSecurity
             .ignoring()
             .antMatchers(HttpMethod.POST, pattern)
+            .antMatchers(HttpMethod.POST, "/logout")
     }
 
     @Throws(Exception::class)

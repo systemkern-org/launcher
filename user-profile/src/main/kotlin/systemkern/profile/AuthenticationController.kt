@@ -6,6 +6,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.web.bind.annotation.*
 import java.time.LocalDateTime
 import java.util.UUID
+import javax.servlet.http.HttpServletRequest
+import javax.servlet.http.HttpServletResponse
 
 @RestController
 internal class AuthenticationController(
@@ -31,6 +33,16 @@ internal class AuthenticationController(
         )
         AuthenticationService.saveToken(token, authResp)
         return authResp
+    }
+    @PostMapping("/logout")
+    internal fun logout(@RequestHeader Authorization: String,
+                        request: HttpServletRequest){
+
+        AuthenticationService.deleteToken(UUID.fromString(
+            Authorization.split(" ")
+                .get(1)))
+
+        request.getSession().invalidate()
     }
 
 }
