@@ -16,7 +16,7 @@ internal class AuthenticationService {
         internal fun isValidToken(token: UUID, request: HttpServletRequest): Boolean {
             val sess: HttpSession = request.session
             if (tokens.containsKey(token)) {
-                return (System.currentTimeMillis() - sess.lastAccessedTime) <= (sess.maxInactiveInterval * 1000)
+                return System.currentTimeMillis() - sess.lastAccessedTime <= sess.maxInactiveInterval * 1000
             }
             tokens.remove(token)
             return false

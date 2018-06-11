@@ -59,7 +59,8 @@ class SessionListener : HttpSessionListener {
     override fun sessionDestroyed(p0: HttpSessionEvent?) {
 
     }
+
     override fun sessionCreated(event: HttpSessionEvent) {
-        event.getSession().setMaxInactiveInterval(30*60);
+        event.getSession().setMaxInactiveInterval(30 * 60);
     }
 }

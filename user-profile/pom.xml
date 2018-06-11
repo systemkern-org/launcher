@@ -48,6 +48,6 @@
             <artifactId>spring-security-web</artifactId>
 
         </dependency>
-    </dependencies><version>3.0.4.RELEASE</version>
+    </dependencies>
 
 </project>
