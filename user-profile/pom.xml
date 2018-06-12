@@ -11,8 +11,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>user-profile</artifactId>
-
-
+    
     <dependencies>
         <dependency>
             <groupId>com.fasterxml.jackson.module</groupId>
