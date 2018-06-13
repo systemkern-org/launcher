@@ -25,8 +25,8 @@ internal class AuthenticationService {
         internal fun saveToken(token: UUID, auth: AuthenticationResponse) {
             tokens[token] = auth
         }
-        internal fun deleteToken(token: UUID)
-        {
+
+        internal fun deleteToken(token: UUID) {
             tokens.remove(token)
         }
 

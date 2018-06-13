@@ -54,13 +54,13 @@ internal class UserProfileConfiguration {
         BCryptPasswordEncoder(bcryptEncodeRounds)
 }
 
-@Configuration
+@Component
 class SessionListener : HttpSessionListener {
     override fun sessionDestroyed(p0: HttpSessionEvent?) {
 
     }
 
     override fun sessionCreated(event: HttpSessionEvent) {
-        event.getSession().setMaxInactiveInterval(30 * 60);
+        event.session.maxInactiveInterval = 30 * 60
     }
 }

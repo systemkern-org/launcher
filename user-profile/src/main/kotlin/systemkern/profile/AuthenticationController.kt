@@ -7,7 +7,6 @@ import org.springframework.web.bind.annotation.*
 import java.time.LocalDateTime
 import java.util.UUID
 import javax.servlet.http.HttpServletRequest
-import javax.servlet.http.HttpServletResponse
 
 @RestController
 internal class AuthenticationController(
@@ -15,8 +14,7 @@ internal class AuthenticationController(
 ) {
 
     @PostMapping("/login")
-    internal fun login(@RequestHeader password: String,
-                       auth: Authentication): AuthenticationResponse {
+    internal fun login(auth: Authentication, @RequestHeader password: String): AuthenticationResponse {
 
         val passwordEncoder = BCryptPasswordEncoder()
         val user = repo.findByUsername(auth.principal.toString())
@@ -34,23 +32,17 @@ internal class AuthenticationController(
         AuthenticationService.saveToken(token, authResp)
         return authResp
     }
+
     @PostMapping("/logout")
     internal fun logout(@RequestHeader Authorization: String,
-                        request: HttpServletRequest){
+                        request: HttpServletRequest) {
 
-        AuthenticationService.deleteToken(UUID.fromString(
-            Authorization.split(" ")
-                .get(1)))
+        AuthenticationService.deleteToken(UUID.fromString(Authorization.split(" ")[1]))
 
-        request.getSession().invalidate()
+        request.session.invalidate()
     }
 
 }
-
-internal data class LoginData(
-    val username: String,
-    val password: String
-)
 
 internal data class AuthenticationResponse
 (
@@ -60,5 +52,5 @@ internal data class AuthenticationResponse
     val validUntil: LocalDateTime
 )
 
-@ResponseStatus(value = HttpStatus.NOT_FOUND)
+@ResponseStatus(HttpStatus.NOT_FOUND)
 internal class UserNotFoundException(message: String?) : RuntimeException(message)

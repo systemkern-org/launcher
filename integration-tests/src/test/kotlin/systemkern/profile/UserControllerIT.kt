@@ -1,8 +1,10 @@
 package systemkern.profile
 
 import org.junit.Before
+import org.junit.FixMethodOrder
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.junit.runners.MethodSorters
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT
@@ -19,7 +21,10 @@ import java.util.*
 
 @RunWith(SpringRunner::class)
 @SpringBootTest(webEnvironment = RANDOM_PORT, classes = [CliEntryPoint::class])
+
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
 internal class UserControllerIT : IntegrationTest() {
+
 
     private val restUrl = "/user-profiles"
     private val restLogin = "/login"
@@ -53,9 +58,9 @@ internal class UserControllerIT : IntegrationTest() {
         this.mockMvc.perform(RestDocumentationRequestBuilders.post(restUrl)
             .content(objectMapper.writeValueAsString(
                 TestUser(
-                    username = "AndresAusecha09",
+                    username = "AndresAusecha18",
                     name = "Andres Ausecha",
-                    password = "AndresAusecha09*"
+                    password = "AndresAusecha18*"
                 )
             ))
             .contentType(APPLICATION_JSON)
@@ -65,6 +70,21 @@ internal class UserControllerIT : IntegrationTest() {
                 requestFields(entityRequestFields),
                 responseFields(entityResponseFields)
             ))
+    }
+
+    @Test
+    fun `Can login User`() {
+        this.mockMvc.perform(RestDocumentationRequestBuilders.post(restLogin)
+            .header("username","AndresAusecha18")
+            .header("password","AndresAusecha18*")
+            .contentType(APPLICATION_JSON)
+            .accept(APPLICATION_JSON))
+            .andExpect(status().isOk)
+           /* .andDo(document("user_login",
+                requestFields(entityRequestFields),
+                responseFields(entityResponseFields)
+            ))*/
+            //.andReturn().response.contentAsString.c
     }
 
     @Test

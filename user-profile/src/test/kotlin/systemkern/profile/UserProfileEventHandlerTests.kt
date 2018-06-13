@@ -21,7 +21,7 @@ import org.springframework.test.context.junit4.SpringRunner
 @RunWith(SpringRunner::class)
 @DataJpaTest(showSql = false)
 @EnableJpaRepositories
-class UserEventHandlerTest {
+internal class UserEventHandlerTest {
 
     @Autowired
     internal lateinit var repo: UserProfileRepository
