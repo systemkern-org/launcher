@@ -83,7 +83,6 @@ internal class AuthenticationFilter(val authenticationProvider: UPAuthentication
 
             if (!AuthenticationService.isValidToken(token, request)) {
 
-                AuthenticationService.tokens.clear()
                 SecurityContextHolder.clearContext()
                 response.sendError(HttpServletResponse.SC_UNAUTHORIZED)
             } else {
@@ -94,41 +93,52 @@ internal class AuthenticationFilter(val authenticationProvider: UPAuthentication
 
             }
         } catch (E: IllegalStateException) {
-            processUsernamePasswordAuthentication(request,
+
+            val headerhames = request.headerNames.toList()
+            if(
+                headerhames.contains("username") &&
+                headerhames.contains("password")
+                )
+            {
+                procUsernamePasswordAuth(request,
                 response,
                 request.getHeader("username"),
                 request.getHeader("password"))
+
+            }else
+            {
+                SecurityContextHolder.clearContext()
+            }
 
         }
         filter.doFilter(request, response)
     }
 
-    private fun processUsernamePasswordAuthentication(
+    private fun procUsernamePasswordAuth(
         request: HttpServletRequest,
         httpResponse: HttpServletResponse, username: String,
         password: String) {
 
         val resultOfAuthentication: Authentication =
-            authenticateUsernameAndPassword(username, password)
+            usernamePasswordAuth(username, password)
 
-        val sess: HttpSession = request.session
-        sess.setAttribute("token", resultOfAuthentication.credentials.toString())
+        request.session.setAttribute("token", resultOfAuthentication.credentials.toString())
 
-        SecurityContextHolder.getContext().setAuthentication(resultOfAuthentication)
+        SecurityContextHolder.getContext().authentication = resultOfAuthentication
         httpResponse.status = HttpServletResponse.SC_OK
     }
 
     private fun tryToAuthenticate(requestAuthentication: Authentication): Authentication {
         val responseAuthentication: Authentication =
             authenticationProvider.authenticate(requestAuthentication)
-        if (!responseAuthentication.isAuthenticated()) {
+        if (!responseAuthentication.isAuthenticated) {
             throw InternalAuthenticationServiceException(
                 "Unable to authenticate Domain User for provided credentials")
         }
         return responseAuthentication
     }
 
-    private fun authenticateUsernameAndPassword(username: String,
+    private fun usernamePasswordAuth(username: String,
                                                 password: String
     ): Authentication {
         val requestAuthentication = UsernamePasswordAuthenticationToken(username, password)

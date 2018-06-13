@@ -8,7 +8,7 @@ import org.springframework.boot.autoconfigure.domain.EntityScan
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories
-import org.springframework.test.context.junit4.SpringRunner
+import org.springframework.test.context.junit4.SpringRunner as SpringRunner
 
 
 @SpringBootTest(classes = [
@@ -26,7 +26,7 @@ internal class UserEventHandlerTest {
     @Autowired
     internal lateinit var repo: UserProfileRepository
 
-    @Test fun `User Passwords are encrypted`() {
+    @Test internal fun `User Passwords are encrypted`() {
         val persistedUser = repo.save(
             UserProfile(
                 username = "userTest",

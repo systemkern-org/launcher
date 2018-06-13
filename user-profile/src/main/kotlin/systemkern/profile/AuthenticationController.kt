@@ -18,6 +18,7 @@ internal class AuthenticationController(
 
         val passwordEncoder = BCryptPasswordEncoder()
         val user = repo.findByUsername(auth.principal.toString())
+        val validUntil = LocalDateTime.now().plusMinutes(30)
 
         if (!passwordEncoder.matches(password, user.password))
             throw UserNotFoundException("UserNotFoundException")
@@ -27,7 +28,7 @@ internal class AuthenticationController(
             token = token,
             username = user.username,
             userId = user.id,
-            validUntil = LocalDateTime.now().plusMinutes(30)
+            validUntil = validUntil
         )
         AuthenticationService.saveToken(token, authResp)
         return authResp

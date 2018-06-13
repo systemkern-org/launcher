@@ -9,6 +9,7 @@ import org.junit.runners.MethodSorters
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT
+import org.springframework.http.HttpHeaders
 import org.springframework.http.MediaType.APPLICATION_JSON
 import org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document
 import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders
@@ -19,6 +20,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import systemkern.CliEntryPoint
 import systemkern.IntegrationTest
 import java.util.*
+import kotlin.collections.HashMap
 
 @RunWith(SpringRunner::class)
 @SpringBootTest(webEnvironment = RANDOM_PORT, classes = [CliEntryPoint::class])
@@ -26,13 +28,18 @@ import java.util.*
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 internal class UserControllerIT : IntegrationTest() {
 
-
+    private val httpHeaders = HttpHeaders()
+    init {
+        var headers: HashMap<String,String> = HashMap()
+        headers["username"] = "AndresAusecha18"
+        headers["password"] = "AndresAusecha18*"
+        httpHeaders.setAll(headers)
+    }
     private val restUrl = "/user-profiles"
     private val restLogin = "/login"
-    companion object {
-        @JvmStatic
-        private var token: String = ""
 
+    companion object {
+        private var token: String = ""
     }
 
     private val entityRequestFields = listOf(
@@ -82,24 +89,18 @@ internal class UserControllerIT : IntegrationTest() {
     fun `Can login User`() {
 
         this.mockMvc.perform(RestDocumentationRequestBuilders.post(restLogin)
-            .header("username","AndresAusecha18")
-            .header("password","AndresAusecha18*")
+            .headers(httpHeaders)
             .contentType(APPLICATION_JSON)
             .accept(APPLICATION_JSON))
             .andExpect(status().isOk)
-           /* .andDo(document("user_login",
-                requestFields(entityRequestFields),
-                responseFields(entityResponseFields)
-            ))*/
+            .andDo(document("user_login"))
             .andReturn().response.contentAsString.let { UserControllerIT.token = "Bearer " + JSONObject(it).get("token").toString() }
-            print("token read: " + UserControllerIT.token  + "\n")
     }
 
     @Test
     fun `Can read User`() {
-        print("token read: " + UserControllerIT.token  + "\n")
         this.mockMvc.perform(RestDocumentationRequestBuilders.get("$restUrl/$userId")
-            .header("Authorization",UserControllerIT.token)
+            .header(HttpHeaders.AUTHORIZATION, UserControllerIT.token)
             .contentType(APPLICATION_JSON)
             .accept(APPLICATION_JSON))
             .andExpect(status().isOk)
@@ -111,15 +112,15 @@ internal class UserControllerIT : IntegrationTest() {
     @Test
     fun `Can update User`() {
         this.mockMvc.perform(RestDocumentationRequestBuilders.put("$restUrl/$userId")
-            .header("Authorization",UserControllerIT.token)
+            .header(HttpHeaders.AUTHORIZATION, UserControllerIT.token)
             .content(
                 objectMapper.writeValueAsString(
-                TestUser(
-                    username = "TestUserToUpdate",
-                    name = "Test user to update",
-                    password = "TestUserToUpdate*"
-                )
-            ))
+                    TestUser(
+                        username = "TestUserToUpdate",
+                        name = "Test user to update",
+                        password = "TestUserToUpdate*"
+                    )
+                ))
             .contentType(APPLICATION_JSON)
             .accept(APPLICATION_JSON))
             .andExpect(status().isOk)
@@ -132,7 +133,6 @@ internal class UserControllerIT : IntegrationTest() {
     @Test
     fun `Can zdelete User`() {
         this.mockMvc.perform(RestDocumentationRequestBuilders.delete("$restUrl/$userId")
-            .header("Authorization",UserControllerIT.token)
             .contentType(APPLICATION_JSON)
             .accept(APPLICATION_JSON))
             .andExpect(status().isForbidden)

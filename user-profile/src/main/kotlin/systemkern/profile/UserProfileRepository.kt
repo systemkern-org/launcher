@@ -50,17 +50,18 @@ internal class RepositoryRestConfig : RepositoryRestConfigurer {
 internal class UserProfileConfiguration {
     val bcryptEncodeRounds: Int = 10
     @Bean
-    internal fun BcryptPasswordEncoderBean() =
+    internal fun bcryptPasswordEncoderBean() =
         BCryptPasswordEncoder(bcryptEncodeRounds)
 }
 
 @Component
-class SessionListener : HttpSessionListener {
+internal class SessionListener : HttpSessionListener {
     override fun sessionDestroyed(p0: HttpSessionEvent?) {
 
     }
 
     override fun sessionCreated(event: HttpSessionEvent) {
-        event.session.maxInactiveInterval = 30 * 60
+        val sessionTime = 30 * 60 //30 minutes can pass with out activity from user
+        event.session.maxInactiveInterval = sessionTime
     }
 }
