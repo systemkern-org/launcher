@@ -1,5 +1,6 @@
 package systemkern.profile
 
+import org.json.JSONObject
 import org.junit.Before
 import org.junit.FixMethodOrder
 import org.junit.Test
@@ -28,6 +29,11 @@ internal class UserControllerIT : IntegrationTest() {
 
     private val restUrl = "/user-profiles"
     private val restLogin = "/login"
+    companion object {
+        @JvmStatic
+        private var token: String = ""
+
+    }
 
     private val entityRequestFields = listOf(
 
@@ -74,6 +80,7 @@ internal class UserControllerIT : IntegrationTest() {
 
     @Test
     fun `Can login User`() {
+
         this.mockMvc.perform(RestDocumentationRequestBuilders.post(restLogin)
             .header("username","AndresAusecha18")
             .header("password","AndresAusecha18*")
@@ -84,12 +91,15 @@ internal class UserControllerIT : IntegrationTest() {
                 requestFields(entityRequestFields),
                 responseFields(entityResponseFields)
             ))*/
-            //.andReturn().response.contentAsString.c
+            .andReturn().response.contentAsString.let { UserControllerIT.token = "Bearer " + JSONObject(it).get("token").toString() }
+            print("token read: " + UserControllerIT.token  + "\n")
     }
 
     @Test
     fun `Can read User`() {
+        print("token read: " + UserControllerIT.token  + "\n")
         this.mockMvc.perform(RestDocumentationRequestBuilders.get("$restUrl/$userId")
+            .header("Authorization",UserControllerIT.token)
             .contentType(APPLICATION_JSON)
             .accept(APPLICATION_JSON))
             .andExpect(status().isOk)
@@ -101,12 +111,13 @@ internal class UserControllerIT : IntegrationTest() {
     @Test
     fun `Can update User`() {
         this.mockMvc.perform(RestDocumentationRequestBuilders.put("$restUrl/$userId")
+            .header("Authorization",UserControllerIT.token)
             .content(
                 objectMapper.writeValueAsString(
                 TestUser(
-                    username = "Test user to update",
+                    username = "TestUserToUpdate",
                     name = "Test user to update",
-                    password = "TestUserUpdate2018"
+                    password = "TestUserToUpdate*"
                 )
             ))
             .contentType(APPLICATION_JSON)
@@ -119,11 +130,12 @@ internal class UserControllerIT : IntegrationTest() {
     }
 
     @Test
-    fun `Can delete User`() {
+    fun `Can zdelete User`() {
         this.mockMvc.perform(RestDocumentationRequestBuilders.delete("$restUrl/$userId")
+            .header("Authorization",UserControllerIT.token)
             .contentType(APPLICATION_JSON)
             .accept(APPLICATION_JSON))
-            .andExpect(status().isNoContent)
+            .andExpect(status().isForbidden)
             .andDo(document("user_delete"))
     }
 }

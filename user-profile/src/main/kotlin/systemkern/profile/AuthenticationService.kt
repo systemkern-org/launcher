@@ -18,7 +18,6 @@ internal class AuthenticationService {
             if (tokens.containsKey(token)) {
                 return System.currentTimeMillis() - sess.lastAccessedTime <= sess.maxInactiveInterval * 1000
             }
-            tokens.remove(token)
             return false
         }
 

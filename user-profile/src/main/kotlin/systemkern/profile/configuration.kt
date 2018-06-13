@@ -78,14 +78,21 @@ internal class AuthenticationFilter(val authenticationProvider: UPAuthentication
         response as HttpServletResponse
         try {
 
-            if (!AuthenticationService.isValidToken(UUID.fromString(
-                    request.getHeader("Authorization").split(" ")[1]), request)) {
+            val token: UUID = UUID.fromString(
+                request.getHeader("Authorization").split(" ")[1])
+
+            if (!AuthenticationService.isValidToken(token, request)) {
 
                 AuthenticationService.tokens.clear()
                 SecurityContextHolder.clearContext()
                 response.sendError(HttpServletResponse.SC_UNAUTHORIZED)
-            }
+            } else {
+                val authRes: Authentication =
+                    PreAuthenticatedAuthenticationToken(token, UUID.randomUUID())
+                authRes.isAuthenticated = true
+                SecurityContextHolder.getContext().authentication = authRes
 
+            }
         } catch (E: IllegalStateException) {
             processUsernamePasswordAuthentication(request,
                 response,
