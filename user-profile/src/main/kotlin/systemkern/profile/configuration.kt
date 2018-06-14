@@ -17,13 +17,13 @@ import javax.servlet.ServletResponse
 import javax.servlet.http.HttpServletRequest
 import org.springframework.security.config.annotation.web.builders.WebSecurity
 import org.springframework.security.core.Authentication
-import org.springframework.security.core.context.SecurityContextHolder
+import org.springframework.security.core.context.SecurityContextHolder.clearContext
+import org.springframework.security.core.context.SecurityContextHolder.getContext
 import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter
 import org.springframework.web.bind.annotation.*
 import java.util.*
 import javax.servlet.http.HttpServletResponse
-import javax.servlet.http.HttpSession
 
 @Configuration
 @EnableWebSecurity
@@ -38,7 +38,6 @@ internal class CustomWebSecurityConfigurerAdapter(
     override fun configure(webSecurity: WebSecurity) {
         webSecurity
             .ignoring()
-            .antMatchers(HttpMethod.POST, pattern)
             .antMatchers(HttpMethod.POST, "/logout")
     }
 
@@ -83,48 +82,45 @@ internal class AuthenticationFilter(val authenticationProvider: UPAuthentication
 
             if (!AuthenticationService.isValidToken(token, request)) {
 
-                SecurityContextHolder.clearContext()
-                response.sendError(HttpServletResponse.SC_UNAUTHORIZED)
+                clearContext()
             } else {
                 val authRes: Authentication =
                     PreAuthenticatedAuthenticationToken(token, UUID.randomUUID())
                 authRes.isAuthenticated = true
-                SecurityContextHolder.getContext().authentication = authRes
+                getContext().authentication = authRes
 
             }
         } catch (E: IllegalStateException) {
 
             val headerhames = request.headerNames.toList()
-            if(
+            if (
                 headerhames.contains("username") &&
                 headerhames.contains("password")
-                )
-            {
+            ) {
                 procUsernamePasswordAuth(request,
-                response,
-                request.getHeader("username"),
-                request.getHeader("password"))
+                    response,
+                    request.getHeader("username"),
+                    request.getHeader("password"))
 
-            }else
-            {
-                SecurityContextHolder.clearContext()
+            } else {
+                clearContext()
             }
 
         }
         filter.doFilter(request, response)
     }
 
-    private fun procUsernamePasswordAuth(
-        request: HttpServletRequest,
-        httpResponse: HttpServletResponse, username: String,
-        password: String) {
+    private fun procUsernamePasswordAuth(request: HttpServletRequest,
+                                         httpResponse: HttpServletResponse,
+                                         username: String,
+                                         password: String) {
 
         val resultOfAuthentication: Authentication =
             usernamePasswordAuth(username, password)
 
         request.session.setAttribute("token", resultOfAuthentication.credentials.toString())
 
-        SecurityContextHolder.getContext().authentication = resultOfAuthentication
+        getContext().authentication = resultOfAuthentication
         httpResponse.status = HttpServletResponse.SC_OK
     }
 
@@ -139,7 +135,7 @@ internal class AuthenticationFilter(val authenticationProvider: UPAuthentication
     }
 
     private fun usernamePasswordAuth(username: String,
-                                                password: String
+                                     password: String
     ): Authentication {
         val requestAuthentication = UsernamePasswordAuthenticationToken(username, password)
         return tryToAuthenticate(requestAuthentication)
@@ -169,6 +165,3 @@ internal class UPAuthenticationProvider : AuthenticationProvider {
 
 @ResponseStatus(HttpStatus.NOT_FOUND)
 internal class MissingDataException(message: String?) : AccessDeniedException(message)
-
-@ResponseStatus(HttpStatus.UNAUTHORIZED)
-internal class InvalidCredentials(message: String?) : AccessDeniedException(message)

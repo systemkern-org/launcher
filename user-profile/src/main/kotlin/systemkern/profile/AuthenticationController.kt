@@ -1,5 +1,6 @@
 package systemkern.profile
 
+import org.springframework.dao.EmptyResultDataAccessException
 import org.springframework.http.HttpStatus
 import org.springframework.security.core.Authentication
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
@@ -17,21 +18,28 @@ internal class AuthenticationController(
     internal fun login(auth: Authentication, @RequestHeader password: String): AuthenticationResponse {
 
         val passwordEncoder = BCryptPasswordEncoder()
-        val user = repo.findByUsername(auth.principal.toString())
-        val validUntil = LocalDateTime.now().plusMinutes(30)
+            try{
 
-        if (!passwordEncoder.matches(password, user.password))
-            throw UserNotFoundException("UserNotFoundException")
+                val user = repo.findByUsername(auth.principal.toString())
+                if (!passwordEncoder.matches(password, user.password))
+                    throw UserNotFoundException("UserNotFoundException")
 
-        val token: UUID = UUID.fromString(auth.credentials.toString())
-        val authResp = AuthenticationResponse(
-            token = token,
-            username = user.username,
-            userId = user.id,
-            validUntil = validUntil
-        )
-        AuthenticationService.saveToken(token, authResp)
-        return authResp
+                val token: UUID = UUID.fromString(auth.credentials.toString())
+                val validUntil = LocalDateTime.now().plusMinutes(30)
+
+                val authResp = AuthenticationResponse(
+                    token = token,
+                    username = user.username,
+                    userId = user.id,
+                    validUntil = validUntil
+                )
+                AuthenticationService.saveToken(token, authResp)
+                return authResp
+
+            }catch (e: EmptyResultDataAccessException)
+            {
+                throw UserNotFoundException("UserNotFoundException")
+            }
     }
 
     @PostMapping("/logout")
