@@ -42,7 +42,7 @@ internal class UserControllerIT : IntegrationTest() {
         private var token: String = ""
     }
 
-    private val entityRequestFields = listOf(
+        private val entityRequestFields = listOf(
 
         fieldWithPath("name").description("Name of the user").type(STRING),
         fieldWithPath("username").description("Username of the user").type(STRING),
