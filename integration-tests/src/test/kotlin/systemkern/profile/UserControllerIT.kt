@@ -1,5 +1,4 @@
 package systemkern.profile
-
 import org.json.JSONObject
 import org.junit.Before
 import org.junit.Test
@@ -25,12 +24,22 @@ import kotlin.collections.HashMap
 @SpringBootTest(webEnvironment = RANDOM_PORT, classes = [CliEntryPoint::class])
 
 internal class UserControllerIT : IntegrationTest() {
+    private val nameExample = "AndresAusecha"
+    private val usernameExample = nameExample + "18"
+    private val passwordExample = usernameExample.plus("*")
+    private val usernameExample1 = nameExample + "19"
+    private val passwordExample1 = usernameExample.plus("*")
+    private val usernameExample2 = nameExample + "20"
+    private val passwordExample2 = usernameExample.plus("*")
+    private val usernameExample3 = "RainerKern01"
+    private val passwordExample3 = usernameExample.plus("*")
+
     private val httpHeaders = HttpHeaders()
     val headers: HashMap<String, String> = HashMap()
 
     init {
-        headers["username"] = "AndresAusecha18"
-        headers["password"] = "AndresAusecha18*"
+        headers["username"] = usernameExample
+        headers["password"] = passwordExample
         httpHeaders.setAll(headers)
     }
 
@@ -72,7 +81,7 @@ internal class UserControllerIT : IntegrationTest() {
             ))
     }
 
-    fun `login function`(username: String, password: String) {
+    private fun `login function`(username: String, password: String) {
         headers["username"] = username
         headers["password"] = password
         httpHeaders.setAll(headers)
@@ -96,16 +105,16 @@ internal class UserControllerIT : IntegrationTest() {
     @Test
     fun `Can create a User`() {
         `create user function`(TestUser(
-            username = "AndresAusecha18",
-            name = "Andres Ausecha",
-            password = "AndresAusecha18*"
+            username = usernameExample,
+            name = nameExample,
+            password = passwordExample
         ))
     }
 
     @Test
     fun `Can login User`() {
-        val username = "RainerKern01"
-        val password = "RainerKern01*"
+        val username = usernameExample3
+        val password = passwordExample3
         `create user function`(TestUser(
             username = username,
             name = "Rainer Kern",
@@ -116,11 +125,11 @@ internal class UserControllerIT : IntegrationTest() {
 
     @Test
     fun `Can read User`() {
-        val username = "AndresAusecha19"
-        val password = "AndresAusecha19*"
+        val username = usernameExample1
+        val password = passwordExample1
         `create user function`(TestUser(
             username = username,
-            name = "Andres Ausecha",
+            name = nameExample,
             password = password
         ))
         `login function`(username, password)
@@ -136,11 +145,11 @@ internal class UserControllerIT : IntegrationTest() {
 
     @Test
     fun `Can update User`() {
-        val username = "AndresAusecha20"
-        val password = "AndresAusecha20*"
+        val username = usernameExample2
+        val password = passwordExample2
         `create user function`(TestUser(
             username = username,
-            name = "Andres Ausecha",
+            name = nameExample,
             password = password
         ))
         `login function`(username, password)

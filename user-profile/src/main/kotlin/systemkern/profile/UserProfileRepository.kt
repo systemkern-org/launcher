@@ -1,5 +1,4 @@
 package systemkern.profile
-
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -56,12 +55,13 @@ internal class UserProfileConfiguration {
 
 @Component
 internal class SessionListener : HttpSessionListener {
+
     override fun sessionDestroyed(p0: HttpSessionEvent?) {
 
     }
 
     override fun sessionCreated(event: HttpSessionEvent) {
-        val sessionTime = 30 * 60 //30 minutes can pass with out activity from user
+        val sessionTime = parameters.sessionTime.toInt() * 60 //30 minutes can pass with out activity from user
         event.session.maxInactiveInterval = sessionTime
     }
 }

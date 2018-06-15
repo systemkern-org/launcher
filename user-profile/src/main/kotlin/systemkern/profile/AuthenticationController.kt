@@ -14,14 +14,16 @@ internal class AuthenticationController(
     val service: AuthenticationService
 ) {
     @PostMapping("/login")
-    internal fun login(auth: Authentication, @RequestHeader password: String): AuthenticationResponse {
+    internal fun login(auth: Authentication,
+                       @RequestHeader password: String
+    ): AuthenticationResponse {
         val passwordEncoder = BCryptPasswordEncoder()
         try {
             val user = service.findByUsername(auth.principal.toString())
             if (!passwordEncoder.matches(password, user.password))
                 throw UserNotFoundException("UserNotFoundException")
             val token: UUID = UUID.fromString(auth.credentials.toString())
-            val validUntil = LocalDateTime.now().plusMinutes(30)
+            val validUntil = LocalDateTime.now().plusMinutes(parameters.sessionTime.toLong())
             val authResp = AuthenticationResponse(
                 token = token,
                 username = user.username,
@@ -36,9 +38,9 @@ internal class AuthenticationController(
     }
 
     @PostMapping("/logout")
-    internal fun logout(@RequestHeader Authorization: String,
+    internal fun logout(@RequestHeader authorization: String,
                         request: HttpServletRequest) {
-        AuthenticationService.deleteToken(UUID.fromString(Authorization.split(" ")[1]))
+        AuthenticationService.deleteToken(UUID.fromString(authorization.split(" ")[1]))
         request.session.invalidate()
     }
 }

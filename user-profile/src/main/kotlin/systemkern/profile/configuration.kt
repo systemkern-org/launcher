@@ -1,5 +1,4 @@
 package systemkern.profile
-
 import org.springframework.context.annotation.Configuration
 import org.springframework.http.HttpMethod
 import org.springframework.http.HttpStatus
@@ -22,6 +21,7 @@ import org.springframework.security.web.authentication.preauth.PreAuthenticatedA
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter
 import org.springframework.web.bind.annotation.*
 import java.util.*
+import javax.servlet.http.HttpServletResponse.SC_OK
 import javax.servlet.http.HttpServletResponse
 
 @Configuration
@@ -109,7 +109,7 @@ internal class AuthenticationFilter(val authenticationProvider: UPAuthentication
         request.session.setAttribute("token", resultOfAuthentication.credentials.toString())
 
         getContext().authentication = resultOfAuthentication
-        httpResponse.status = HttpServletResponse.SC_OK
+        httpResponse.status = SC_OK
     }
 
     private fun tryToAuthenticate(requestAuthentication: Authentication): Authentication {
