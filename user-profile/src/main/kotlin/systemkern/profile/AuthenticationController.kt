@@ -13,20 +13,15 @@ import javax.servlet.http.HttpServletRequest
 internal class AuthenticationController(
     val repo: UserProfileRepository
 ) {
-
     @PostMapping("/login")
     internal fun login(auth: Authentication, @RequestHeader password: String): AuthenticationResponse {
-
         val passwordEncoder = BCryptPasswordEncoder()
             try{
-
                 val user = repo.findByUsername(auth.principal.toString())
                 if (!passwordEncoder.matches(password, user.password))
                     throw UserNotFoundException("UserNotFoundException")
-
                 val token: UUID = UUID.fromString(auth.credentials.toString())
                 val validUntil = LocalDateTime.now().plusMinutes(30)
-
                 val authResp = AuthenticationResponse(
                     token = token,
                     username = user.username,
@@ -35,13 +30,11 @@ internal class AuthenticationController(
                 )
                 AuthenticationService.saveToken(token, authResp)
                 return authResp
-
             }catch (e: EmptyResultDataAccessException)
             {
                 throw UserNotFoundException("UserNotFoundException")
             }
     }
-
     @PostMapping("/logout")
     internal fun logout(@RequestHeader Authorization: String,
                         request: HttpServletRequest) {

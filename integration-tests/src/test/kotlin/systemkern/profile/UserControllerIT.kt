@@ -25,25 +25,18 @@ import kotlin.collections.HashMap
 @RunWith(SpringRunner::class)
 @SpringBootTest(webEnvironment = RANDOM_PORT, classes = [CliEntryPoint::class])
 
-@FixMethodOrder(MethodSorters.NAME_ASCENDING)
 internal class UserControllerIT : IntegrationTest() {
-
     private val httpHeaders = HttpHeaders()
+    val headers: HashMap<String,String> = HashMap()
     init {
-        var headers: HashMap<String,String> = HashMap()
         headers["username"] = "AndresAusecha18"
         headers["password"] = "AndresAusecha18*"
         httpHeaders.setAll(headers)
     }
     private val restUrl = "/user-profiles"
     private val restLogin = "/login"
-
-    companion object {
-        private var token: String = ""
-    }
-
-        private val entityRequestFields = listOf(
-
+    private var token: String = ""
+    private val entityRequestFields = listOf(
         fieldWithPath("name").description("Name of the user").type(STRING),
         fieldWithPath("username").description("Username of the user").type(STRING),
         fieldWithPath("password").description("Password of user to be created").type(STRING)
@@ -66,16 +59,10 @@ internal class UserControllerIT : IntegrationTest() {
         this.userId = testDataCreator.userId
     }
 
-    @Test
-    fun `Can create a User`() {
+    private fun `create user function`(user: TestUser)
+    {
         this.mockMvc.perform(RestDocumentationRequestBuilders.post(restUrl)
-            .content(objectMapper.writeValueAsString(
-                TestUser(
-                    username = "AndresAusecha18",
-                    name = "Andres Ausecha",
-                    password = "AndresAusecha18*"
-                )
-            ))
+            .content(objectMapper.writeValueAsString(user))
             .contentType(APPLICATION_JSON)
             .accept(APPLICATION_JSON))
             .andExpect(status().isCreated)
@@ -83,23 +70,55 @@ internal class UserControllerIT : IntegrationTest() {
                 responseFields(entityResponseFields)
             ))
     }
+    fun `login function`(username: String,password: String)
+    {
+        headers["username"] = username
+        headers["password"] = password
+        httpHeaders.setAll(headers)
+
+        this.mockMvc.perform(RestDocumentationRequestBuilders.post(restLogin)
+        .headers(httpHeaders)
+        .contentType(APPLICATION_JSON)
+        .accept(APPLICATION_JSON))
+        .andExpect(status().isOk)
+        .andDo(document("user_login"))
+        .andReturn().response.contentAsString.let { token = "Bearer " + JSONObject(it).get("token").toString() }
+    }
+
+
+    @Test
+    fun `Can create a User`() {
+        `create user function`(TestUser(
+            username = "AndresAusecha18",
+            name = "Andres Ausecha",
+            password = "AndresAusecha18*"
+        ))
+    }
 
     @Test
     fun `Can login User`() {
-
-        this.mockMvc.perform(RestDocumentationRequestBuilders.post(restLogin)
-            .headers(httpHeaders)
-            .contentType(APPLICATION_JSON)
-            .accept(APPLICATION_JSON))
-            .andExpect(status().isOk)
-            .andDo(document("user_login"))
-            .andReturn().response.contentAsString.let { UserControllerIT.token = "Bearer " + JSONObject(it).get("token").toString() }
+        val username = "RainerKern01"
+        val password = "RainerKern01*"
+        `create user function`(TestUser(
+            username = username,
+            name = "Rainer Kern",
+            password = password
+        ))
+        `login function`(username,password)
     }
 
     @Test
     fun `Can read User`() {
+        val username = "AndresAusecha19"
+        val password = "AndresAusecha19*"
+        `create user function`(TestUser(
+            username = username,
+            name = "Andres Ausecha",
+            password = password
+        ))
+        `login function`(username, password)
         this.mockMvc.perform(RestDocumentationRequestBuilders.get("$restUrl/$userId")
-            .header(HttpHeaders.AUTHORIZATION, UserControllerIT.token)
+            .header(HttpHeaders.AUTHORIZATION, token)
             .contentType(APPLICATION_JSON)
             .accept(APPLICATION_JSON))
             .andExpect(status().isOk)
@@ -110,8 +129,16 @@ internal class UserControllerIT : IntegrationTest() {
 
     @Test
     fun `Can update User`() {
+        val username = "AndresAusecha20"
+        val password = "AndresAusecha20*"
+        `create user function`(TestUser(
+            username = username,
+            name = "Andres Ausecha",
+            password = password
+        ))
+       `login function`(username, password)
         this.mockMvc.perform(RestDocumentationRequestBuilders.put("$restUrl/$userId")
-            .header(HttpHeaders.AUTHORIZATION, UserControllerIT.token)
+            .header(HttpHeaders.AUTHORIZATION, token)
             .content(
                 objectMapper.writeValueAsString(
                     TestUser(
@@ -129,7 +156,7 @@ internal class UserControllerIT : IntegrationTest() {
     }
 
     @Test
-    fun `Can zdelete User`() {
+    fun `Cannot delete User`() {
         this.mockMvc.perform(RestDocumentationRequestBuilders.delete("$restUrl/$userId")
             .contentType(APPLICATION_JSON)
             .accept(APPLICATION_JSON))
