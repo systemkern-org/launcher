@@ -25,32 +25,20 @@ import kotlin.collections.HashMap
 
 internal class UserControllerIT : IntegrationTest() {
     private val nameExample = "AndresAusecha"
+    private val nameExample1 = "RainerKern"
     private val usernameExample = nameExample + "18"
     private val passwordExample = usernameExample.plus("*")
     private val usernameExample1 = nameExample + "19"
     private val passwordExample1 = usernameExample.plus("*")
     private val usernameExample2 = nameExample + "20"
     private val passwordExample2 = usernameExample.plus("*")
-    private val usernameExample3 = "RainerKern01"
+    private val usernameExample3 = nameExample1.plus("01")
     private val passwordExample3 = usernameExample.plus("*")
-
     private val httpHeaders = HttpHeaders()
-    val headers: HashMap<String, String> = HashMap()
-
-    init {
-        headers["username"] = usernameExample
-        headers["password"] = passwordExample
-        httpHeaders.setAll(headers)
-    }
-
     private val restUrl = "/user-profiles"
     private val restLogin = "/login"
     private var token: String = ""
-    /*    private val entityRequestFields = listOf(
-            fieldWithPath("TestUser.name").description("Name of the user").type(STRING),
-            fieldWithPath("TestUser.username").description("Username of the user").type(STRING),
-            fieldWithPath("TestUser.password").description("Password of user to be created").type(STRING)
-        )*/
+    val headers: HashMap<String, String> = HashMap()
     private val entityResponseFields = listOf(
         fieldWithPath("id").description("The Id of the user entity").type(STRING),
         fieldWithPath("name").description("Name of the user").type(STRING),
@@ -59,7 +47,14 @@ internal class UserControllerIT : IntegrationTest() {
         fieldWithPath("_links.userProfile.href").description("Link to access the created user").type(
             STRING)
     )
-
+    private val loginResponseFields = responseFields(listOf(
+    fieldWithPath("token").description("Token to authenticate the next requests")
+    .type(STRING),
+    fieldWithPath("username").description("Username of the user").type(STRING),
+    fieldWithPath("userId").description("Password of user to be created").type(STRING),
+    fieldWithPath("validUntil").description("Date and Time until session will expire")
+    .type(STRING)
+    ))
     @Autowired
     private lateinit var testDataCreator: UserProfileTestDataCreator
     private lateinit var userId: UUID
@@ -90,15 +85,7 @@ internal class UserControllerIT : IntegrationTest() {
             .contentType(APPLICATION_JSON)
             .accept(APPLICATION_JSON))
             .andExpect(status().isOk)
-            .andDo(document("user_login",
-                responseFields(listOf(
-                    fieldWithPath("token").description("Token to authenticate the next requests")
-                        .type(STRING),
-                    fieldWithPath("username").description("Username of the user").type(STRING),
-                    fieldWithPath("userId").description("Password of user to be created").type(STRING),
-                    fieldWithPath("validUntil").description("Date and Time until session will expire")
-                        .type(STRING)
-                ))))
+            .andDo(document("user_login",loginResponseFields))
             .andReturn().response.contentAsString.let { token = "Bearer " + JSONObject(it).get("token").toString() }
     }
 
@@ -117,7 +104,7 @@ internal class UserControllerIT : IntegrationTest() {
         val password = passwordExample3
         `create user function`(TestUser(
             username = username,
-            name = "Rainer Kern",
+            name = nameExample1,
             password = password
         ))
         `login function`(username, password)

@@ -1,5 +1,4 @@
 package systemkern.profile
-
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -8,8 +7,7 @@ import org.springframework.boot.autoconfigure.domain.EntityScan
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories
-import org.springframework.test.context.junit4.SpringRunner as SpringRunner
-
+import org.springframework.test.context.junit4.SpringRunner
 
 @SpringBootTest(classes = [
     UserProfileRepository::class,

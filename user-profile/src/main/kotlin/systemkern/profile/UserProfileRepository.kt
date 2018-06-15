@@ -61,7 +61,6 @@ internal class SessionListener : HttpSessionListener {
     }
 
     override fun sessionCreated(event: HttpSessionEvent) {
-        val sessionTime = parameters.sessionTime.toInt() * 60 //30 minutes can pass with out activity from user
-        event.session.maxInactiveInterval = sessionTime
+        event.session.maxInactiveInterval =  Parameters.sessionTime.toInt() * 60
     }
 }

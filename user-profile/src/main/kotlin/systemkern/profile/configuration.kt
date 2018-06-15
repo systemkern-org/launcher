@@ -1,4 +1,5 @@
 package systemkern.profile
+
 import org.springframework.context.annotation.Configuration
 import org.springframework.http.HttpMethod
 import org.springframework.http.HttpStatus
@@ -63,8 +64,8 @@ internal class AuthenticationFilter(val authenticationProvider: UPAuthentication
     override fun doFilter(
         request: ServletRequest,
         response: ServletResponse,
-        filter: FilterChain) {
-
+        filter: FilterChain
+    ) {
         request as HttpServletRequest
         response as HttpServletResponse
         try {

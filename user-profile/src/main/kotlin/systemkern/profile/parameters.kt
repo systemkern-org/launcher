@@ -1,5 +1,5 @@
 package systemkern.profile
-class parameters {
+class Parameters {
     companion object {
         internal const val sessionTime = "30"
     }

@@ -23,7 +23,7 @@ internal class AuthenticationController(
             if (!passwordEncoder.matches(password, user.password))
                 throw UserNotFoundException("UserNotFoundException")
             val token: UUID = UUID.fromString(auth.credentials.toString())
-            val validUntil = LocalDateTime.now().plusMinutes(parameters.sessionTime.toLong())
+            val validUntil = LocalDateTime.now().plusMinutes(Parameters.sessionTime.toLong())
             val authResp = AuthenticationResponse(
                 token = token,
                 username = user.username,
@@ -45,8 +45,7 @@ internal class AuthenticationController(
     }
 }
 
-internal data class AuthenticationResponse
-(
+internal data class AuthenticationResponse(
     val token: UUID,
     val username: String,
     val userId: UUID,
