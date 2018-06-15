@@ -80,7 +80,6 @@ internal class UserControllerIT : IntegrationTest() {
             .accept(APPLICATION_JSON))
             .andExpect(status().isCreated)
             .andDo(document("user_create",
-                requestFields(entityRequestFields),
                 responseFields(entityResponseFields)
             ))
     }
@@ -125,7 +124,6 @@ internal class UserControllerIT : IntegrationTest() {
             .accept(APPLICATION_JSON))
             .andExpect(status().isOk)
             .andDo(document("user_update",
-                requestFields(entityRequestFields),
                 responseFields(entityResponseFields)
             ))
     }
