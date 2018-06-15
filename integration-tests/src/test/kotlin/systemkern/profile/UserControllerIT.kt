@@ -2,14 +2,13 @@ package systemkern.profile
 
 import org.json.JSONObject
 import org.junit.Before
-import org.junit.FixMethodOrder
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.junit.runners.MethodSorters
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT
 import org.springframework.http.HttpHeaders
+import org.springframework.http.HttpHeaders.AUTHORIZATION
 import org.springframework.http.MediaType.APPLICATION_JSON
 import org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document
 import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders
@@ -27,26 +26,29 @@ import kotlin.collections.HashMap
 
 internal class UserControllerIT : IntegrationTest() {
     private val httpHeaders = HttpHeaders()
-    val headers: HashMap<String,String> = HashMap()
+    val headers: HashMap<String, String> = HashMap()
+
     init {
         headers["username"] = "AndresAusecha18"
         headers["password"] = "AndresAusecha18*"
         httpHeaders.setAll(headers)
     }
+
     private val restUrl = "/user-profiles"
     private val restLogin = "/login"
     private var token: String = ""
-    private val entityRequestFields = listOf(
-        fieldWithPath("name").description("Name of the user").type(STRING),
-        fieldWithPath("username").description("Username of the user").type(STRING),
-        fieldWithPath("password").description("Password of user to be created").type(STRING)
-    )
+    /*    private val entityRequestFields = listOf(
+            fieldWithPath("TestUser.name").description("Name of the user").type(STRING),
+            fieldWithPath("TestUser.username").description("Username of the user").type(STRING),
+            fieldWithPath("TestUser.password").description("Password of user to be created").type(STRING)
+        )*/
     private val entityResponseFields = listOf(
         fieldWithPath("id").description("The Id of the user entity").type(STRING),
         fieldWithPath("name").description("Name of the user").type(STRING),
         fieldWithPath("username").description("Username to log in").type(STRING),
         fieldWithPath("_links.self.href").description("Link to access the created user").type(STRING),
-        fieldWithPath("_links.userProfile.href").description("Link to access the created user").type(STRING)
+        fieldWithPath("_links.userProfile.href").description("Link to access the created user").type(
+            STRING)
     )
 
     @Autowired
@@ -59,8 +61,7 @@ internal class UserControllerIT : IntegrationTest() {
         this.userId = testDataCreator.userId
     }
 
-    private fun `create user function`(user: TestUser)
-    {
+    private fun `create user function`(user: TestUser) {
         this.mockMvc.perform(RestDocumentationRequestBuilders.post(restUrl)
             .content(objectMapper.writeValueAsString(user))
             .contentType(APPLICATION_JSON)
@@ -70,21 +71,27 @@ internal class UserControllerIT : IntegrationTest() {
                 responseFields(entityResponseFields)
             ))
     }
-    fun `login function`(username: String,password: String)
-    {
+
+    fun `login function`(username: String, password: String) {
         headers["username"] = username
         headers["password"] = password
         httpHeaders.setAll(headers)
-
         this.mockMvc.perform(RestDocumentationRequestBuilders.post(restLogin)
-        .headers(httpHeaders)
-        .contentType(APPLICATION_JSON)
-        .accept(APPLICATION_JSON))
-        .andExpect(status().isOk)
-        .andDo(document("user_login"))
-        .andReturn().response.contentAsString.let { token = "Bearer " + JSONObject(it).get("token").toString() }
+            .headers(httpHeaders)
+            .contentType(APPLICATION_JSON)
+            .accept(APPLICATION_JSON))
+            .andExpect(status().isOk)
+            .andDo(document("user_login",
+                responseFields(listOf(
+                    fieldWithPath("token").description("Token to authenticate the next requests")
+                        .type(STRING),
+                    fieldWithPath("username").description("Username of the user").type(STRING),
+                    fieldWithPath("userId").description("Password of user to be created").type(STRING),
+                    fieldWithPath("validUntil").description("Date and Time until session will expire")
+                        .type(STRING)
+                ))))
+            .andReturn().response.contentAsString.let { token = "Bearer " + JSONObject(it).get("token").toString() }
     }
-
 
     @Test
     fun `Can create a User`() {
@@ -104,7 +111,7 @@ internal class UserControllerIT : IntegrationTest() {
             name = "Rainer Kern",
             password = password
         ))
-        `login function`(username,password)
+        `login function`(username, password)
     }
 
     @Test
@@ -118,7 +125,7 @@ internal class UserControllerIT : IntegrationTest() {
         ))
         `login function`(username, password)
         this.mockMvc.perform(RestDocumentationRequestBuilders.get("$restUrl/$userId")
-            .header(HttpHeaders.AUTHORIZATION, token)
+            .header(AUTHORIZATION, token)
             .contentType(APPLICATION_JSON)
             .accept(APPLICATION_JSON))
             .andExpect(status().isOk)
@@ -136,9 +143,9 @@ internal class UserControllerIT : IntegrationTest() {
             name = "Andres Ausecha",
             password = password
         ))
-       `login function`(username, password)
+        `login function`(username, password)
         this.mockMvc.perform(RestDocumentationRequestBuilders.put("$restUrl/$userId")
-            .header(HttpHeaders.AUTHORIZATION, token)
+            .header(AUTHORIZATION, token)
             .content(
                 objectMapper.writeValueAsString(
                     TestUser(

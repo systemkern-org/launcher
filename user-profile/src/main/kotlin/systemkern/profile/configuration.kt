@@ -15,7 +15,6 @@ import javax.servlet.FilterChain
 import javax.servlet.ServletRequest
 import javax.servlet.ServletResponse
 import javax.servlet.http.HttpServletRequest
-import org.springframework.security.config.annotation.web.builders.WebSecurity
 import org.springframework.security.core.Authentication
 import org.springframework.security.core.context.SecurityContextHolder.clearContext
 import org.springframework.security.core.context.SecurityContextHolder.getContext
@@ -31,15 +30,7 @@ internal class CustomWebSecurityConfigurerAdapter(
     val pattern: String = "/user-profiles",
     val pattern1: String = "/user-profiles/",
     val pattern2: String = "/user-profiles/{\\d+}"
-
 ) : WebSecurityConfigurerAdapter() {
-
-    @Throws(Exception::class)
-    override fun configure(webSecurity: WebSecurity) {
-        webSecurity
-            .ignoring()
-            .antMatchers(HttpMethod.POST, "/logout")
-    }
 
     @Throws(Exception::class)
     override fun configure(http: HttpSecurity) {
@@ -69,26 +60,23 @@ internal class CustomWebSecurityConfigurerAdapter(
 internal class AuthenticationFilter(val authenticationProvider: UPAuthenticationProvider)
     : GenericFilterBean() {
 
-    override fun doFilter(request: ServletRequest,
-                          response: ServletResponse,
-                          filter: FilterChain) {
+    override fun doFilter(
+        request: ServletRequest,
+        response: ServletResponse,
+        filter: FilterChain) {
 
         request as HttpServletRequest
         response as HttpServletResponse
         try {
-
             val token: UUID = UUID.fromString(
                 request.getHeader("Authorization").split(" ")[1])
-
             if (!AuthenticationService.isValidToken(token, request)) {
-
                 clearContext()
             } else {
                 val authRes: Authentication =
                     PreAuthenticatedAuthenticationToken(token, UUID.randomUUID())
                 authRes.isAuthenticated = true
                 getContext().authentication = authRes
-
             }
         } catch (E: IllegalStateException) {
 

@@ -7,13 +7,15 @@ import javax.servlet.http.HttpServletRequest
 import kotlin.collections.HashMap
 
 @Service
-internal class AuthenticationService {
+internal class AuthenticationService(val repo: UserProfileRepository) {
+    fun findByUsername(username: String): UserProfile {
+        return repo.findByUsername(username)
+    }
 
     companion object {
         val tokens: HashMap<UUID, AuthenticationResponse> = HashMap()
-
         internal fun isValidToken(token: UUID, request: HttpServletRequest): Boolean {
-            val inactiveInterval =  System.currentTimeMillis() - request.session.lastAccessedTime
+            val inactiveInterval = System.currentTimeMillis() - request.session.lastAccessedTime
             val maxInactiveIntervalMilis = request.session.maxInactiveInterval * 1000
             if (tokens.containsKey(token)) {
                 return inactiveInterval <= maxInactiveIntervalMilis
@@ -28,6 +30,5 @@ internal class AuthenticationService {
         internal fun deleteToken(token: UUID) {
             tokens.remove(token)
         }
-
     }
 }
