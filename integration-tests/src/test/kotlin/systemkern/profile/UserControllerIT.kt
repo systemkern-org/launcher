@@ -39,10 +39,13 @@ internal class UserControllerIT : IntegrationTest() {
     private val restLogin = "/login"
     private var token: String = ""
     val headers: HashMap<String, String> = HashMap()
+    private var usernameDesc = "Username to log in"
+    private var username = "username"
+    
     private val entityResponseFields = listOf(
         fieldWithPath("id").description("The Id of the user entity").type(STRING),
         fieldWithPath("name").description("Name of the user").type(STRING),
-        fieldWithPath("username").description("Username to log in").type(STRING),
+        fieldWithPath(username).description(usernameDesc).type(STRING),
         fieldWithPath("_links.self.href").description("Link to access the created user").type(STRING),
         fieldWithPath("_links.userProfile.href").description("Link to access the created user").type(
             STRING)
@@ -50,7 +53,7 @@ internal class UserControllerIT : IntegrationTest() {
     private val loginResponseFields = responseFields(listOf(
     fieldWithPath("token").description("Token to authenticate the next requests")
     .type(STRING),
-    fieldWithPath("username").description("Username of the user").type(STRING),
+    fieldWithPath(username).description(usernameDesc).type(STRING),
     fieldWithPath("userId").description("Password of user to be created").type(STRING),
     fieldWithPath("validUntil").description("Date and Time until session will expire")
     .type(STRING)
@@ -77,7 +80,7 @@ internal class UserControllerIT : IntegrationTest() {
     }
 
     private fun `login function`(username: String, password: String) {
-        headers["username"] = username
+        headers[this.username] = username
         headers["password"] = password
         httpHeaders.setAll(headers)
         this.mockMvc.perform(RestDocumentationRequestBuilders.post(restLogin)

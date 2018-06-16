@@ -1,4 +1,5 @@
 package systemkern.profile
+
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.annotation.JsonProperty.Access.WRITE_ONLY
 import java.util.*
