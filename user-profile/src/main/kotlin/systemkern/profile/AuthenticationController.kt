@@ -30,7 +30,7 @@ internal class AuthenticationController(
                 userId = user.id,
                 validUntil = validUntil
             )
-            AuthenticationService.saveToken(token, authResp)
+            service.saveToken(token, authResp)
             return authResp
         } catch (e: EmptyResultDataAccessException) {
             throw UserNotFoundException("UserNotFoundException")
@@ -40,7 +40,7 @@ internal class AuthenticationController(
     @PostMapping("/logout")
     internal fun logout(@RequestHeader authorization: String,
                         request: HttpServletRequest) {
-        AuthenticationService.deleteToken(UUID.fromString(authorization.split(" ")[1]))
+        service.deleteToken(UUID.fromString(authorization.split(" ")[1]))
         request.session.invalidate()
     }
 }

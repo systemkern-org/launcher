@@ -28,10 +28,11 @@ import javax.servlet.http.HttpServletResponse
 @Configuration
 @EnableWebSecurity
 internal class CustomWebSecurityConfigurerAdapter(
-    val pattern: String = "/user-profiles",
-    val pattern1: String = "/user-profiles/",
-    val pattern2: String = "/user-profiles/{\\d+}"
+    val service: AuthenticationService
 ) : WebSecurityConfigurerAdapter() {
+    val pattern: String = "/user-profiles"
+    val pattern1: String = "/user-profiles/"
+    val pattern2: String = "/user-profiles/{\\d+}"
 
     @Throws(Exception::class)
     override fun configure(http: HttpSecurity) {
@@ -52,14 +53,16 @@ internal class CustomWebSecurityConfigurerAdapter(
             .denyAll()
 
             .and()
-            .addFilterBefore(AuthenticationFilter(UPAuthenticationProvider()),
+            .addFilterBefore(AuthenticationFilter(UPAuthenticationProvider(), service),
                 BasicAuthenticationFilter::class.java)
     }
 
 }
 
-internal class AuthenticationFilter(val authenticationProvider: UPAuthenticationProvider)
-    : GenericFilterBean() {
+internal class AuthenticationFilter(
+    val authenticationProvider: UPAuthenticationProvider,
+    val service: AuthenticationService
+) : GenericFilterBean() {
 
     override fun doFilter(
         request: ServletRequest,
@@ -71,7 +74,7 @@ internal class AuthenticationFilter(val authenticationProvider: UPAuthentication
         try {
             val token: UUID = UUID.fromString(
                 request.getHeader("Authorization").split(" ")[1])
-            if (!AuthenticationService.isValidToken(token, request)) {
+            if (!service.isValidToken(token, request)) {
                 clearContext()
             } else {
                 val authRes: Authentication =

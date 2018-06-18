@@ -28,6 +28,7 @@
         <org.zalando.jackson-datatype-money.version>1.0.0-RC2</org.zalando.jackson-datatype-money.version>
         <version.eye>3.11.4</version.eye>
         <org.springframework.security.ver>5.1.0.BUILD-SNAPSHOT</org.springframework.security.ver>
+        <spring-integration-core>5.1.0.BUILD-SNAPSHOT</spring-integration-core>
     </properties>
 
     <dependencies>

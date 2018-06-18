@@ -8,7 +8,6 @@ import kotlin.collections.HashMap
 @Service
 internal class AuthenticationService(val repo: UserProfileRepository) {
     internal fun findByUsername(username: String)= repo.findByUsername(username)
-    companion object {
         private var inactiveInterval:Long = 0
         private var maxInactiveIntervalMilis = 0
         val tokens: HashMap<UUID, AuthenticationResponse> = HashMap()
@@ -26,5 +25,4 @@ internal class AuthenticationService(val repo: UserProfileRepository) {
         internal fun deleteToken(token: UUID) {
             tokens.remove(token)
         }
-    }
 }
