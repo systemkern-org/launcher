@@ -11,7 +11,8 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>user-profile</artifactId>
-    
+
+
     <dependencies>
         <dependency>
             <groupId>com.fasterxml.jackson.module</groupId>
@@ -26,14 +27,30 @@
             <artifactId>spring-boot-starter-data-jpa</artifactId>
         </dependency>
         <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-core</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.systemkern</groupId>
-            <artifactId>core</artifactId>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-config</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.hsqldb</groupId>
+            <artifactId>hsqldb</artifactId>
             <scope>test</scope>
-            <type>test-jar</type>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-web</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.integration</groupId>
+            <artifactId>spring-integration-core</artifactId>
+            <version>${spring-integration-core}</version>
         </dependency>
     </dependencies>
 

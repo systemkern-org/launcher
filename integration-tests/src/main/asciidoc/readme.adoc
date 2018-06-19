@@ -64,11 +64,20 @@ access the user that have been created.
 
 operation::user_create[snippets='curl-request,http-request,http-response']
 
+==== Login
+To login and access system, username and password must be sent to Url + /login. Some data is returned including
+an access token, which must be added in the header of future read and update requests.
+
+operation::user_login[snippets='curl-request,http-response']
+
 ==== Read
 The "id" of user should be added at the end of URL, the Http verb of request is GET but
 a body is not necessary.
 If the URL is correct and there is an user identified with the "id" provided,
 then web service sends 200 ok status code and the body of response contains the data of user.
+Remember to add the access token in a header called Authorization,the syntax is
+for example: "Bearer [token]"
+
 
 operation::user_read[snippets='curl-request,http-request,http-response,response-fields']
 
@@ -77,13 +86,12 @@ To update an user, the url is equal to the Read case. The difference is in the v
 PUT http, the body of the request should contain the new values of "name" and "password".
 If the request is right then the response contains; the data provided in the request and 2 links
 to access the user that have been updated, the status should be 200 ok.
-
+Remember to add the access token in a header called Authorization,the syntax is
+for example: "Bearer [token]"
 
 operation::user_update[snippets='curl-request,http-request,http-response']
 
 ==== Delete
-To delete an user, it's id must be added at the end of base url and http verb is DELETE.
-If every-thing is all-right so the web service sends an 204 No content status code,
-which means that request worked but there is not body in the response.
+User delete is forbidden
 
 operation::user_delete[snippets='curl-request,http-request,http-response']

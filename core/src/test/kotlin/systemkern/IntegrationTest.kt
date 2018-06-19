@@ -12,6 +12,7 @@ import org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDO
 import org.springframework.context.annotation.ComponentScan
 import org.springframework.restdocs.JUnitRestDocumentation
 import org.springframework.restdocs.mockmvc.MockMvcRestDocumentation
+import org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.junit4.SpringRunner
 import org.springframework.test.web.servlet.MockMvc
@@ -41,6 +42,7 @@ abstract class IntegrationTest {
     fun setUp() {
         this.mockMvc = MockMvcBuilders.webAppContextSetup(this.context)
             .apply<DefaultMockMvcBuilder>(MockMvcRestDocumentation.documentationConfiguration(this.restDocumentation))
+            .apply<DefaultMockMvcBuilder>(springSecurity())
             .build()
     }
 }
