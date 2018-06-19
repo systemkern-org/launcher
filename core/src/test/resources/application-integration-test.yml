@@ -6,6 +6,3 @@
 # It is activated by the class annotation @ActiveProfiles("integrationtest")
 #
 ##############################################################################
-
-user-profile:
-  bcrypt-encode-rounds: 20

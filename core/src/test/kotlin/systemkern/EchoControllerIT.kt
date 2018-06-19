@@ -2,7 +2,7 @@ package systemkern
 
 
 import org.junit.Test
-import org.junit.runner.RunWith
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT
 import org.springframework.http.MediaType.APPLICATION_JSON
@@ -12,12 +12,14 @@ import org.springframework.restdocs.payload.JsonFieldType.NUMBER
 import org.springframework.restdocs.payload.JsonFieldType.STRING
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
 import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
-import org.springframework.test.context.junit4.SpringRunner
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import java.time.LocalDateTime
 
-@RunWith(SpringRunner::class)
-@SpringBootTest(webEnvironment = RANDOM_PORT, classes = [CliEntryPoint::class])
+@SpringBootTest(
+    webEnvironment = RANDOM_PORT,
+    classes = [EchoController::class]
+)
+@EnableAutoConfiguration
 internal class EchoControllerIT : IntegrationTest() {
 
     @Test fun `Can Post Echo Request`() {
