@@ -5,13 +5,15 @@ import org.springframework.http.HttpStatus
 import org.springframework.security.core.Authentication
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.web.bind.annotation.*
+import java.time.Duration
 import java.time.LocalDateTime
 import java.util.UUID
 import javax.servlet.http.HttpServletRequest
 
 @RestController
 internal class AuthenticationController(
-    val service: AuthenticationService
+    val service: AuthenticationService,
+    val sessionTimeOut: Duration
 ) {
     @PostMapping("/login")
     internal fun login(auth: Authentication,
@@ -23,7 +25,7 @@ internal class AuthenticationController(
             if (!passwordEncoder.matches(password, user.password))
                 throw UserNotFoundException("UserNotFoundException")
             val token: UUID = UUID.fromString(auth.credentials.toString())
-            val validUntil = LocalDateTime.now().plusMinutes(Parameters.sessionTime.toLong())
+            val validUntil = LocalDateTime.now().plusMinutes(sessionTimeOut.toMinutes())
             val authResp = AuthenticationResponse(
                 token = token,
                 username = user.username,

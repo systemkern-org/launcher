@@ -141,12 +141,6 @@
                     </dependency>
                 </dependencies>
             </plugin>
-            <!-- version-eye -->
-            <plugin>
-                <groupId>com.versioneye</groupId>
-                <artifactId>versioneye-maven-plugin</artifactId>
-                <version>${version.eye}</version>
-            </plugin>
             <!-- create test jars -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

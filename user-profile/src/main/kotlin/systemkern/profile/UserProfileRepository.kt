@@ -9,6 +9,7 @@ import org.springframework.data.rest.core.config.RepositoryRestConfiguration
 import org.springframework.data.rest.webmvc.config.RepositoryRestConfigurer
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.stereotype.Component
+import java.time.Duration
 import java.util.*
 import javax.persistence.*
 import javax.servlet.http.HttpSessionEvent
@@ -48,20 +49,23 @@ internal class RepositoryRestConfig : RepositoryRestConfigurer {
 @Configuration
 @ConfigurationProperties("user-profile")
 internal class UserProfileConfiguration {
-    val bcryptEncodeRounds: Int = 10
-    @Bean
-    internal fun bcryptPasswordEncoderBean() =
+    var bcryptEncodeRounds: Int = 10
+    var sessionTimeOut: Duration = Duration.ofMinutes(30)
+
+    @Bean internal fun bcryptPasswordEncoderBean() =
         BCryptPasswordEncoder(bcryptEncodeRounds)
+    @Bean internal fun sessTimeOutBean() =
+        sessionTimeOut
 }
 
 @Component
-internal class SessionListener : HttpSessionListener {
+internal class SessionListener(val sessionTimeOut: Duration) : HttpSessionListener {
 
     override fun sessionDestroyed(p0: HttpSessionEvent?) {
 
     }
 
     override fun sessionCreated(event: HttpSessionEvent) {
-        event.session.maxInactiveInterval =  Parameters.sessionTime.toInt() * 60
+        event.session.maxInactiveInterval =  sessionTimeOut.toMinutes() as Int
     }
 }

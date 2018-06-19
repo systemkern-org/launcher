@@ -52,13 +52,11 @@ internal class UserControllerIT : IntegrationTest() {
             STRING)
     )
     private val loginResponseFields = responseFields(listOf(
-    fieldWithPath("token").description("Token to authenticate the next requests")
-    .type(STRING),
+    fieldWithPath("token").description("Token to authenticate the next requests").type(STRING),
     fieldWithPath(username).description(usernameDesc).type(STRING),
     fieldWithPath("userId").description("Password of user to be created").type(STRING),
-    fieldWithPath("validUntil").description("Date and Time until session will expire")
-    .type(STRING)
-    ))
+    fieldWithPath("validUntil").description("Date and Time until session will expire").type(STRING)))
+
     @Autowired
     private lateinit var testDataCreator: UserProfileTestDataCreator
     private lateinit var userId: UUID
