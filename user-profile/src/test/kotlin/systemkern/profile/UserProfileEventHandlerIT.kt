@@ -8,8 +8,11 @@ import org.springframework.boot.autoconfigure.domain.EntityScan
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories
+import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.junit4.SpringRunner
 
+@RunWith(SpringRunner::class)
+@ActiveProfiles("integration-test")
 @SpringBootTest(classes = [
     UserProfileRepository::class,
     UserProfileEntiyListener::class,
@@ -17,10 +20,9 @@ import org.springframework.test.context.junit4.SpringRunner
     UserProfile::class
 ])
 @EntityScan("systemkern")
-@RunWith(SpringRunner::class)
 @DataJpaTest(showSql = false)
 @EnableJpaRepositories
-internal class UserEventHandlerTest {
+internal class UserEventHandlerIT {
 
     @Autowired
     internal lateinit var repo: UserProfileRepository

@@ -59,6 +59,11 @@
             <artifactId>spring-restdocs-mockmvc</artifactId>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-test</artifactId>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <dependencyManagement>
@@ -96,27 +101,27 @@
 
             <!-- external dependencies -->
             <dependency>
-                <groupId>com.nhaarman</groupId>
-                <artifactId>mockito-kotlin</artifactId>
-                <version>${com.nhaarman.mockito-kotlin.version}</version>
-            </dependency>
-
-            <dependency>
                 <groupId>commons-net</groupId>
                 <artifactId>commons-net</artifactId>
                 <version>${commons-net.commons-net.version}</version>
             </dependency>
-
             <dependency>
                 <groupId>org.javamoney</groupId>
                 <artifactId>moneta</artifactId>
                 <version>${org.javamoney.moneta.version}</version>
             </dependency>
-
             <dependency>
                 <groupId>org.zalando</groupId>
                 <artifactId>jackson-datatype-money</artifactId>
                 <version>${org.zalando.jackson-datatype-money.version}</version>
+            </dependency>
+
+            <!-- testing dependencies -->
+            <dependency>
+                <groupId>com.nhaarman</groupId>
+                <artifactId>mockito-kotlin</artifactId>
+                <version>${com.nhaarman.mockito-kotlin.version}</version>
+                <scope>test</scope>
             </dependency>
         </dependencies>
     </dependencyManagement>

@@ -1,4 +1,4 @@
-package systemkern
+package systemkern.profile
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.junit.Before
@@ -26,7 +26,7 @@ import org.springframework.web.context.WebApplicationContext
 @ComponentScan(basePackages = ["systemkern"])
 @SpringBootTest(webEnvironment = RANDOM_PORT, classes = [Any::class])
 @EnableAutoConfiguration
-internal abstract class IntegrationTest {
+abstract class IntegrationTest {
 
     val restDocumentation = JUnitRestDocumentation()
     @Autowired
@@ -42,7 +42,7 @@ internal abstract class IntegrationTest {
     fun setUp() {
         this.mockMvc = MockMvcBuilders.webAppContextSetup(this.context)
             .apply<DefaultMockMvcBuilder>(MockMvcRestDocumentation.documentationConfiguration(this.restDocumentation))
-            //.apply<DefaultMockMvcBuilder>(springSecurity())
+            .apply<DefaultMockMvcBuilder>(springSecurity())
             .build()
     }
 }
