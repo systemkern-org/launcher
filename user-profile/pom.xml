@@ -29,6 +29,12 @@
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-core</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.systemkern</groupId>
+            <artifactId>core</artifactId>
+            <scope>test</scope>
+            <type>test-jar</type>
+        </dependency>
     </dependencies>
 
 </project>
