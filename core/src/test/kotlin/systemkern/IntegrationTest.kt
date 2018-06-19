@@ -6,6 +6,10 @@ import org.junit.Rule
 import org.junit.rules.RuleChain
 import org.junit.runner.RunWith
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration
+import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT
+import org.springframework.context.annotation.ComponentScan
 import org.springframework.restdocs.JUnitRestDocumentation
 import org.springframework.restdocs.mockmvc.MockMvcRestDocumentation
 import org.springframework.test.context.ActiveProfiles
@@ -18,7 +22,10 @@ import org.springframework.web.context.WebApplicationContext
 
 @RunWith(SpringRunner::class)
 @ActiveProfiles("integration-test")
-internal abstract class IntegrationTest {
+@ComponentScan(basePackages = ["systemkern"])
+@SpringBootTest(webEnvironment = RANDOM_PORT, classes = [Any::class])
+@EnableAutoConfiguration
+abstract class IntegrationTest {
 
     val restDocumentation = JUnitRestDocumentation()
     @Autowired

@@ -1,10 +1,7 @@
 package systemkern
 
-
 import org.junit.Test
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration
-import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT
 import org.springframework.http.MediaType
 import org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document
 import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get
@@ -12,10 +9,7 @@ import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
 import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
-@SpringBootTest(
-    webEnvironment = RANDOM_PORT,
-    classes = [PingController::class]
-)
+
 @EnableAutoConfiguration
 internal class PingControllerIT : IntegrationTest() {
 
