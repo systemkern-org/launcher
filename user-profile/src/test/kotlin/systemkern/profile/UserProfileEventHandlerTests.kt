@@ -12,7 +12,7 @@ import org.springframework.test.context.junit4.SpringRunner
 
 @SpringBootTest(classes = [
     UserProfileRepository::class,
-    UserProfileEntiyListener::class,
+    UserProfileEntityListener::class,
     UserProfileConfiguration::class,
     UserProfile::class
 ])
@@ -30,7 +30,9 @@ internal class UserEventHandlerTest {
             UserProfile(
                 username = "userTest",
                 name = "Test User",
-                password = "password"
+                password = "password",
+                email = "userTest@gmail.com",
+                emailVerified = false
             ))
 
         assertThat(persistedUser.password).isNotBlank()

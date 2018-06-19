@@ -8,7 +8,7 @@ import java.util.UUID.randomUUID
 import javax.persistence.GenerationType.AUTO
 
 @Entity
-@EntityListeners(UserProfileEntiyListener::class)
+@EntityListeners(UserProfileEntityListener::class)
 internal data class UserProfile(
     @Id
     @GeneratedValue(strategy = AUTO)
@@ -17,5 +17,7 @@ internal data class UserProfile(
 
     @JsonProperty(access = WRITE_ONLY)
     var password: String, /*This attribute is var because of how repository event handler works*/
-    val username: String
+    val username: String,
+    val email: String,
+    val emailVerified: Boolean
 )

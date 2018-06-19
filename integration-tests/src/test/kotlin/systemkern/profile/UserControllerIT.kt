@@ -37,6 +37,7 @@ internal class UserControllerIT : IntegrationTest() {
     private val passwordExample3 = usernameExample.plus("*")
     private val httpHeaders = HttpHeaders()
     private val restUrl = "/user-profiles"
+    private val emailVerify = "/user-profiles/verify-email"
     private val restLogin = "/login"
     private var token: String = ""
     val headers: HashMap<String, String> = HashMap()
@@ -130,6 +131,25 @@ internal class UserControllerIT : IntegrationTest() {
             .accept(APPLICATION_JSON))
             .andExpect(status().isOk)
             .andDo(document("user_read",
+                responseFields(entityResponseFields)
+            ))
+    }
+    @Test
+    fun `Can verify email User`() {
+     /*   val username = usernameExample1
+        val password = passwordExample1
+        `create user function`(TestUser(
+            username = username,
+            name = nameExample,
+            password = password
+        ))
+        `login function`(username, password)*/
+        this.mockMvc.perform(RestDocumentationRequestBuilders.put("$emailVerify")
+            //.header(AUTHORIZATION, token)
+            .contentType(APPLICATION_JSON)
+            .accept(APPLICATION_JSON))
+            .andExpect(status().isOk)
+            .andDo(document("user_email_verify",
                 responseFields(entityResponseFields)
             ))
     }
