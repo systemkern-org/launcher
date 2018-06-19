@@ -40,18 +40,23 @@
 
         <!-- testing dependencies -->
         <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
             <groupId>com.nhaarman</groupId>
             <artifactId>mockito-kotlin</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.assertj</groupId>
-            <artifactId>assertj-core</artifactId>
+            <groupId>org.hsqldb</groupId>
+            <artifactId>hsqldb</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.restdocs</groupId>
+            <artifactId>spring-restdocs-mockmvc</artifactId>
             <scope>test</scope>
         </dependency>
     </dependencies>
