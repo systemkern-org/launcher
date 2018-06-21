@@ -70,6 +70,7 @@ internal class UserProfileConfiguration {
 
     @Bean internal fun bcryptPasswordEncoderBean() =
         BCryptPasswordEncoder(bcryptEncodeRounds)
+
     @Bean internal fun sessTimeOutBean() =
         sessionTimeOut
 }
@@ -77,11 +78,9 @@ internal class UserProfileConfiguration {
 @Component
 internal class SessionListener(val sessionTimeOut: Duration) : HttpSessionListener {
 
-    override fun sessionDestroyed(p0: HttpSessionEvent?) {
-
-    }
+    override fun sessionDestroyed(p0: HttpSessionEvent?) {}
 
     override fun sessionCreated(event: HttpSessionEvent) {
-        event.session.maxInactiveInterval =  sessionTimeOut.toMinutes() as Int
+        event.session.maxInactiveInterval = 30 * 60
     }
 }
