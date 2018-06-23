@@ -7,19 +7,14 @@ services:
   - docker
 
 # -B batch mode makes Maven less verbose
-script: mvn -B clean verify
 script:
-  - docker run -v $TRAVIS_BUILD_DIR:/documents/ --name asciidoc-to-html asciidoctor/docker-asciidoctor asciidoctor -D docs "integration-tests/src/main/asciidoc/readme.adoc"
-  - docker run -v $TRAVIS_BUILD_DIR:/documents/ --name asciidoc-to-pdf asciidoctor/docker-asciidoctor asciidoctor-pdf -D docs "integration-tests/src/main/asciidoc/readme.adoc"
+  - mvn -B clean compile
+  - mvn -B clean install
+  - mvn -B clean verify
 
-after_error:
-  - docker logs asciidoc-to-html
-  - docker logs asciidoc-to-pdf
-
-after_failure:
-  - docker logs asciidoc-to-html
-  - docker logs asciidoc-to-pdf
 after_success:
+  - cd $TRAVIS_BUILD_DIR/integration-tests/target/generated-docs
+  - cp readme.html $TRAVIS_BUILD_DIR/docs
   - cd $TRAVIS_BUILD_DIR/docs
   - mv readme.html index.html
   - cd ..
