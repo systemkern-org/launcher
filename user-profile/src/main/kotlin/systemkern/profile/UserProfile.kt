@@ -19,5 +19,5 @@ internal data class UserProfile(
     var password: String, /*This attribute is var because of how repository event handler works*/
     val username: String,
     val email: String,
-    val emailVerified: Boolean
+    val verified: Boolean
 )
