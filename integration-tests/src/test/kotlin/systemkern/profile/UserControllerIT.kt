@@ -13,6 +13,7 @@ import org.springframework.http.MediaType.APPLICATION_JSON
 import org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document
 import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders
 import org.springframework.restdocs.payload.JsonFieldType.STRING
+import org.springframework.restdocs.payload.JsonFieldType.BOOLEAN
 import org.springframework.restdocs.payload.PayloadDocumentation.*
 import org.springframework.test.context.junit4.SpringRunner
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
@@ -28,6 +29,7 @@ internal class UserControllerIT : IntegrationTest() {
     private val nameExample = "AndresAusecha"
     private val nameExample1 = "RainerKern"
     private val usernameExample = nameExample + "18"
+    private val emailExample = nameExample + "@gmail.com"
     private val passwordExample = usernameExample.plus("*")
     private val usernameExample1 = nameExample + "19"
     private val passwordExample1 = usernameExample.plus("*")
@@ -48,6 +50,10 @@ internal class UserControllerIT : IntegrationTest() {
         fieldWithPath("id").description("The Id of the user entity").type(STRING),
         fieldWithPath("name").description("Name of the user").type(STRING),
         fieldWithPath(username).description(usernameDesc).type(STRING),
+        fieldWithPath("email").description("User's email").type(STRING),
+        fieldWithPath("verified").description("Verified is a flag that means user profile activation")
+            .type(BOOLEAN),
+        fieldWithPath("_links.self.href").description("Link to access the created user").type(STRING),
         fieldWithPath("_links.self.href").description("Link to access the created user").type(STRING),
         fieldWithPath("_links.userProfile.href").description("Link to access the created user").type(
             STRING)
@@ -99,7 +105,8 @@ internal class UserControllerIT : IntegrationTest() {
         `create user function`(TestUser(
             username = usernameExample,
             name = nameExample,
-            password = passwordExample
+            password = passwordExample,
+            email = emailExample
         ))
     }
 
@@ -110,7 +117,8 @@ internal class UserControllerIT : IntegrationTest() {
         `create user function`(TestUser(
             username = username,
             name = nameExample1,
-            password = password
+            password = password,
+            email = emailExample
         ))
         `login function`(username, password)
     }
@@ -122,7 +130,8 @@ internal class UserControllerIT : IntegrationTest() {
         `create user function`(TestUser(
             username = username,
             name = nameExample,
-            password = password
+            password = password,
+            email = emailExample
         ))
         `login function`(username, password)
         this.mockMvc.perform(RestDocumentationRequestBuilders.get("$restUrl/$userId")
@@ -144,7 +153,7 @@ internal class UserControllerIT : IntegrationTest() {
             password = password
         ))
         `login function`(username, password)*/
-        this.mockMvc.perform(RestDocumentationRequestBuilders.put("$emailVerify")
+        this.mockMvc.perform(RestDocumentationRequestBuilders.put(emailVerify)
             //.header(AUTHORIZATION, token)
             .contentType(APPLICATION_JSON)
             .accept(APPLICATION_JSON))
@@ -161,7 +170,8 @@ internal class UserControllerIT : IntegrationTest() {
         `create user function`(TestUser(
             username = username,
             name = nameExample,
-            password = password
+            password = password,
+            email = emailExample
         ))
         `login function`(username, password)
         this.mockMvc.perform(RestDocumentationRequestBuilders.put("$restUrl/$userId")
@@ -171,7 +181,8 @@ internal class UserControllerIT : IntegrationTest() {
                     TestUser(
                         username = "TestUserToUpdate",
                         name = "Test user to update",
-                        password = "TestUserToUpdate*"
+                        password = "TestUserToUpdate*",
+                        email = emailExample
                     )
                 ))
             .contentType(APPLICATION_JSON)
@@ -195,5 +206,6 @@ internal class UserControllerIT : IntegrationTest() {
 private data class TestUser(
     val username: String,
     val name: String,
-    val password: String
+    val password: String,
+    val email: String
 )

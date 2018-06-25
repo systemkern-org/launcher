@@ -24,5 +24,5 @@ internal fun createTestUser() =
         name = "Test User",
         password = "s3cret",
         email = "userTest@gmail.com",
-        emailVerified = false
+        verified = false
     )
