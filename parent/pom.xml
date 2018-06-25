@@ -25,7 +25,7 @@
         <replacer-maven-plugin.version>1.5.3</replacer-maven-plugin.version>
 
         <!-- dependency versions-->
-        <com.nhaarman.mockito-kotlin.version>1.5.0</com.nhaarman.mockito-kotlin.version>
+        <com.nhaarman.mockito-kotlin.version>1.6.0</com.nhaarman.mockito-kotlin.version>
         <org.javamoney.moneta.version>1.1</org.javamoney.moneta.version>
         <org.zalando.jackson-datatype-money.version>1.0.2</org.zalando.jackson-datatype-money.version>
     </properties>
@@ -102,11 +102,6 @@
             </dependency>
 
             <!-- external dependencies -->
-            <dependency>
-                <groupId>com.nhaarman</groupId>
-                <artifactId>mockito-kotlin</artifactId>
-                <version>${com.nhaarman.mockito-kotlin.version}</version>
-            </dependency>
             <dependency>
                 <groupId>commons-net</groupId>
                 <artifactId>commons-net</artifactId>
