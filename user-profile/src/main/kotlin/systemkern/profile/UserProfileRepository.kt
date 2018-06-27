@@ -27,7 +27,6 @@ internal class UserProfileController(val repo1: UserProfileRepository,
                                      val repo2: EmailVerificationRepository){
     @PostMapping("user-profiles")
     fun saveUser(@RequestBody requestBody: UserProfile){
-
         repo1.save(requestBody)
         val localDateTime = LocalDateTime.now()
         val emailVerificationEntity = EmailVerification(
