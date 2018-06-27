@@ -2,13 +2,13 @@ version: '2'
 services:
 
   mailsender:
-    image: djfarrelly/maildev
+    image: droptica/maildev:latest
     ports:
       - '25:25'
       - '4085:80'
 
   database:
-    image: postgres:9.6.3-alpine
+    image: postgres:latest
     hostname: 192.168.99.100
     ports:
       - '5432:5432'

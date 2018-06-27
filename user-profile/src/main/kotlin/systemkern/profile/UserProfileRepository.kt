@@ -24,9 +24,9 @@ import java.util.zip.DataFormatException
 
 @RestController
 internal class UserProfileController(val repo1: UserProfileRepository,
-                                     val repo2: EmailVerificationRepository){
+                                     val repo2: EmailVerificationRepository) {
     @PostMapping("user-profiles")
-    fun saveUser(@RequestBody requestBody: UserProfile){
+    fun saveUser(@RequestBody requestBody: UserProfile) {
         repo1.save(requestBody)
         val localDateTime = LocalDateTime.now()
         val emailVerificationEntity = EmailVerification(
@@ -37,6 +37,7 @@ internal class UserProfileController(val repo1: UserProfileRepository,
             requestBody.id
         )
         repo2.save(emailVerificationEntity)
+
     }
 }
 
@@ -104,5 +105,6 @@ internal class SessionListener : HttpSessionListener {
         event.session.maxInactiveInterval = Parameters.sessionTime.toInt() * 60
     }
 }
+
 @ResponseStatus(HttpStatus.NOT_ACCEPTABLE)
 internal class BadEmailException(message: String?) : DataFormatException(message)
