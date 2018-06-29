@@ -1,23 +1,36 @@
 package systemkern.profile
 
-import org.springframework.data.jpa.repository.Query
 import org.springframework.data.repository.CrudRepository
-import org.springframework.data.repository.query.Param
-import org.springframework.data.rest.core.annotation.RepositoryRestResource
-import org.springframework.stereotype.Component
-import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.stereotype.Service
+import org.springframework.web.bind.annotation.*
 import java.time.LocalDateTime
 import java.util.*
 import javax.persistence.Entity
 import javax.persistence.Id
 
-@RepositoryRestResource
-@Component
-internal interface EmailVerificationRepository : CrudRepository<EmailVerification, UUID> {
-    @PostMapping("verify-email/{tokenId}")
-    @Query("SELECT * FROM public.user_profile u WHERE u.id = :tokenId", nativeQuery = true)
-    fun verifyEmail(@Param("tokenId") tokenId: String): EmailVerification
+
+@RestController
+internal class EmailVerificationController(val serv: EmailVerificationService){
+    @GetMapping("/verify-email/{id}")
+    fun verifyUserByToken(@PathVariable("id") tokenId : String): EmailVerification {
+        val emailVerification = serv.findById(UUID.fromString(tokenId)).get()
+        val completionDate = LocalDateTime.now()
+        if(LocalDateTime.now() <= emailVerification.validUntil) {
+            emailVerification.completionDate = completionDate
+            serv.save(emailVerification)
+        }
+        return emailVerification
+    }
 }
+@Service
+internal class EmailVerificationService(val repo: EmailVerificationRepository) {
+    internal fun findById(id: UUID) =
+        repo.findById(id)
+    internal fun save(emailVerification: EmailVerification) =
+        repo.save(emailVerification)
+}
+
+internal interface EmailVerificationRepository : CrudRepository<EmailVerification, UUID>
 
 @Entity
 internal data class EmailVerification(
@@ -25,6 +38,6 @@ internal data class EmailVerification(
     val id: UUID,
     val creationDate: LocalDateTime,
     val validUntil: LocalDateTime,
-    val completionDate: LocalDateTime,
+    var completionDate: LocalDateTime,
     val userProfileId: UUID
 )

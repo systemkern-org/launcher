@@ -53,6 +53,17 @@
             <artifactId>spring-integration-core</artifactId>
             <version>${spring-integration-core}</version>
         </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context-support</artifactId>
+            <version>5.1.0.BUILD-SNAPSHOT</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-beans</artifactId>
+            <version>5.1.0.BUILD-SNAPSHOT</version>
+        </dependency>
     </dependencies>
 
 </project>

@@ -4,16 +4,16 @@ services:
   mailsender:
     image: droptica/maildev:latest
     ports:
-      - '25:25'
+      - '1025:1080'
       - '4085:80'
 
-  database:
-    image: postgres:latest
-    hostname: 192.168.99.100
-    ports:
+  #database:
+   # image: postgres:latest
+    #hostname: 192.168.99.100
+    #ports:
       - '5432:5432'
-    environment:
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
+    #environment:
+     # - POSTGRES_USER=postgres
+      #- POSTGRES_PASSWORD=postgres
     #volumes:
       #- ./setup-db.sql:/docker-entrypoint-initdb.d/setup-db.sql:ro

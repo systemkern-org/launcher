@@ -31,8 +31,7 @@ internal class UserEventHandlerTest {
                 username = "userTest",
                 name = "Test User",
                 password = "password",
-                email = "userTest@gmail.com",
-                verified = false
+                email = "userTest@gmail.com"
             ))
 
         assertThat(persistedUser.password).isNotBlank()

@@ -39,7 +39,7 @@ internal class CustomWebSecurityConfigurerAdapter(
     override fun configure(webSecurity: WebSecurity) {
         webSecurity
             .ignoring()
-            .antMatchers(HttpMethod.PUT,"$pattern/verify-email")
+            .antMatchers(HttpMethod.GET,"/verify-email/{\\d+}")
     }
     @Throws(Exception::class)
     override fun configure(http: HttpSecurity) {
