@@ -29,8 +29,10 @@ internal class UserProfileController(val repo1: UserProfileRepository,
                                      @Autowired
                                      val emailSender: JavaMailSender
 ) {
+    var urlToVerify: String = ""
+
     @PostMapping("user-profiles")
-    fun saveUser(@RequestBody requestBody: UserProfile) {
+    private fun saveUser(@RequestBody requestBody: UserProfile): SaveUserProfileResponse{
         repo1.save(requestBody)
         val localDateTime = LocalDateTime.now()
         val tokenId = UUID.randomUUID()
@@ -44,7 +46,11 @@ internal class UserProfileController(val repo1: UserProfileRepository,
         repo2.save(emailVerificationEntity)
         val message = createEmailMessage(requestBody, tokenId)
         emailSender.send(message)
+
+        return SaveUserProfileResponse(urlToVerify)
     }
+
+    private data class SaveUserProfileResponse(var url: String)
 
     private fun createEmailMessage(userProfile: UserProfile,
                                    tokenId: UUID
@@ -53,7 +59,8 @@ internal class UserProfileController(val repo1: UserProfileRepository,
         val message = SimpleMailMessage()
         message.setTo(userProfile.email)
         message.subject = "Verify launcher account"
-        message.text = buildLink(tokenId)
+        urlToVerify = buildLink(tokenId)
+        message.text = urlToVerify
 
         return message
     }

@@ -10,22 +10,24 @@ import javax.persistence.Id
 
 
 @RestController
-internal class EmailVerificationController(val serv: EmailVerificationService){
+internal class EmailVerificationController(val serv: EmailVerificationService) {
     @GetMapping("/verify-email/{id}")
-    fun verifyUserByToken(@PathVariable("id") tokenId : String): EmailVerification {
+    fun verifyUserByToken(@PathVariable("id") tokenId: String): EmailVerification {
         val emailVerification = serv.findById(UUID.fromString(tokenId)).get()
         val completionDate = LocalDateTime.now()
-        if(LocalDateTime.now() <= emailVerification.validUntil) {
+        if (LocalDateTime.now() <= emailVerification.validUntil) {
             emailVerification.completionDate = completionDate
             serv.save(emailVerification)
         }
         return emailVerification
     }
 }
+
 @Service
 internal class EmailVerificationService(val repo: EmailVerificationRepository) {
     internal fun findById(id: UUID) =
         repo.findById(id)
+
     internal fun save(emailVerification: EmailVerification) =
         repo.save(emailVerification)
 }

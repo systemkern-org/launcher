@@ -45,6 +45,7 @@ internal class UserControllerIT : IntegrationTest() {
     val headers: HashMap<String, String> = HashMap()
     private var usernameDesc = "Username to log in"
     private var username = "username"
+    private var urlToVerifyUserProfile = ""
     
     private val entityResponseFields = listOf(
         fieldWithPath("id").description("The Id of the user entity").type(STRING),
@@ -81,10 +82,28 @@ internal class UserControllerIT : IntegrationTest() {
             .content(objectMapper.writeValueAsString(user))
             .contentType(APPLICATION_JSON)
             .accept(APPLICATION_JSON))
-            .andExpect(status().isCreated)
+            .andExpect(status().isOk)
             .andDo(document("user_create",
-                responseFields(entityResponseFields)
-            ))
+                responseFields(listOf(
+                    fieldWithPath("url").description("Url to verify user email").type(STRING))
+                )))
+            .andReturn().response.contentAsString.let { urlToVerifyUserProfile = "url" +
+                    JSONObject(it).get("url").toString() }
+        `verify email`()
+    }
+
+    private fun `verify email`(){
+        this.mockMvc.perform(RestDocumentationRequestBuilders.get(urlToVerifyUserProfile)
+            .contentType(APPLICATION_JSON)
+            .accept(APPLICATION_JSON))
+            .andExpect(status().isOk)
+            .andDo(document("user_verify",
+                responseFields(listOf(
+                    fieldWithPath("creationDate").description("Date of user profile creation").type(STRING),
+                    fieldWithPath("validUntil").description("Date time until token is valid").type(STRING),
+                    fieldWithPath("completionDate").description("Date time in which email was verified").type(STRING),
+                    fieldWithPath("userProfileId").description("Id of user in data base").type(STRING)
+                ))))
     }
 
     private fun `login function`(username: String, password: String) {
