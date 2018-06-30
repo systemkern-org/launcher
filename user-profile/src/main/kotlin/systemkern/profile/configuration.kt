@@ -39,7 +39,6 @@ internal class CustomWebSecurityConfigurerAdapter(
     override fun configure(webSecurity: WebSecurity) {
         webSecurity
             .ignoring()
-            .antMatchers(HttpMethod.GET,"/verify-email/{\\d+}")
     }
     @Throws(Exception::class)
     override fun configure(http: HttpSecurity) {
@@ -58,6 +57,9 @@ internal class CustomWebSecurityConfigurerAdapter(
             .authenticated()
             .antMatchers(HttpMethod.GET, pattern, pattern1)
             .denyAll()
+
+            .antMatchers(HttpMethod.POST,"/verify-email/{\\d+}")
+            .authenticated()
 
             .and()
             .addFilterBefore(AuthenticationFilter(UPAuthenticationProvider(), service),

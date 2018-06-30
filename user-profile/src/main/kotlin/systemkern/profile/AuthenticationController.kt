@@ -1,9 +1,7 @@
 package systemkern.profile
 
-import org.springframework.dao.EmptyResultDataAccessException
 import org.springframework.http.HttpStatus
 import org.springframework.security.core.Authentication
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.web.bind.annotation.*
 import java.time.LocalDateTime
 import java.util.UUID
@@ -17,24 +15,7 @@ internal class AuthenticationController(
     internal fun login(auth: Authentication,
                        @RequestHeader password: String
     ): AuthenticationResponse {
-        val passwordEncoder = BCryptPasswordEncoder()
-        try {
-            val user = service.findByUsername(auth.principal.toString())
-            if (!passwordEncoder.matches(password, user.password))
-                throw UserNotFoundException("UserNotFoundException")
-            val token: UUID = UUID.fromString(auth.credentials.toString())
-            val validUntil = LocalDateTime.now().plusMinutes(Parameters.sessionTime.toLong())
-            val authResp = AuthenticationResponse(
-                token = token,
-                username = user.username,
-                userId = user.id,
-                validUntil = validUntil
-            )
-            service.saveToken(token, authResp)
-            return authResp
-        } catch (e: EmptyResultDataAccessException) {
-            throw UserNotFoundException("UserNotFoundException")
-        }
+        return service.authenticationProcess(auth, password)
     }
 
     @PostMapping("/logout")

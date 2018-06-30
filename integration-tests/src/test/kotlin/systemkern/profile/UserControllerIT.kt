@@ -89,27 +89,21 @@ internal class UserControllerIT : IntegrationTest() {
                 )))
             .andReturn().response.contentAsString.let { urlToVerifyUserProfile = "url" +
                     JSONObject(it).get("url").toString() }
-        `verify email`()
+        `verify email`(user.username,user.password)
     }
 
-    private fun `verify email`(){
-        this.mockMvc.perform(RestDocumentationRequestBuilders.get(urlToVerifyUserProfile)
+    private fun `verify email`(username: String, password: String){
+        createHeadersObject(username,password)
+        this.mockMvc.perform(RestDocumentationRequestBuilders.post(urlToVerifyUserProfile)
+            .headers(httpHeaders)
             .contentType(APPLICATION_JSON)
             .accept(APPLICATION_JSON))
             .andExpect(status().isOk)
-            .andDo(document("user_verify",
-                responseFields(listOf(
-                    fieldWithPath("creationDate").description("Date of user profile creation").type(STRING),
-                    fieldWithPath("validUntil").description("Date time until token is valid").type(STRING),
-                    fieldWithPath("completionDate").description("Date time in which email was verified").type(STRING),
-                    fieldWithPath("userProfileId").description("Id of user in data base").type(STRING)
-                ))))
+            .andDo(document("user_verify",loginResponseFields))
     }
 
     private fun `login function`(username: String, password: String) {
-        headers[this.username] = username
-        headers["password"] = password
-        httpHeaders.setAll(headers)
+        createHeadersObject(username,password)
         this.mockMvc.perform(RestDocumentationRequestBuilders.post(restLogin)
             .headers(httpHeaders)
             .contentType(APPLICATION_JSON)
@@ -117,6 +111,12 @@ internal class UserControllerIT : IntegrationTest() {
             .andExpect(status().isOk)
             .andDo(document("user_login",loginResponseFields))
             .andReturn().response.contentAsString.let { token = "Bearer " + JSONObject(it).get("token").toString() }
+    }
+
+    private fun createHeadersObject(username: String, password: String){
+        headers[this.username] = username
+        headers["password"] = password
+        httpHeaders.setAll(headers)
     }
 
     @Test
@@ -159,25 +159,6 @@ internal class UserControllerIT : IntegrationTest() {
             .accept(APPLICATION_JSON))
             .andExpect(status().isOk)
             .andDo(document("user_read",
-                responseFields(entityResponseFields)
-            ))
-    }
-    @Test
-    fun `Can verify email User`() {
-     /*   val username = usernameExample1
-        val password = passwordExample1
-        `create user function`(TestUser(
-            username = username,
-            name = nameExample,
-            password = password
-        ))
-        `login function`(username, password)*/
-        this.mockMvc.perform(RestDocumentationRequestBuilders.put(emailVerify)
-            //.header(AUTHORIZATION, token)
-            .contentType(APPLICATION_JSON)
-            .accept(APPLICATION_JSON))
-            .andExpect(status().isOk)
-            .andDo(document("user_email_verify",
                 responseFields(entityResponseFields)
             ))
     }

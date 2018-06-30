@@ -1,12 +1,16 @@
 package systemkern.profile
 
+import org.springframework.security.core.Authentication
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.stereotype.Service
+import java.time.LocalDateTime
 import java.util.*
 import javax.servlet.http.HttpServletRequest
 import kotlin.collections.HashMap
 
 @Service
-internal class AuthenticationService(val repo: UserProfileRepository) {
+internal class AuthenticationService(val repo: UserProfileRepository,
+                                     val passwordEncoder: BCryptPasswordEncoder) {
     val tokens: HashMap<UUID, AuthenticationResponse> = HashMap()
 
     internal fun findByUsername(username: String) =
@@ -27,5 +31,26 @@ internal class AuthenticationService(val repo: UserProfileRepository) {
 
     internal fun deleteToken(token: UUID) {
         tokens.remove(token)
+    }
+
+    @Throws(UserNotFoundException::class)
+    internal fun authenticationProcess(auth: Authentication,
+                                       password: String
+    ): AuthenticationResponse {
+
+        val user = findByUsername(auth.principal.toString())
+        if (!passwordEncoder.matches(password, user.password))
+            throw UserNotFoundException("UserNotFoundException")
+        val token: UUID = UUID.fromString(auth.credentials.toString())
+
+        val validUntil = LocalDateTime.now().plusMinutes(Parameters.sessionTime.toLong())
+        val authResp = AuthenticationResponse(
+            token = token,
+            username = user.username,
+            userId = user.id,
+            validUntil = validUntil
+        )
+        saveToken(token, authResp)
+        return authResp
     }
 }

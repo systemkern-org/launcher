@@ -1,6 +1,8 @@
 package systemkern.profile
 
 import org.springframework.data.repository.CrudRepository
+import org.springframework.http.HttpStatus
+import org.springframework.security.core.Authentication
 import org.springframework.stereotype.Service
 import org.springframework.web.bind.annotation.*
 import java.time.LocalDateTime
@@ -10,16 +12,24 @@ import javax.persistence.Id
 
 
 @RestController
-internal class EmailVerificationController(val serv: EmailVerificationService) {
-    @GetMapping("/verify-email/{id}")
-    fun verifyUserByToken(@PathVariable("id") tokenId: String): EmailVerification {
-        val emailVerification = serv.findById(UUID.fromString(tokenId)).get()
+internal class EmailVerificationController(
+    val emailVerificationService: EmailVerificationService,
+    val authenticationService: AuthenticationService) {
+
+    @PostMapping("/verify-email/{id}")
+    fun verifyUserByToken(@PathVariable("id") tokenId: String,
+                          @RequestHeader password: String,
+                          auth: Authentication): AuthenticationResponse {
+
+        val emailVerification = emailVerificationService.findById(UUID.fromString(tokenId)).get()
         val completionDate = LocalDateTime.now()
         if (LocalDateTime.now() <= emailVerification.validUntil) {
             emailVerification.completionDate = completionDate
-            serv.save(emailVerification)
+            emailVerificationService.save(emailVerification)
+
+            return authenticationService.authenticationProcess(auth, password)
         }
-        return emailVerification
+        throw ExpiredTokenException("Token has expired")
     }
 }
 
@@ -43,3 +53,6 @@ internal data class EmailVerification(
     var completionDate: LocalDateTime,
     val userProfileId: UUID
 )
+
+@ResponseStatus(HttpStatus.UNAUTHORIZED)
+internal class ExpiredTokenException(message: String?) : RuntimeException()
