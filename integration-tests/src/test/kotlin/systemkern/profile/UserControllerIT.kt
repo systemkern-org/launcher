@@ -50,9 +50,6 @@ internal class UserControllerIT : IntegrationTest() {
         fieldWithPath("id").description("The Id of the user entity").type(STRING),
         fieldWithPath("name").description("Name of the user").type(STRING),
         fieldWithPath(username).description(usernameDesc).type(STRING),
-        fieldWithPath("email").description("User's email").type(STRING),
-        fieldWithPath("verified").description("Verified is a flag that means user profile activation")
-            .type(BOOLEAN),
         fieldWithPath("_links.self.href").description("Link to access the created user").type(STRING),
         fieldWithPath("_links.self.href").description("Link to access the created user").type(STRING),
         fieldWithPath("_links.userProfile.href").description("Link to access the created user").type(
@@ -143,26 +140,6 @@ internal class UserControllerIT : IntegrationTest() {
                 responseFields(entityResponseFields)
             ))
     }
-    @Test
-    fun `Can verify email User`() {
-     /*   val username = usernameExample1
-        val password = passwordExample1
-        `create user function`(TestUser(
-            username = username,
-            name = nameExample,
-            password = password
-        ))
-        `login function`(username, password)*/
-        this.mockMvc.perform(RestDocumentationRequestBuilders.put(emailVerify)
-            //.header(AUTHORIZATION, token)
-            .contentType(APPLICATION_JSON)
-            .accept(APPLICATION_JSON))
-            .andExpect(status().isOk)
-            .andDo(document("user_email_verify",
-                responseFields(entityResponseFields)
-            ))
-    }
-
     @Test
     fun `Can update User`() {
         val username = usernameExample2
