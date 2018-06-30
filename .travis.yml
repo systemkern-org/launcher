@@ -14,7 +14,7 @@ after_success:
   - cp $TRAVIS_BUILD_DIR/integration-tests/target/generated-docs/readme.html $TRAVIS_BUILD_DIR/docs/index.html
   - git config user.name "${GH_USER_NAME}"
   - git config user.email "${GH_USER_EMAIL}"
-  - git checkout -b "Branch to compilation for the number ${TRAVIS_BUILD_NUMBER}"
+  - git checkout -b branch-compilation-number-${TRAVIS_BUILD_NUMBER}
   - git add .
   - git commit -m "#18 Deploy to GitHub Pages number ${TRAVIS_BUILD_NUMBER}"
   - git push --quiet "https://${GH_TOKEN}@${GH_REF}"
