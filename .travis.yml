@@ -8,18 +8,14 @@ services:
 
 # -B batch mode makes Maven less verbose
 script:
-  - mvn -B clean compile
-  - mvn -B clean install
   - mvn -B clean verify
 
 after_success:
-  - cd $TRAVIS_BUILD_DIR/integration-tests/target/generated-docs
-  - cp readme.html $TRAVIS_BUILD_DIR/docs
-  - cd $TRAVIS_BUILD_DIR/docs
-  - mv readme.html index.html
+  - cp $TRAVIS_BUILD_DIR/integration-tests/target/generated-docs/readme.html $TRAVIS_BUILD_DIR/docs/index.html
   - cd ..
   - git config user.name "${GH_USER_NAME}"
   - git config user.email "${GH_USER_EMAIL}"
   - git checkout master
-  - git add . ; sudo git commit -m "#18 Deploy to GitHub Pages number ${TRAVIS_BUILD_NUMBER}"
-  - git push --force --quiet "https://${GH_TOKEN}@${GH_REF}"
+  - git add .
+  - git commit -m "#18 Deploy to GitHub Pages number ${TRAVIS_BUILD_NUMBER}"
+  - git push --quiet "https://${GH_TOKEN}@${GH_REF}"
