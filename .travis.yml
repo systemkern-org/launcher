@@ -15,7 +15,7 @@ after_success:
   - cd ..
   - git config user.name "${GH_USER_NAME}"
   - git config user.email "${GH_USER_EMAIL}"
-  - git checkout master
+  - git checkout -b "Branch to compilation for the number ${TRAVIS_BUILD_NUMBER}"
   - git add .
   - git commit -m "#18 Deploy to GitHub Pages number ${TRAVIS_BUILD_NUMBER}"
   - git push --quiet "https://${GH_TOKEN}@${GH_REF}"
