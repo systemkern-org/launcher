@@ -24,8 +24,8 @@ import java.util.regex.Pattern
 import java.util.zip.DataFormatException
 
 @RestController
-internal class UserProfileController(val repo1: UserProfileRepository,
-                                     val repo2: EmailVerificationRepository,
+internal class UserProfileController(val userProfileService: UserProfileService,
+                                     val emailVerificationService: EmailVerificationService,
                                      @Autowired
                                      val emailSender: JavaMailSender
 ) {
@@ -33,7 +33,7 @@ internal class UserProfileController(val repo1: UserProfileRepository,
 
     @PostMapping("user-profiles")
     private fun saveUser(@RequestBody requestBody: UserProfile): SaveUserProfileResponse{
-        repo1.save(requestBody)
+        userProfileService.save(requestBody)
         val localDateTime = LocalDateTime.now()
         val tokenId = UUID.randomUUID()
         val emailVerificationEntity = EmailVerification(
@@ -43,7 +43,7 @@ internal class UserProfileController(val repo1: UserProfileRepository,
             localDateTime,
             requestBody.id
         )
-        repo2.save(emailVerificationEntity)
+        emailVerificationService.save(emailVerificationEntity)
         val message = createEmailMessage(requestBody, tokenId)
         emailSender.send(message)
 
