@@ -10,9 +10,8 @@ services:
 script:
   - mvn -B clean verify
 
-branches:
-  only:
-  - master
+git:
+if: branch IS master
 
 after_success:
   - cp $TRAVIS_BUILD_DIR/integration-tests/target/generated-docs/readme.html $TRAVIS_BUILD_DIR/docs/index.html
