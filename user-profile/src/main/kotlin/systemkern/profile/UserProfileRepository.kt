@@ -8,7 +8,7 @@ import org.springframework.data.repository.CrudRepository
 import org.springframework.data.rest.core.annotation.RepositoryRestResource
 import org.springframework.data.rest.core.config.RepositoryRestConfiguration
 import org.springframework.data.rest.webmvc.config.RepositoryRestConfigurer
-import org.springframework.http.HttpStatus
+import org.springframework.http.HttpStatus.NOT_ACCEPTABLE
 import org.springframework.mail.SimpleMailMessage
 import org.springframework.mail.javamail.JavaMailSender
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
@@ -85,10 +85,9 @@ internal interface UserProfileRepository : CrudRepository<UserProfile, UUID> {
 internal class UserProfileEntityListener(
     internal val passwordEncoder: BCryptPasswordEncoder = BCryptPasswordEncoder()
 ) {
-    val pattern = Pattern.compile("^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*" +
-        "@[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$")
 
-    fun validateEmail(hex: String): Boolean = pattern.matcher(hex).matches()
+    fun validateEmail(hex: String): Boolean = Pattern.compile("^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*" +
+        "@[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$").matcher(hex).matches()
 
     @PrePersist
     internal fun handleUserCreate(userProfile: UserProfile) {
@@ -133,5 +132,5 @@ internal class SessionListener : HttpSessionListener {
     }
 }
 
-@ResponseStatus(HttpStatus.NOT_ACCEPTABLE)
+@ResponseStatus(NOT_ACCEPTABLE)
 internal class BadEmailException(message: String?) : DataFormatException(message)

@@ -1,6 +1,6 @@
 package systemkern.profile
 
-import org.springframework.http.HttpStatus
+import org.springframework.http.HttpStatus.NOT_FOUND
 import org.springframework.security.core.Authentication
 import org.springframework.web.bind.annotation.*
 import java.time.LocalDateTime
@@ -33,5 +33,5 @@ internal data class AuthenticationResponse(
     val validUntil: LocalDateTime
 )
 
-@ResponseStatus(HttpStatus.NOT_FOUND)
+@ResponseStatus(NOT_FOUND)
 internal class UserNotFoundException(message: String?) : RuntimeException(message)

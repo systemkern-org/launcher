@@ -37,7 +37,6 @@ internal class AuthenticationService(val repo: UserProfileRepository,
     internal fun authenticationProcess(auth: Authentication,
                                        password: String
     ): AuthenticationResponse {
-
         val user = findByUsername(auth.principal.toString())
         if (!passwordEncoder.matches(password, user.password))
             throw UserNotFoundException("UserNotFoundException")
