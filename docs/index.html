@@ -434,7 +434,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <span id="author" class="author">Systemkern</span><br>
 <span id="email" class="email"><a href="mailto:office@systemkern.com">office@systemkern.com</a></span><br>
 <span id="revnumber">version ,</span>
-<span id="revdate">2018-07-02 20:56:29 UTC</span>
+<span id="revdate">2018-07-02 21:46:43 UTC</span>
 </div>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
@@ -574,7 +574,7 @@ It can be used to test Json Object mapper implementations</p>
     -d '{
   "id" : 1,
   "value" : "foo",
-  "timestamp" : "2018-07-02T20:56:24.197"
+  "timestamp" : "2018-07-02T21:46:37.711"
 }'</code></pre>
 </div>
 </div>
@@ -592,7 +592,7 @@ Content-Length: 76
 {
   "id" : 1,
   "value" : "foo",
-  "timestamp" : "2018-07-02T20:56:24.197"
+  "timestamp" : "2018-07-02T21:46:37.711"
 }</code></pre>
 </div>
 </div>
@@ -614,7 +614,7 @@ Content-Length: 76
 {
   "id" : 1,
   "value" : "foo",
-  "timestamp" : "2018-07-02T20:56:24.197"
+  "timestamp" : "2018-07-02T21:46:37.711"
 }</code></pre>
 </div>
 </div>
@@ -693,7 +693,7 @@ X-Frame-Options: DENY
 Content-Length: 45
 
 {
-  "timestamp" : "2018-07-02T20:56:24.309"
+  "timestamp" : "2018-07-02T21:46:37.834"
 }</code></pre>
 </div>
 </div>
@@ -779,7 +779,7 @@ Content-Length: 138
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">HTTP/1.1 201 Created
-Location: http://localhost:8080/user-profiles/ba324bee-9a87-4aa3-b420-33be502a9848
+Location: http://localhost:8080/user-profiles/4695e7bd-5a6c-46e2-87a0-11f9f618708c
 Content-Type: application/json;charset=UTF-8
 X-Content-Type-Options: nosniff
 X-XSS-Protection: 1; mode=block
@@ -790,15 +790,15 @@ X-Frame-Options: DENY
 Content-Length: 363
 
 {
-  "id" : "ba324bee-9a87-4aa3-b420-33be502a9848",
+  "id" : "4695e7bd-5a6c-46e2-87a0-11f9f618708c",
   "name" : "AndresAusecha",
   "username" : "AndresAusecha20",
   "_links" : {
     "self" : {
-      "href" : "http://localhost:8080/user-profiles/ba324bee-9a87-4aa3-b420-33be502a9848"
+      "href" : "http://localhost:8080/user-profiles/4695e7bd-5a6c-46e2-87a0-11f9f618708c"
     },
     "userProfile" : {
-      "href" : "http://localhost:8080/user-profiles/ba324bee-9a87-4aa3-b420-33be502a9848"
+      "href" : "http://localhost:8080/user-profiles/4695e7bd-5a6c-46e2-87a0-11f9f618708c"
     }
   }
 }</code></pre>
@@ -839,10 +839,10 @@ X-Frame-Options: DENY
 Content-Length: 185
 
 {
-  "token" : "3790c84f-4a18-435e-a3e8-0fc16deb0fea",
+  "token" : "6e6f7f57-a673-4598-ab8d-2641f32d5131",
   "username" : "AndresAusecha20",
-  "userId" : "ba324bee-9a87-4aa3-b420-33be502a9848",
-  "validUntil" : "2018-07-02T21:26:23.896"
+  "userId" : "4695e7bd-5a6c-46e2-87a0-11f9f618708c",
+  "validUntil" : "2018-07-02T22:16:37.429"
 }</code></pre>
 </div>
 </div>
@@ -862,9 +862,9 @@ for example: "Bearer [token]"</p>
 <h5 id="_read_curl_request"><a class="link" href="#_read_curl_request">Curl request</a></h5>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">$ curl 'http://localhost:8080/user-profiles/924638b2-2a27-4ef0-8ea7-f54eaa22a4b7' -i -X GET \
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">$ curl 'http://localhost:8080/user-profiles/8fc9e915-9e00-41de-b628-344d53ead54b' -i -X GET \
     -H 'Content-Type: application/json' \
-    -H 'Authorization: Bearer 5d24dfd0-0a7a-4f9b-b491-251cdacddb41' \
+    -H 'Authorization: Bearer 83f38702-fd54-44d7-b985-8622d79594fa' \
     -H 'Accept: application/json'</code></pre>
 </div>
 </div>
@@ -873,9 +873,9 @@ for example: "Bearer [token]"</p>
 <h5 id="_read_http_request"><a class="link" href="#_read_http_request">HTTP request</a></h5>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">GET /user-profiles/924638b2-2a27-4ef0-8ea7-f54eaa22a4b7 HTTP/1.1
+<pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">GET /user-profiles/8fc9e915-9e00-41de-b628-344d53ead54b HTTP/1.1
 Content-Type: application/json
-Authorization: Bearer 5d24dfd0-0a7a-4f9b-b491-251cdacddb41
+Authorization: Bearer 83f38702-fd54-44d7-b985-8622d79594fa
 Accept: application/json
 Host: localhost:8080</code></pre>
 </div>
@@ -896,15 +896,15 @@ X-Frame-Options: DENY
 Content-Length: 352
 
 {
-  "id" : "924638b2-2a27-4ef0-8ea7-f54eaa22a4b7",
+  "id" : "8fc9e915-9e00-41de-b628-344d53ead54b",
   "name" : "Test User",
   "username" : "userTest",
   "_links" : {
     "self" : {
-      "href" : "http://localhost:8080/user-profiles/924638b2-2a27-4ef0-8ea7-f54eaa22a4b7"
+      "href" : "http://localhost:8080/user-profiles/8fc9e915-9e00-41de-b628-344d53ead54b"
     },
     "userProfile" : {
-      "href" : "http://localhost:8080/user-profiles/924638b2-2a27-4ef0-8ea7-f54eaa22a4b7"
+      "href" : "http://localhost:8080/user-profiles/8fc9e915-9e00-41de-b628-344d53ead54b"
     }
   }
 }</code></pre>
@@ -975,9 +975,9 @@ for example: "Bearer [token]"</p>
 <h5 id="_update_curl_request"><a class="link" href="#_update_curl_request">Curl request</a></h5>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">$ curl 'http://localhost:8080/user-profiles/afe6ae55-252c-450e-8d58-b68a9add339b' -i -X PUT \
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">$ curl 'http://localhost:8080/user-profiles/c23d84c2-8a24-453a-bd1f-704a1a5d9d9d' -i -X PUT \
     -H 'Content-Type: application/json' \
-    -H 'Authorization: Bearer 3790c84f-4a18-435e-a3e8-0fc16deb0fea' \
+    -H 'Authorization: Bearer 6e6f7f57-a673-4598-ab8d-2641f32d5131' \
     -H 'Accept: application/json' \
     -d '{
   "username" : "TestUserToUpdate",
@@ -992,9 +992,9 @@ for example: "Bearer [token]"</p>
 <h5 id="_update_http_request"><a class="link" href="#_update_http_request">HTTP request</a></h5>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">PUT /user-profiles/afe6ae55-252c-450e-8d58-b68a9add339b HTTP/1.1
+<pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">PUT /user-profiles/c23d84c2-8a24-453a-bd1f-704a1a5d9d9d HTTP/1.1
 Content-Type: application/json
-Authorization: Bearer 3790c84f-4a18-435e-a3e8-0fc16deb0fea
+Authorization: Bearer 6e6f7f57-a673-4598-ab8d-2641f32d5131
 Accept: application/json
 Host: localhost:8080
 Content-Length: 146
@@ -1013,7 +1013,7 @@ Content-Length: 146
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">HTTP/1.1 200 OK
-Location: http://localhost:8080/user-profiles/afe6ae55-252c-450e-8d58-b68a9add339b
+Location: http://localhost:8080/user-profiles/c23d84c2-8a24-453a-bd1f-704a1a5d9d9d
 Content-Type: application/json;charset=UTF-8
 X-Content-Type-Options: nosniff
 X-XSS-Protection: 1; mode=block
@@ -1024,15 +1024,15 @@ X-Frame-Options: DENY
 Content-Length: 370
 
 {
-  "id" : "afe6ae55-252c-450e-8d58-b68a9add339b",
+  "id" : "c23d84c2-8a24-453a-bd1f-704a1a5d9d9d",
   "name" : "Test user to update",
   "username" : "TestUserToUpdate",
   "_links" : {
     "self" : {
-      "href" : "http://localhost:8080/user-profiles/afe6ae55-252c-450e-8d58-b68a9add339b"
+      "href" : "http://localhost:8080/user-profiles/c23d84c2-8a24-453a-bd1f-704a1a5d9d9d"
     },
     "userProfile" : {
-      "href" : "http://localhost:8080/user-profiles/afe6ae55-252c-450e-8d58-b68a9add339b"
+      "href" : "http://localhost:8080/user-profiles/c23d84c2-8a24-453a-bd1f-704a1a5d9d9d"
     }
   }
 }</code></pre>
@@ -1049,7 +1049,7 @@ Content-Length: 370
 <h5 id="_delete_curl_request"><a class="link" href="#_delete_curl_request">Curl request</a></h5>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">$ curl 'http://localhost:8080/user-profiles/c448f988-3112-4785-b908-854b1f02edf8' -i -X DELETE \
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">$ curl 'http://localhost:8080/user-profiles/8e95d192-9290-454e-88b4-7283e3e24786' -i -X DELETE \
     -H 'Content-Type: application/json' \
     -H 'Accept: application/json'</code></pre>
 </div>
@@ -1059,7 +1059,7 @@ Content-Length: 370
 <h5 id="_delete_http_request"><a class="link" href="#_delete_http_request">HTTP request</a></h5>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">DELETE /user-profiles/c448f988-3112-4785-b908-854b1f02edf8 HTTP/1.1
+<pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">DELETE /user-profiles/8e95d192-9290-454e-88b4-7283e3e24786 HTTP/1.1
 Content-Type: application/json
 Accept: application/json
 Host: localhost:8080</code></pre>
@@ -1088,7 +1088,7 @@ X-Frame-Options: DENY</code></pre>
 <div id="footer">
 <div id="footer-text">
 Version <br>
-Last updated 2018-07-02 20:53:06 UTC
+Last updated 2018-07-02 21:43:13 UTC
 </div>
 </div>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css">
