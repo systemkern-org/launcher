@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>com.systemkern</groupId>
+        <artifactId>launcher-parent</artifactId>
+        <version>0.1</version>
+        <relativePath>../parent/pom.xml</relativePath>
+    </parent>
+    <packaging>war</packaging>
+
+    <artifactId>runtime-gae-standard</artifactId>
+
+    <dependencies>
+        <!-- project internal dependencies -->
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>runtime-cli</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <!-- external dependencies -->
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>javax.servlet-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.google.appengine</groupId>
+            <artifactId>appengine-api-1.0-sdk</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.module</groupId>
+            <artifactId>jackson-module-kotlin</artifactId>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <!-- as of may.2018
+             inheriting the final name from the launcher-parent.pom will break the runtime-gae-standard with the following exception
+             [ERROR] Failed to execute goal com.google.cloud.tools:appengine-maven-plugin:1.3.1:run (default-cli)
+             on project runtime-gae-standard: Dev App Server does not support App Engine Flexible Environment applications.
+        -->
+        <finalName>${project.artifactId}-${project.version}</finalName>
+        <outputDirectory>target/${project.artifactId}-${project.version}/WEB-INF/classes</outputDirectory>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-war-plugin</artifactId>
+                <configuration>
+                    <archiveClasses>true</archiveClasses>
+                    <failOnMissingWebXml>false</failOnMissingWebXml>
+                </configuration>
+            </plugin>
+
+            <!-- google cloud plugin -->
+            <plugin>
+                <groupId>com.google.cloud.tools</groupId>
+                <artifactId>appengine-maven-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
+</project>
