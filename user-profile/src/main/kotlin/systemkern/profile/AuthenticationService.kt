@@ -38,15 +38,16 @@ internal class AuthenticationService(val repo: UserProfileRepository,
                                        password: String
     ): AuthenticationResponse {
         val user = findByUsername(auth.principal.toString())
-        if (!passwordEncoder.matches(password, user.password))
-            throw UserNotFoundException("UserNotFoundException")
+        val emailVerification = user.emailVerificationList.last()
+        if (!passwordEncoder.matches(password, user.password)
+            && emailVerification.completionDate <= emailVerification.creationDate)
+                throw UserNotFoundException("UserNotFoundException")
         val token: UUID = UUID.fromString(auth.credentials.toString())
-
         val validUntil = LocalDateTime.now().plusMinutes(Parameters.sessionTime.toLong())
         val authResp = AuthenticationResponse(
             token = token,
             username = user.username,
-            userId = user.id,
+            userId = user.id_userProfile,
             validUntil = validUntil
         )
         saveToken(token, authResp)

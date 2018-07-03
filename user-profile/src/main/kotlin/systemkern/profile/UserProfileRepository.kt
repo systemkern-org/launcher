@@ -41,7 +41,7 @@ internal class UserProfileController(val userProfileService: UserProfileService,
             localDateTime,
             localDateTime.plusHours(6),
             localDateTime,
-            requestBody.id
+            requestBody
         )
         emailVerificationService.save(emailVerificationEntity)
         val message = createEmailMessage(requestBody, tokenId)

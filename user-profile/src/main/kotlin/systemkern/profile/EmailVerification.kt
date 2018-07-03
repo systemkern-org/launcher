@@ -5,11 +5,11 @@ import org.springframework.http.HttpStatus
 import org.springframework.security.core.Authentication
 import org.springframework.stereotype.Service
 import org.springframework.web.bind.annotation.*
+import reactor.util.annotation.NonNull
+import reactor.util.annotation.Nullable
 import java.time.LocalDateTime
 import java.util.*
-import javax.persistence.Entity
-import javax.persistence.Id
-
+import javax.persistence.*
 
 @RestController
 internal class EmailVerificationController(
@@ -26,7 +26,6 @@ internal class EmailVerificationController(
         if (LocalDateTime.now() <= emailVerification.validUntil) {
             emailVerification.completionDate = completionDate
             emailVerificationService.save(emailVerification)
-
             return authenticationService.authenticationProcess(auth, password)
         }
         throw ExpiredTokenException("Token has expired")
@@ -47,11 +46,14 @@ internal interface EmailVerificationRepository : CrudRepository<EmailVerificatio
 @Entity
 internal data class EmailVerification(
     @Id
-    val id: UUID,
+    @Column(name = "id_email_verification")
+    val id_email_verification: UUID,
     val creationDate: LocalDateTime,
     val validUntil: LocalDateTime,
     var completionDate: LocalDateTime,
-    val userProfileId: UUID
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_user_profile", nullable = false)
+    val userProfileId: UserProfile
 )
 
 @ResponseStatus(HttpStatus.UNAUTHORIZED)

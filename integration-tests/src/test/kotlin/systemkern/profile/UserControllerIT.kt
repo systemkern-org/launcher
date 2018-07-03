@@ -39,7 +39,6 @@ internal class UserControllerIT : IntegrationTest() {
     private val passwordExample3 = usernameExample.plus("*")
     private val httpHeaders = HttpHeaders()
     private val restUrl = "/user-profiles"
-    private val emailVerify = "/user-profiles/verify-email"
     private val restLogin = "/login"
     private var token: String = ""
     val headers: HashMap<String, String> = HashMap()
@@ -77,7 +76,7 @@ internal class UserControllerIT : IntegrationTest() {
         this.userId = testDataCreator.userId
     }
 
-    private fun `create user function`(user: TestUser) {
+    private fun createUser(user: TestUser) {
         this.mockMvc.perform(RestDocumentationRequestBuilders.post(restUrl)
             .content(objectMapper.writeValueAsString(user))
             .contentType(APPLICATION_JSON)
@@ -89,10 +88,10 @@ internal class UserControllerIT : IntegrationTest() {
                 )))
             .andReturn().response.contentAsString.let { urlToVerifyUserProfile = "url" +
                     JSONObject(it).get("url").toString() }
-        `verify email`(user.username,user.password)
+        verifyEmail(user.username,user.password)
     }
 
-    private fun `verify email`(username: String, password: String){
+    private fun verifyEmail(username: String, password: String){
         createHeadersObject(username,password)
         this.mockMvc.perform(RestDocumentationRequestBuilders.post(urlToVerifyUserProfile)
             .headers(httpHeaders)
@@ -121,7 +120,7 @@ internal class UserControllerIT : IntegrationTest() {
 
     @Test
     fun `Can create a User`() {
-        `create user function`(TestUser(
+        createUser(TestUser(
             username = usernameExample,
             name = nameExample,
             password = passwordExample,
@@ -133,7 +132,7 @@ internal class UserControllerIT : IntegrationTest() {
     fun `Can login User`() {
         val username = usernameExample3
         val password = passwordExample3
-        `create user function`(TestUser(
+        createUser(TestUser(
             username = username,
             name = nameExample1,
             password = password,
@@ -146,7 +145,7 @@ internal class UserControllerIT : IntegrationTest() {
     fun `Can read User`() {
         val username = usernameExample1
         val password = passwordExample1
-        `create user function`(TestUser(
+        createUser(TestUser(
             username = username,
             name = nameExample,
             password = password,
@@ -167,7 +166,7 @@ internal class UserControllerIT : IntegrationTest() {
     fun `Can update User`() {
         val username = usernameExample2
         val password = passwordExample2
-        `create user function`(TestUser(
+        createUser(TestUser(
             username = username,
             name = nameExample,
             password = password,
