@@ -41,7 +41,7 @@ internal class AuthenticationService(val repo: UserProfileRepository,
         val emailVerification = user.emailVerificationList.last()
         if (!passwordEncoder.matches(password, user.password)
             && emailVerification.completionDate <= emailVerification.creationDate)
-                throw UserNotFoundException("UserNotFoundException")
+            throw UserNotFoundException("UserNotFoundException")
         val token: UUID = UUID.fromString(auth.credentials.toString())
         val validUntil = LocalDateTime.now().plusMinutes(Parameters.sessionTime.toLong())
         val authResp = AuthenticationResponse(

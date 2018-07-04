@@ -32,7 +32,7 @@ internal class UserProfileController(val userProfileService: UserProfileService,
     var urlToVerify: String = ""
 
     @PostMapping("user-profiles")
-    private fun saveUser(@RequestBody requestBody: UserProfile): SaveUserProfileResponse{
+    private fun saveUser(@RequestBody requestBody: UserProfile): SaveUserProfileResponse {
         userProfileService.save(requestBody)
         val localDateTime = LocalDateTime.now()
         val tokenId = UUID.randomUUID()

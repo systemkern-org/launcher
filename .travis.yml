@@ -5,6 +5,7 @@ language: java
 
 services:
   - docker
+  - maildev
 
 # -B batch mode makes Maven less verbose
 script: mvn -B clean verify

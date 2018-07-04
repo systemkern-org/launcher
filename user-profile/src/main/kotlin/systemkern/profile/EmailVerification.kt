@@ -53,7 +53,7 @@ internal data class EmailVerification(
     var completionDate: LocalDateTime,
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_user_profile", nullable = false)
-    val userProfileId: UserProfile
+    val userProfile: UserProfile
 )
 
 @ResponseStatus(HttpStatus.UNAUTHORIZED)

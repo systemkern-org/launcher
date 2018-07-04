@@ -43,6 +43,7 @@ internal class CustomWebSecurityConfigurerAdapter(
         webSecurity
             .ignoring()
     }
+
     @Throws(Exception::class)
     override fun configure(http: HttpSecurity) {
         http.csrf()
@@ -61,7 +62,7 @@ internal class CustomWebSecurityConfigurerAdapter(
             .antMatchers(GET, pattern, pattern1)
             .denyAll()
 
-            .antMatchers(POST,"/verify-email/{\\d+}")
+            .antMatchers(POST, "/verify-email/{\\d+}")
             .authenticated()
 
             .and()

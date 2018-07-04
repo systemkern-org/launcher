@@ -29,6 +29,10 @@
         <version.eye>3.11.4</version.eye>
         <org.springframework.security.ver>5.1.0.BUILD-SNAPSHOT</org.springframework.security.ver>
         <spring-integration-core>5.1.0.BUILD-SNAPSHOT</spring-integration-core>
+        <spring-context-support-ver>5.1.0.BUILD-SNAPSHOT</spring-context-support-ver>
+        <spring-beans-ver>5.1.0.BUILD-SNAPSHOT</spring-beans-ver>
+        <hibernate-core-ver>5.0.12.Final</hibernate-core-ver>
+        <spring-boot-starter-mail>1.4.3.RELEASE</spring-boot-starter-mail>
     </properties>
 
     <dependencies>
