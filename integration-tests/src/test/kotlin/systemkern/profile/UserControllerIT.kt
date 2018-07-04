@@ -47,16 +47,16 @@ internal class UserControllerIT : IntegrationTest() {
     private var urlToVerifyUserProfile = ""
     
     private val entityResponseFields = listOf(
-        fieldWithPath("id").description("The Id of the user entity").type(STRING),
+        fieldWithPath("id_userProfile").description("The Id of the user entity").type(STRING),
         fieldWithPath("name").description("Name of the user").type(STRING),
         fieldWithPath(username).description(usernameDesc).type(STRING),
         fieldWithPath("email").description("User's email").type(STRING),
-        fieldWithPath("verified").description("Verified is a flag that means user profile activation")
-            .type(BOOLEAN),
         fieldWithPath("_links.self.href").description("Link to access the created user").type(STRING),
         fieldWithPath("_links.self.href").description("Link to access the created user").type(STRING),
         fieldWithPath("_links.userProfile.href").description("Link to access the created user").type(
-            STRING)
+            STRING),
+        fieldWithPath("_links.emailVerificationList.href").description(
+            "Link to access verification tokens generated").type(STRING)
     )
     private val loginResponseFields = responseFields(listOf(
     fieldWithPath("token").description("Token to authenticate the next requests")
