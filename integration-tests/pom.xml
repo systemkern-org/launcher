@@ -18,7 +18,7 @@
 
 
     <dependencies>
-        <!-- dependency on the production code-->
+        <!-- dependency the production code-->
         <dependency>
             <groupId>${project.parent.groupId}</groupId>
             <artifactId>runtime-cli</artifactId>
