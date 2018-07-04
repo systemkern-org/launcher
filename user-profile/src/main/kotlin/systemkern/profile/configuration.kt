@@ -36,6 +36,16 @@ internal class CustomWebSecurityConfigurerAdapter(
 
     @Throws(Exception::class)
     override fun configure(http: HttpSecurity) {
+        http.authorizeRequests()
+            .antMatchers(
+                "/v2/api-docs",
+                "/swagger-resources/**",
+                "/swagger-ui.html",
+                "/webjars/**" ,
+                /*Probably not needed*/ "/swagger.json")
+            .permitAll();
+
+        return
         http.csrf()
             .disable()
             .authorizeRequests()

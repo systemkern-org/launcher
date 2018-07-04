@@ -12,6 +12,13 @@
 
     <artifactId>user-profile</artifactId>
 
+    <properties>
+        <swagger.version>2.8.0</swagger.version>
+        <swagger-maven-plugin-version>3.1.0</swagger-maven-plugin-version>
+
+        <start.class>systemkern.CliEntryPointKt</start.class>
+    </properties>
+
 
     <dependencies>
         <!-- project internal dependencies -->
@@ -50,6 +57,12 @@
         <dependency>
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-web</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>io.springfox</groupId>
+            <artifactId>springfox-swagger2</artifactId>
+            <version>${swagger.version}</version>
         </dependency>
     </dependencies>
 

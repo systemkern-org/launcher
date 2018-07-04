@@ -1,6 +1,7 @@
 package systemkern.profile
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import io.swagger.annotations.Api
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -21,6 +22,7 @@ import javax.persistence.PreUpdate
 import javax.servlet.http.HttpSessionEvent
 import javax.servlet.http.HttpSessionListener
 
+@Api
 @RepositoryRestResource(path = "user-profiles")
 internal interface UserProfileRepository : CrudRepository<UserProfile, UUID> {
     fun findByUsername(username: String): UserProfile
