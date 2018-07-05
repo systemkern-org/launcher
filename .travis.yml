@@ -9,6 +9,7 @@ services:
 
 # -B batch mode makes Maven less verbose
 script:
+  - maildev --outgoing-host localhost
+  - maildev --outgoing-user user
+  - maildev --outgoing-pass 123
   - mvn -B clean verify
-  - maildev --incoming-user user
-  - maildev --incoming-pass 123
