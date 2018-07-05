@@ -13,10 +13,9 @@ internal class AuthenticationController(
 ) {
     @PostMapping("/login")
     internal fun login(auth: Authentication,
-                       @RequestHeader password: String
-    ): AuthenticationResponse {
-        return service.authenticationProcess(auth, password)
-    }
+                       @RequestHeader password: String) =
+        service.authenticationProcess(auth, password)
+
 
     @PostMapping("/logout")
     internal fun logout(@RequestHeader authorization: String,

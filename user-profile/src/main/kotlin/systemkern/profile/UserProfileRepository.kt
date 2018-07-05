@@ -20,6 +20,7 @@ import java.util.*
 import javax.persistence.*
 import javax.servlet.http.HttpSessionEvent
 import javax.servlet.http.HttpSessionListener
+import java.util.regex.Pattern.compile
 import java.util.regex.Pattern
 import java.util.zip.DataFormatException
 
@@ -83,11 +84,13 @@ internal interface UserProfileRepository : CrudRepository<UserProfile, UUID> {
 
 @Component
 internal class UserProfileEntityListener(
-    internal val passwordEncoder: BCryptPasswordEncoder = BCryptPasswordEncoder()
+    internal val passwordEncoder: BCryptPasswordEncoder = BCryptPasswordEncoder(),
+    private val emailPattern: Pattern = compile("^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*" +
+        "@[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$")
 ) {
 
-    fun validateEmail(hex: String): Boolean = Pattern.compile("^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*" +
-        "@[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$").matcher(hex).matches()
+    private fun validateEmail(hex: String): Boolean =
+        emailPattern.matcher(hex).matches()
 
     @PrePersist
     internal fun handleUserCreate(userProfile: UserProfile) {
