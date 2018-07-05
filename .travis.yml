@@ -11,8 +11,8 @@ before_install:
   - docker pull djfarrelly/maildev
 
 install:
-  - docker run -d -p 1080:80 -p 1025:25 djfarrelly/maildev --name maildev
-  - docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' maildev
+  - docker run -d -p 1080:80 -p 1025:25 djfarrelly/maildev
+  - docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' djfarrelly/maildev
 
 script:
   - mvn -B clean verify
