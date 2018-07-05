@@ -13,7 +13,6 @@ before_install:
 
 install:
   - docker run -d -p 1080:80 -p 1025:25 djfarrelly/maildev
-  - docker inspect djfarrelly/maildev
 
 script:
   - mvn -B clean verify
