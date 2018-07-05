@@ -12,7 +12,17 @@
 
     <artifactId>user-profile</artifactId>
 
+
     <dependencies>
+        <!-- project internal dependencies -->
+        <dependency>
+            <groupId>com.systemkern</groupId>
+            <artifactId>core</artifactId>
+            <type>test-jar</type>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- external dependencies -->
         <dependency>
             <groupId>com.fasterxml.jackson.module</groupId>
             <artifactId>jackson-module-kotlin</artifactId>

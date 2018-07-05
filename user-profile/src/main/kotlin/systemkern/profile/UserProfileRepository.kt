@@ -23,6 +23,7 @@ import javax.servlet.http.HttpSessionListener
 import java.util.regex.Pattern.compile
 import java.util.regex.Pattern
 import java.util.zip.DataFormatException
+import java.time.Duration
 
 @RestController
 internal class UserProfileController(val userProfileService: UserProfileService,
@@ -117,21 +118,24 @@ internal class RepositoryRestConfig : RepositoryRestConfigurer {
 @Configuration
 @ConfigurationProperties("user-profile")
 internal class UserProfileConfiguration {
-    val bcryptEncodeRounds: Int = 10
-    @Bean
-    internal fun bcryptPasswordEncoderBean() =
+    var bcryptEncodeRounds: Int = 10
+    var sessionTimeOut: Duration = Duration.ofMinutes(30)
+
+    @Bean internal fun bcryptPasswordEncoderBean() =
         BCryptPasswordEncoder(bcryptEncodeRounds)
+    @Bean internal fun sessTimeOutBean() =
+        sessionTimeOut
 }
 
 @Component
-internal class SessionListener : HttpSessionListener {
+internal class SessionListener(val sessionTimeOut: Duration) : HttpSessionListener {
 
     override fun sessionDestroyed(p0: HttpSessionEvent?) {
 
     }
 
     override fun sessionCreated(event: HttpSessionEvent) {
-        event.session.maxInactiveInterval = Parameters.sessionTime.toInt() * 60
+        event.session.maxInactiveInterval =  sessionTimeOut.toMinutes() as Int
     }
 }
 
