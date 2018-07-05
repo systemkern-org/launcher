@@ -8,4 +8,7 @@ services:
   - maildev
 
 # -B batch mode makes Maven less verbose
-script: mvn -B clean verify
+script:
+  - mvn -B clean verify
+  - maildev --incoming-user user
+  - maildev --incoming-pass 123
