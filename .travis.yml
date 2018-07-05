@@ -5,11 +5,10 @@ language: java
 
 services:
   - docker
-  - maildev
 
 # -B batch mode makes Maven less verbose
 script:
-  - maildev --outgoing-host localhost
-  - maildev --outgoing-user user
-  - maildev --outgoing-pass 123
   - mvn -B clean verify
+  - docker pull djfarrelly/maildev
+  - docker run -p 1080:80 -p 1025:25 djfarrelly/maildev
+  - docker-machine ip maildev
