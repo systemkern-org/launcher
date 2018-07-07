@@ -8,10 +8,7 @@ import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RestController
 import java.time.LocalDateTime
 import java.util.*
-import javax.persistence.Entity
-import javax.persistence.Id
-import javax.persistence.JoinColumn
-import javax.persistence.ManyToOne
+import javax.persistence.*
 
 @RestController
 internal class EmailChangeController(val emailChangeService: EmailChangeService){
@@ -48,12 +45,13 @@ internal data class EmailChangeRequest(val newEmailAddress: String,val userProfi
 @Entity
 internal data class EmailChangeEntity(
     @Id
+    @Column(name = "id_email_change_entity")
     val id: UUID,
     val creationDate: LocalDateTime,
     val validUntil: LocalDateTime,
     val completionDate: LocalDateTime,
     val newEmailAddress: String,
-    @ManyToOne
-    @JoinColumn
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_user_profile", nullable = false)
     val userProfile: UserProfile
 )
