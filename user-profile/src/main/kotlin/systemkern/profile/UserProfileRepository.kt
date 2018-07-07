@@ -1,19 +1,24 @@
 package systemkern.profile
 
+import com.fasterxml.jackson.databind.ObjectMapper
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.core.convert.support.ConfigurableConversionService
 import org.springframework.data.repository.CrudRepository
 import org.springframework.data.rest.core.annotation.RepositoryRestResource
 import org.springframework.data.rest.core.config.RepositoryRestConfiguration
+import org.springframework.data.rest.core.event.ValidatingRepositoryEventListener
 import org.springframework.data.rest.webmvc.config.RepositoryRestConfigurer
 import org.springframework.http.HttpStatus.NOT_ACCEPTABLE
+import org.springframework.http.converter.HttpMessageConverter
 import org.springframework.mail.SimpleMailMessage
 import org.springframework.mail.javamail.JavaMailSender
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.stereotype.Component
 import org.springframework.web.bind.annotation.*
+import org.springframework.web.servlet.mvc.method.annotation.ExceptionHandlerExceptionResolver
 import java.net.InetAddress
 import java.time.LocalDateTime
 import java.util.*
@@ -108,6 +113,26 @@ internal class UserProfileEntityListener(
 
 @Configuration
 internal class RepositoryRestConfig : RepositoryRestConfigurer {
+    override fun configureConversionService(p0: ConfigurableConversionService?) {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+    override fun configureValidatingRepositoryEventListener(p0: ValidatingRepositoryEventListener?) {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+    override fun configureHttpMessageConverters(p0: MutableList<HttpMessageConverter<*>>?) {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+    override fun configureExceptionHandlerExceptionResolver(p0: ExceptionHandlerExceptionResolver?) {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+    override fun configureJacksonObjectMapper(p0: ObjectMapper?) {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
     override fun configureRepositoryRestConfiguration(
         config: RepositoryRestConfiguration) {
         config.exposeIdsFor(UserProfile::class.java)
