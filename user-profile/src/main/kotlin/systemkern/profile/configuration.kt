@@ -1,8 +1,11 @@
 package systemkern.profile
 
 import org.springframework.context.annotation.Configuration
-import org.springframework.http.HttpMethod
-import org.springframework.http.HttpStatus
+import org.springframework.http.HttpMethod.POST
+import org.springframework.http.HttpMethod.GET
+import org.springframework.http.HttpMethod.PUT
+import org.springframework.http.HttpMethod.DELETE
+import org.springframework.http.HttpStatus.NOT_FOUND
 import org.springframework.security.access.AccessDeniedException
 import org.springframework.security.authentication.AuthenticationProvider
 import org.springframework.security.authentication.InternalAuthenticationServiceException
@@ -30,6 +33,7 @@ import javax.servlet.http.HttpServletResponse
 internal class CustomWebSecurityConfigurerAdapter(
     val service: AuthenticationService
 ) : WebSecurityConfigurerAdapter() {
+    val emailChangePattern = "/email-change/{\\d+}"
     val pattern: String = "/user-profiles"
     val pattern1: String = "/user-profiles/"
     val pattern2: String = "/user-profiles/{\\d+}"
@@ -39,28 +43,30 @@ internal class CustomWebSecurityConfigurerAdapter(
         http.csrf()
             .disable()
             .authorizeRequests()
-            .antMatchers(HttpMethod.DELETE, pattern, pattern1, pattern2)
+            .antMatchers(DELETE, pattern, pattern1, pattern2)
             .denyAll()
 
-            .antMatchers(HttpMethod.PUT, pattern2)
+            .antMatchers(PUT, pattern2)
             .authenticated()
-            .antMatchers(HttpMethod.PUT, pattern, pattern1)
+            .antMatchers(PUT, pattern, pattern1)
             .denyAll()
 
-            .antMatchers(HttpMethod.GET, pattern2)
+            .antMatchers(GET, pattern2)
             .authenticated()
-            .antMatchers(HttpMethod.GET, pattern, pattern1)
+            .antMatchers(GET, pattern, pattern1)
             .denyAll()
+
+            .antMatchers(POST, emailChangePattern)
+            .authenticated()
 
             .and()
             .addFilterBefore(AuthenticationFilter(UPAuthenticationProvider(), service),
                 BasicAuthenticationFilter::class.java)
     }
-
 }
 
 internal class AuthenticationFilter(
-    val authenticationProvider: UPAuthenticationProvider,
+    private val authenticationProvider: UPAuthenticationProvider,
     val service: AuthenticationService
 ) : GenericFilterBean() {
 
@@ -84,10 +90,10 @@ internal class AuthenticationFilter(
             }
         } catch (E: IllegalStateException) {
 
-            val headerhames = request.headerNames.toList()
+            val headerNames = request.headerNames.toList()
             if (
-                headerhames.contains("username") &&
-                headerhames.contains("password")
+                headerNames.contains("username") &&
+                headerNames.contains("password")
             ) {
                 procUsernamePasswordAuth(request,
                     response,
@@ -155,5 +161,5 @@ internal class UPAuthenticationProvider : AuthenticationProvider {
 
 }
 
-@ResponseStatus(HttpStatus.NOT_FOUND)
+@ResponseStatus(NOT_FOUND)
 internal class MissingDataException(message: String?) : AccessDeniedException(message)

@@ -11,7 +11,8 @@ import java.util.*
 import javax.persistence.*
 
 @RestController
-internal class EmailChangeController(val emailChangeService: EmailChangeService){
+internal class EmailChangeController(val emailChangeService: EmailChangeService,
+                                     val userProfileService: UserProfileService){
     @PostMapping("/email-change")
     internal fun saveRequest(@RequestBody emailChangeRequest: EmailChangeRequest){
         val now = LocalDateTime.now()
