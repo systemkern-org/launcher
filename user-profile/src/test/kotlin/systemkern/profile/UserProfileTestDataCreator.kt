@@ -13,7 +13,7 @@ class UserProfileTestDataCreator internal constructor(
 
     /** Creates one UserProfile entity in the database and publishes the Id to UserProfileRepository#userId */
     fun persistTestData() {
-        userId = repo.save(createTestUser()).id
+        userId = repo.save(createTestUser()).id_userProfile
     }
 
 }
@@ -22,5 +22,6 @@ internal fun createTestUser() =
     UserProfile(
         username = "userTest",
         name = "Test User",
-        password = "s3cret"
+        password = "s3cret",
+        email = "userTest@gmail.com"
     )

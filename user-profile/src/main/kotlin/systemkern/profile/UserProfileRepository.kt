@@ -1,6 +1,7 @@
 package systemkern.profile
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -10,16 +11,48 @@ import org.springframework.data.rest.core.annotation.RepositoryRestResource
 import org.springframework.data.rest.core.config.RepositoryRestConfiguration
 import org.springframework.data.rest.core.event.ValidatingRepositoryEventListener
 import org.springframework.data.rest.webmvc.config.RepositoryRestConfigurer
+import org.springframework.http.HttpStatus.NOT_ACCEPTABLE
 import org.springframework.http.converter.HttpMessageConverter
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.stereotype.Component
+import org.springframework.web.bind.annotation.*
 import org.springframework.web.servlet.mvc.method.annotation.ExceptionHandlerExceptionResolver
+import java.time.LocalDateTime
 import java.time.Duration
 import java.util.*
-import javax.persistence.PrePersist
-import javax.persistence.PreUpdate
+import javax.persistence.*
 import javax.servlet.http.HttpSessionEvent
 import javax.servlet.http.HttpSessionListener
+import java.util.regex.Pattern
+import java.util.zip.DataFormatException
+
+@RestController
+internal class UserProfileController(val userProfileService: UserProfileService,
+                                     val emailVerificationService: EmailVerificationService,
+                                     @Autowired
+                                     val mailUtility: MailUtility
+) {
+    @PostMapping("user-profiles")
+    private fun saveUser(@RequestBody requestBody: UserProfile): SaveUserProfileResponse {
+        userProfileService.save(requestBody)
+        val localDateTime = LocalDateTime.now()
+        val tokenId = UUID.randomUUID()
+        val emailVerificationEntity = EmailVerification(
+            tokenId,
+            localDateTime,
+            localDateTime.plusHours(6),
+            localDateTime,
+            requestBody
+        )
+        emailVerificationService.save(emailVerificationEntity)
+        mailUtility.createEmailMessage(requestBody.email, tokenId, "/verify-email/",
+            "Verify launcher account")
+        mailUtility.sendMessage()
+        return SaveUserProfileResponse(mailUtility.urlToVerify)
+    }
+
+    private data class SaveUserProfileResponse(var url: String)
+}
 
 @RepositoryRestResource(path = "user-profiles")
 internal interface UserProfileRepository : CrudRepository<UserProfile, UUID> {
@@ -30,9 +63,16 @@ internal interface UserProfileRepository : CrudRepository<UserProfile, UUID> {
 internal class UserProfileEntityListener(
     internal val passwordEncoder: BCryptPasswordEncoder = BCryptPasswordEncoder()
 ) {
+    private val emailPattern = Pattern.compile("^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*" +
+        "@[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$")
+
+    fun validateEmail(hex: String)
+        = emailPattern.matcher(hex).matches()
 
     @PrePersist
     internal fun handleUserCreate(userProfile: UserProfile) {
+        if (!validateEmail(userProfile.email))
+            throw BadEmailException("Email address is invalid")
         userProfile.password = passwordEncoder.encode(userProfile.password)
     }
 
@@ -41,7 +81,6 @@ internal class UserProfileEntityListener(
         userProfile.password = passwordEncoder.encode(userProfile.password)
     }
 }
-
 
 @Configuration
 internal class RepositoryRestConfig : RepositoryRestConfigurer {
@@ -82,6 +121,9 @@ internal class SessionListener(val sessionTimeOut: Duration) : HttpSessionListen
     }
 
     override fun sessionCreated(event: HttpSessionEvent) {
-        event.session.maxInactiveInterval =  sessionTimeOut.toMinutes() as Int
+        event.session.maxInactiveInterval =  sessionTimeOut.toMinutes().toInt()
     }
 }
+
+@ResponseStatus(NOT_ACCEPTABLE)
+internal class BadEmailException(message: String?) : DataFormatException(message)

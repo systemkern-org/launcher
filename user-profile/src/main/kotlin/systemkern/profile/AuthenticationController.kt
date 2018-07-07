@@ -29,7 +29,7 @@ internal class AuthenticationController(
             val authResp = AuthenticationResponse(
                 token = token,
                 username = user.username,
-                userId = user.id,
+                userId = user.id_userProfile,
                 validUntil = validUntil
             )
             service.saveToken(token, authResp)

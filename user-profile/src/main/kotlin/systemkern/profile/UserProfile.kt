@@ -19,7 +19,12 @@ internal data class UserProfile(
     var password: String, /*This attribute is var because of how repository event handler works*/
     val username: String,
     val email: String,
+
     @OneToMany(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_user_profile")
-    val emailChangeList: List<EmailChangeEntity> = ArrayList()
+    val emailChangeList: List<EmailChangeEntity> = ArrayList(),
+
+    @OneToMany(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_user_profile")
+    val emailVerificationList: List<EmailVerification> = ArrayList()
 )
