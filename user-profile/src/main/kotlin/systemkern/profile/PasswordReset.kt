@@ -13,11 +13,11 @@ import javax.persistence.*
 
 @RestController
 internal class PasswordResetController(
-    val authenticationService: AuthenticationService,
     val passwordResetService: PasswordResetService,
     val userProfileService: UserProfileService,
     @Autowired
-    val mailUtility: MailUtility
+    val mailUtility: MailUtility,
+    val timeUntilTokenExpiresInHours: Long = 6
 ) {
     @PostMapping("/password-reset")
     internal fun requestPasswordReset(@RequestHeader("username") username: String): RequestPasswordResetEntity {
@@ -28,7 +28,7 @@ internal class PasswordResetController(
             PasswordResetEntity(tokenId,
                 userProfile,
                 localTime,
-                localTime.plusHours(6),
+                localTime.plusHours(timeUntilTokenExpiresInHours),
                 localTime)
 
         passwordResetService.save(passwordResetEntity)
