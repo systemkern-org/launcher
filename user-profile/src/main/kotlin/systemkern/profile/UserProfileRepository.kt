@@ -30,7 +30,8 @@ import java.util.zip.DataFormatException
 internal class UserProfileController(val userProfileService: UserProfileService,
                                      val emailVerificationService: EmailVerificationService,
                                      @Autowired
-                                     val mailUtility: MailUtility
+                                     val mailUtility: MailUtility,
+                                     val timeUntilTokenExpires: Long = 6
 ) {
     @PostMapping("user-profiles")
     private fun saveUser(@RequestBody requestBody: UserProfile): SaveUserProfileResponse {
@@ -40,7 +41,7 @@ internal class UserProfileController(val userProfileService: UserProfileService,
         val emailVerificationEntity = EmailVerification(
             tokenId,
             localDateTime,
-            localDateTime.plusHours(6),
+            localDateTime.plusHours(timeUntilTokenExpires),
             localDateTime,
             requestBody
         )
@@ -82,18 +83,15 @@ internal class UserProfileEntityListener(
 
     @PreUpdate
     internal fun handleUserUpdate(userProfile: UserProfile) {
-        userProfile.password = passwordEncoder.encode(userProfile.password)
-    }
-
-    @PreUpdate
-    internal fun handleUserEmailUpdate(userProfile: UserProfile) {
         executeValidation(userProfile.email)
+        userProfile.password = passwordEncoder.encode(userProfile.password)
     }
 }
 
 @Configuration
 internal class RepositoryRestConfig : RepositoryRestConfigurer {
-    override fun configureConversionService(conversionService: ConfigurableConversionService?) {}
+    override fun configureConversionService(
+        conversionService: ConfigurableConversionService?) {}
 
     override fun configureExceptionHandlerExceptionResolver(
         exceptionResolver: ExceptionHandlerExceptionResolver?) {}
@@ -108,7 +106,8 @@ internal class RepositoryRestConfig : RepositoryRestConfigurer {
         config.exposeIdsFor(UserProfile::class.java)
     }
 
-    override fun configureValidatingRepositoryEventListener(validatingListener: ValidatingRepositoryEventListener?) {}
+    override fun configureValidatingRepositoryEventListener(
+        validatingListener: ValidatingRepositoryEventListener?) {}
 }
 
 

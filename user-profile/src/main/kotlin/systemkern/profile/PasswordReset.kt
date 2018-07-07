@@ -59,7 +59,7 @@ internal class PasswordResetController(
     }
 }
 
-internal data class NewPasswordResetBody(val password: String)
+data class NewPasswordResetBody(val password: String)
 
 @Service
 internal class PasswordResetService(private val repo: PasswordResetRepository) {
