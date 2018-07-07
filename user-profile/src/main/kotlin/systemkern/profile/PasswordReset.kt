@@ -38,7 +38,7 @@ internal class PasswordResetController(
 
         return RequestPasswordResetEntity(tokenId,
             localTime,
-            localTime.plusHours(6),
+            localTime.plusHours(timeUntilTokenExpiresInHours),
             localTime)
     }
 
@@ -59,7 +59,7 @@ internal class PasswordResetController(
     }
 }
 
-data class NewPasswordResetBody(val password: String)
+internal data class NewPasswordResetBody(val password: String)
 
 @Service
 internal class PasswordResetService(private val repo: PasswordResetRepository) {
@@ -87,7 +87,7 @@ internal data class PasswordResetEntity(
     val validUntil: LocalDateTime,
     var completionDate: LocalDateTime)
 
-data class RequestPasswordResetEntity(
+internal data class RequestPasswordResetEntity(
     val id: UUID,
     val creationDate: LocalDateTime,
     val validUntil: LocalDateTime,

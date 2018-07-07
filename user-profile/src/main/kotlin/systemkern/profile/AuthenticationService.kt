@@ -10,9 +10,12 @@ import kotlin.collections.HashMap
 import java.time.Duration
 
 @Service
-internal class AuthenticationService(val repo: UserProfileRepository,
-                                     val passwordEncoder: BCryptPasswordEncoder,
-                                     val sessionTimeOut: Duration) {
+internal class AuthenticationService(
+    val repo: UserProfileRepository,
+    val passwordEncoder: BCryptPasswordEncoder,
+    val sessionTimeOut: Duration,
+    val auxNumToConvertSecstoMillis:Int = 1000
+) {
     val tokens: HashMap<UUID, AuthenticationResponse> = HashMap()
 
     internal fun findByUsername(username: String) =
@@ -20,7 +23,7 @@ internal class AuthenticationService(val repo: UserProfileRepository,
 
     internal fun isValidToken(token: UUID, request: HttpServletRequest): Boolean {
         val inactiveInterval = System.currentTimeMillis() - request.session.lastAccessedTime
-        val maxInactiveIntervalMilis = request.session.maxInactiveInterval * 1000
+        val maxInactiveIntervalMilis = request.session.maxInactiveInterval * auxNumToConvertSecstoMillis
         if (tokens.containsKey(token)) {
             return inactiveInterval <= maxInactiveIntervalMilis
         }
