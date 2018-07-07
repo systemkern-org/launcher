@@ -27,7 +27,7 @@ internal interface UserProfileRepository : CrudRepository<UserProfile, UUID> {
 }
 
 @Component
-internal class UserProfileEntiyListener(
+internal class UserProfileEntityListener(
     internal val passwordEncoder: BCryptPasswordEncoder = BCryptPasswordEncoder()
 ) {
 
