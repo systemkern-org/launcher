@@ -1,17 +1,16 @@
 package systemkern.profile
 
 import org.springframework.context.annotation.Configuration
-import org.springframework.http.HttpMethod.POST
-import org.springframework.http.HttpMethod.GET
-import org.springframework.http.HttpMethod.PUT
 import org.springframework.http.HttpMethod.DELETE
+import org.springframework.http.HttpMethod.POST
+import org.springframework.http.HttpMethod.PUT
+import org.springframework.http.HttpMethod.GET
 import org.springframework.http.HttpStatus.NOT_FOUND
 import org.springframework.security.access.AccessDeniedException
 import org.springframework.security.authentication.AuthenticationProvider
 import org.springframework.security.authentication.InternalAuthenticationServiceException
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
-import org.springframework.security.config.annotation.web.builders.WebSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter
 import org.springframework.web.filter.GenericFilterBean
@@ -34,15 +33,11 @@ import javax.servlet.http.HttpServletResponse
 internal class CustomWebSecurityConfigurerAdapter(
     val service: AuthenticationService
 ) : WebSecurityConfigurerAdapter() {
+    val patternVerifyEmailId: String = "/verify-email/{\\d+}"
+    val patternPasswordResetId: String = "/password-reset/{\\d++}"
     val pattern: String = "/user-profiles"
     val pattern1: String = "/user-profiles/"
     val pattern2: String = "/user-profiles/{\\d+}"
-
-    @Throws(Exception::class)
-    override fun configure(webSecurity: WebSecurity) {
-        webSecurity
-            .ignoring()
-    }
 
     @Throws(Exception::class)
     override fun configure(http: HttpSecurity) {
@@ -62,7 +57,10 @@ internal class CustomWebSecurityConfigurerAdapter(
             .antMatchers(GET, pattern, pattern1)
             .denyAll()
 
-            .antMatchers(POST, "/verify-email/{\\d+}")
+            .antMatchers(POST,patternPasswordResetId)
+            .authenticated()
+
+            .antMatchers(POST,patternVerifyEmailId)
             .authenticated()
 
             .and()
@@ -73,8 +71,8 @@ internal class CustomWebSecurityConfigurerAdapter(
 }
 
 internal class AuthenticationFilter(
-    val authenticationProvider: UPAuthenticationProvider,
-    val service: AuthenticationService
+    private val authenticationProvider: UPAuthenticationProvider,
+    private val service: AuthenticationService
 ) : GenericFilterBean() {
 
     override fun doFilter(
@@ -97,10 +95,10 @@ internal class AuthenticationFilter(
             }
         } catch (E: IllegalStateException) {
 
-            val headerhames = request.headerNames.toList()
+            val headerNames = request.headerNames.toList()
             if (
-                headerhames.contains("username") &&
-                headerhames.contains("password")
+                headerNames.contains("username") &&
+                headerNames.contains("password")
             ) {
                 procUsernamePasswordAuth(request,
                     response,

@@ -21,7 +21,7 @@ internal class EmailVerificationController(
 
         val emailVerification = emailVerificationService.findById(UUID.fromString(tokenId)).get()
         val completionDate = LocalDateTime.now()
-        if (LocalDateTime.now() <= emailVerification.validUntil) {
+        if (completionDate <= emailVerification.validUntil) {
             emailVerification.completionDate = completionDate
             emailVerificationService.save(emailVerification)
             return authenticationService.authenticationProcess(auth, password)

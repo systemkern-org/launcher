@@ -15,6 +15,7 @@ import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders
 import org.springframework.restdocs.payload.JsonFieldType.STRING
 import org.springframework.restdocs.payload.PayloadDocumentation.*
 import org.springframework.test.context.junit4.SpringRunner
+import org.springframework.test.web.servlet.ResultActions
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import systemkern.CliEntryPoint
 import systemkern.IntegrationTest
@@ -39,12 +40,15 @@ internal class UserControllerIT : IntegrationTest() {
     private val httpHeaders = HttpHeaders()
     private val restUrl = "/user-profiles"
     private val restLogin = "/login"
+    private val passwordResetUrl = "/password-reset"
     private var token: String = ""
-    val headers: HashMap<String, String> = HashMap()
+    private val headers: HashMap<String, String> = HashMap()
     private var usernameDesc = "Username to log in"
     private var username = "username"
     private var urlToVerifyUserProfile = ""
-    
+    private var passwordResetEntityId: String = ""
+    private var verifyEmailAccessToken: String = ""
+
     private val entityResponseFields = listOf(
         fieldWithPath("id_userProfile").description("The Id of the user entity").type(STRING),
         fieldWithPath("name").description("Name of the user").type(STRING),
@@ -75,7 +79,7 @@ internal class UserControllerIT : IntegrationTest() {
         this.userId = testDataCreator.userId
     }
 
-    private fun createUser(user: TestUser) {
+    private fun createUser(user: TestUser,verify: Boolean) {
         this.mockMvc.perform(RestDocumentationRequestBuilders.post(restUrl)
             .content(objectMapper.writeValueAsString(user))
             .contentType(APPLICATION_JSON)
@@ -87,31 +91,58 @@ internal class UserControllerIT : IntegrationTest() {
                 )))
             .andReturn().response.contentAsString.let { urlToVerifyUserProfile = "url" +
                     JSONObject(it).get("url").toString() }
-        verifyEmail(user.username,user.password)
+        if(verify) {
+            verifyEmail(user.username,user.password)
+        }
     }
 
-    private fun verifyEmail(username: String, password: String){
-        createHeadersObject(username,password)
+    private fun verifyEmail(username: String, password: String) {
+        createHeadersObject(username, password)
         this.mockMvc.perform(RestDocumentationRequestBuilders.post(urlToVerifyUserProfile)
             .headers(httpHeaders)
             .contentType(APPLICATION_JSON)
             .accept(APPLICATION_JSON))
             .andExpect(status().isOk)
-            .andDo(document("user_verify",loginResponseFields))
+            .andDo(document("user_verify", loginResponseFields))
+            .andReturn().response.contentAsString.let { verifyEmailAccessToken = JSONObject(it).get("token").toString() }
     }
 
-    private fun `login function`(username: String, password: String) {
-        createHeadersObject(username,password)
+    private fun loginFunction(username: String, password: String) {
+        createHeadersObject(username, password)
         this.mockMvc.perform(RestDocumentationRequestBuilders.post(restLogin)
             .headers(httpHeaders)
             .contentType(APPLICATION_JSON)
             .accept(APPLICATION_JSON))
             .andExpect(status().isOk)
-            .andDo(document("user_login",loginResponseFields))
+            .andDo(document("user_login", loginResponseFields))
             .andReturn().response.contentAsString.let { token = "Bearer " + JSONObject(it).get("token").toString() }
     }
 
-    private fun createHeadersObject(username: String, password: String){
+    private fun resetPasswordFunction(username: String, password: String) {
+        createHeadersObject(username, password)
+        headers[AUTHORIZATION] = verifyEmailAccessToken
+        buildResetPasswordFunction(passwordResetUrl)
+            .andDo(document("resetPassword", responseFields(listOf(
+                fieldWithPath("id").description("The Id of the user entity").type(STRING),
+                fieldWithPath("creationDate").description("Date which was created the request").type(STRING),
+                fieldWithPath("validUntil").description("Date until token is valid").type(STRING),
+                fieldWithPath("completionDate").description("Date in which request is confirmed").type(STRING)))))
+            .andReturn().response.contentAsString.let { passwordResetEntityId = JSONObject(it).get("id").toString() }
+    }
+
+    private fun resetPasswordFunctionWithId() {
+        buildResetPasswordFunction("$passwordResetUrl/$passwordResetEntityId")
+    }
+
+    private fun buildResetPasswordFunction(url: String): ResultActions =
+        this.mockMvc.perform(RestDocumentationRequestBuilders.post(url
+        )
+            .headers(httpHeaders)
+            .contentType(APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(NewPasswordResetBody(password = "NewPassword*")))
+            .accept(APPLICATION_JSON)).andExpect(status().isOk)
+
+    private fun createHeadersObject(username: String, password: String) {
         headers[this.username] = username
         headers["password"] = password
         httpHeaders.setAll(headers)
@@ -124,7 +155,7 @@ internal class UserControllerIT : IntegrationTest() {
             name = nameExample,
             password = passwordExample,
             email = emailExample
-        ))
+        ),true)
     }
 
     @Test
@@ -136,8 +167,22 @@ internal class UserControllerIT : IntegrationTest() {
             name = nameExample1,
             password = password,
             email = emailExample
-        ))
-        `login function`(username, password)
+        ),false)
+    }
+
+    @Test
+    fun `Can reset password`() {
+        val username = usernameExample3
+        val password = passwordExample3
+        createUser(TestUser(
+            username = username,
+            name = nameExample1,
+            password = password,
+            email = emailExample
+        ),true)
+        verifyEmail(username, password)
+        resetPasswordFunction(username, password)
+        resetPasswordFunctionWithId()
     }
 
     @Test
@@ -149,8 +194,8 @@ internal class UserControllerIT : IntegrationTest() {
             name = nameExample,
             password = password,
             email = emailExample
-        ))
-        `login function`(username, password)
+        ),true)
+        loginFunction(username, password)
         this.mockMvc.perform(RestDocumentationRequestBuilders.get("$restUrl/$userId")
             .header(AUTHORIZATION, token)
             .contentType(APPLICATION_JSON)
@@ -170,8 +215,8 @@ internal class UserControllerIT : IntegrationTest() {
             name = nameExample,
             password = password,
             email = emailExample
-        ))
-        `login function`(username, password)
+        ),true)
+        loginFunction(username, password)
         this.mockMvc.perform(RestDocumentationRequestBuilders.put("$restUrl/$userId")
             .header(AUTHORIZATION, token)
             .content(
