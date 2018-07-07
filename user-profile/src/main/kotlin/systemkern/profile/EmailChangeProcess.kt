@@ -1,13 +1,11 @@
 package systemkern.profile
 
-import com.fasterxml.jackson.annotation.JsonIgnore
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.repository.CrudRepository
+import org.springframework.http.HttpStatus.NOT_ACCEPTABLE
 import org.springframework.stereotype.Repository
 import org.springframework.stereotype.Service
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
 import java.time.LocalDateTime
 import java.util.*
 import javax.persistence.*
@@ -20,13 +18,14 @@ internal class EmailChangeController(
     val mailUtility: MailUtility
 ) {
     @PostMapping("/email-change")
-    internal fun saveRequest(@RequestBody emailChangeRequest: EmailChangeRequest)
-        : EmailChangeEntity {
+    internal fun saveRequest(@RequestBody emailChangeRequest: EmailChangeRequest
+    ): EmailChangeEntity {
+
         val now = LocalDateTime.now()
         val emailChangeRequestId = UUID.randomUUID()
         val userProfile = userProfileService.findById(emailChangeRequest.userProfileId).get()
-        mailUtility.createEmailMessage(userProfile.email, emailChangeRequestId, "/email-change",
-            "Verify old email for launcher")
+        sendEmails(userProfile.email,emailChangeRequestId)
+        sendEmails(emailChangeRequest.newEmailAddress,emailChangeRequestId)
         return emailChangeService.save(EmailChangeEntity(
             emailChangeRequestId,
             now,
@@ -35,11 +34,32 @@ internal class EmailChangeController(
             emailChangeRequest.newEmailAddress,
             userProfile))
     }
+
+    internal fun sendEmails(emailAddress: String,id: UUID){
+        mailUtility.createEmailMessage(emailAddress, id, "/email-change",
+            "Verify old email for launcher")
+        mailUtility.sendMessage()
+    }
+
+    @PostMapping("/email-change/{id}")
+    internal fun confirmOldEmail(@PathVariable emailChangeRequestId: UUID
+    ): EmailChangeEntity {
+        //first i must include utility to validate email address
+        val emailChangeEntity = emailChangeService.findById(emailChangeRequestId).get()
+        val now = LocalDateTime.now()
+        if(emailChangeEntity.validUntil > now)
+            throw EmailTokenExpired()
+        emailChangeEntity.completionDate = now
+        emailChangeEntity.userProfile.email = emailChangeEntity.newEmailAddress
+
+        return emailChangeEntity
+    }
 }
 
 @Service
-internal class EmailChangeService(val emailChangeRepository: EmailChangeRepository) {
+internal class EmailChangeService(private val emailChangeRepository: EmailChangeRepository) {
     internal fun save(emailChangeEntity: EmailChangeEntity) = emailChangeRepository.save(emailChangeEntity)
+    internal fun findById(id: UUID) = emailChangeRepository.findById(id)
 }
 
 @Repository
@@ -51,13 +71,14 @@ internal data class EmailChangeRequest(val newEmailAddress: String, val userProf
 internal data class EmailChangeEntity(
     @Id
     @Column(name = "id_email_change_entity")
-    @JsonIgnore
     val id: UUID,
     val creationDate: LocalDateTime,
     val validUntil: LocalDateTime,
-    val completionDate: LocalDateTime,
+    var completionDate: LocalDateTime,
     val newEmailAddress: String,
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_user_profile", nullable = false)
     val userProfile: UserProfile
 )
+@ResponseStatus(NOT_ACCEPTABLE)
+internal class EmailTokenExpired: RuntimeException()
