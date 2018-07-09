@@ -69,15 +69,20 @@ internal class UserProfileEntityListener(
     fun validateEmail(hex: String)
         = emailPattern.matcher(hex).matches()
 
+    private fun executeValidation(emailToVal: String){
+        if (!validateEmail(emailToVal))
+            throw BadEmailException("Email address is invalid")
+    }
+
     @PrePersist
     internal fun handleUserCreate(userProfile: UserProfile) {
-        if (!validateEmail(userProfile.email))
-            throw BadEmailException("Email address is invalid")
+        executeValidation(userProfile.email)
         userProfile.password = passwordEncoder.encode(userProfile.password)
     }
 
     @PreUpdate
     internal fun handleUserUpdate(userProfile: UserProfile) {
+        executeValidation(userProfile.email)
         userProfile.password = passwordEncoder.encode(userProfile.password)
     }
 }
