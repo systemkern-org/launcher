@@ -62,8 +62,8 @@ internal class CustomWebSecurityConfigurerAdapter(
             .antMatchers(GET, pattern, pattern1)
             .denyAll()
 
-            .antMatchers(POST, "/verify-email/{\\d+}")
-            .authenticated()
+            .antMatchers(POST,"/verify-email/{\\d+}")
+            .permitAll()
 
             .and()
             .addFilterBefore(AuthenticationFilter(UPAuthenticationProvider(), service),
@@ -73,7 +73,7 @@ internal class CustomWebSecurityConfigurerAdapter(
 }
 
 internal class AuthenticationFilter(
-    val authenticationProvider: UPAuthenticationProvider,
+    private val authenticationProvider: UPAuthenticationProvider,
     val service: AuthenticationService
 ) : GenericFilterBean() {
 
@@ -97,10 +97,10 @@ internal class AuthenticationFilter(
             }
         } catch (E: IllegalStateException) {
 
-            val headerhames = request.headerNames.toList()
+            val headerNames = request.headerNames.toList()
             if (
-                headerhames.contains("username") &&
-                headerhames.contains("password")
+                headerNames.contains("username") &&
+                headerNames.contains("password")
             ) {
                 procUsernamePasswordAuth(request,
                     response,
