@@ -34,7 +34,7 @@ internal class CustomWebSecurityConfigurerAdapter(
     val service: AuthenticationService
 ) : WebSecurityConfigurerAdapter() {
     val patternVerifyEmailId: String = "/verify-email/{\\d+}"
-    val patternPasswordResetId: String = "/password-reset/{\\d++}"
+    val patternPasswordResetId: String = "/password-reset/{\\d+}"
     val pattern: String = "/user-profiles"
     val pattern1: String = "/user-profiles/"
     val pattern2: String = "/user-profiles/{\\d+}"
@@ -58,10 +58,10 @@ internal class CustomWebSecurityConfigurerAdapter(
             .denyAll()
 
             .antMatchers(POST,patternPasswordResetId)
-            .authenticated()
+            .permitAll()
 
             .antMatchers(POST,patternVerifyEmailId)
-            .authenticated()
+            .permitAll()
 
             .and()
             .addFilterBefore(AuthenticationFilter(UPAuthenticationProvider(), service),

@@ -15,6 +15,7 @@ import javax.persistence.*
 internal class PasswordResetController(
     val passwordResetService: PasswordResetService,
     val userProfileService: UserProfileService,
+    val authenticationService: AuthenticationService,
     @Autowired
     val mailUtility: MailUtility,
     val timeUntilTokenExpiresInHours: Long = 6
@@ -43,19 +44,17 @@ internal class PasswordResetController(
     }
 
     @PostMapping("/password-reset/{id}")
-    internal fun confirmPasswordReset(@PathVariable("id") id: UUID,
-                                      @RequestBody newPasswordResetBody: NewPasswordResetBody,
-                                      auth: Authentication
-    ) {
-        val passwordResetEntity = passwordResetService.findById(id).get()
-        val userProfile = passwordResetEntity.userProfile
+    internal fun confirmPasswordReset(@PathVariable("id") passwordResetId: UUID,
+                                      @RequestBody newPasswordResetBody: NewPasswordResetBody
+    ): AuthenticationResponse {
+        val passwordResetEntity = passwordResetService.findById(passwordResetId).get()
         val completionDate = LocalDateTime.now()
-        if (completionDate <= passwordResetEntity.validUntil) {
-            passwordResetEntity.completionDate = completionDate
-            userProfile.password = newPasswordResetBody.password
-            return passwordResetService.save(passwordResetEntity)
-        }
-        throw ExpiredTokenException("Token has expired")
+        val authResponse = authenticationService.authProcessPasswordReset(passwordResetEntity,completionDate)
+        passwordResetEntity.completionDate = completionDate
+        passwordResetEntity.userProfile.password = newPasswordResetBody.password
+        passwordResetService.save(passwordResetEntity)
+        userProfileService.save(passwordResetEntity.userProfile)
+        return authResponse
     }
 }
 

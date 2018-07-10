@@ -3,15 +3,16 @@ package systemkern.profile
 import org.springframework.security.core.Authentication
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.stereotype.Service
-import java.time.LocalDateTime
-import java.util.*
+import java.time.LocalDateTime.now
+import java.util.UUID
 import javax.servlet.http.HttpServletRequest
 import kotlin.collections.HashMap
 import java.time.Duration
+import java.time.LocalDateTime
 
 @Service
 internal class AuthenticationService(
-    val repo: UserProfileRepository,
+    val userProfileRepository: UserProfileRepository,
     val passwordEncoder: BCryptPasswordEncoder,
     val sessionTimeOut: Duration,
     val auxNumToConvertSecstoMillis:Int = 1000
@@ -19,7 +20,7 @@ internal class AuthenticationService(
     val tokens: HashMap<UUID, AuthenticationResponse> = HashMap()
 
     internal fun findByUsername(username: String) =
-        repo.findByUsername(username)
+        userProfileRepository.findByUsername(username)
 
     internal fun isValidToken(token: UUID, request: HttpServletRequest): Boolean {
         val inactiveInterval = System.currentTimeMillis() - request.session.lastAccessedTime
@@ -39,23 +40,53 @@ internal class AuthenticationService(
     }
 
     @Throws(UserNotFoundException::class)
-    internal fun authenticationProcess(auth: Authentication,
-                                       password: String
+    internal fun authenticationProcess(
+        auth: Authentication,
+        password: String
     ): AuthenticationResponse {
         val user = findByUsername(auth.principal.toString())
         val emailVerification = user.emailVerificationList.last()
         if (!passwordEncoder.matches(password, user.password)
             && emailVerification.completionDate <= emailVerification.creationDate)
-            throw UserNotFoundException("UserNotFoundException")
-        val token: UUID = UUID.fromString(auth.credentials.toString())
-        val validUntil = LocalDateTime.now().plusMinutes(sessionTimeOut.toMinutes())
-        val authResp = AuthenticationResponse(
-            token = token,
+            throw UserNotFoundException("User Not Found Or Not Verified")
+
+        return buildResponseAndSaveToken(
+            authenticationToken = UUID.fromString(auth.credentials.toString()),
             username = user.username,
             userId = user.id_userProfile,
+            validUntil = now().plusMinutes(sessionTimeOut.toMinutes()))
+    }
+
+    internal fun authProcessPasswordReset(
+        passwordResetEntity: PasswordResetEntity,
+        completionDate: LocalDateTime
+    ): AuthenticationResponse {
+        val userProfile = passwordResetEntity.userProfile
+        val emailVerification = userProfile.emailVerificationList.last()
+
+        if (completionDate <= passwordResetEntity.validUntil
+            && emailVerification.completionDate > emailVerification.creationDate) {
+            return buildResponseAndSaveToken(
+                authenticationToken = UUID.randomUUID(),
+                username = userProfile.username,
+                userId = userProfile.id_userProfile,
+                validUntil = now().plusMinutes(sessionTimeOut.toMinutes()))
+        }
+        throw ExpiredTokenException("Token has expired")
+    }
+
+    private fun buildResponseAndSaveToken(
+        authenticationToken: UUID,
+        validUntil: LocalDateTime,
+        username: String,
+        userId: UUID): AuthenticationResponse {
+        val authResp = AuthenticationResponse(
+            token = authenticationToken,
+            username = username,
+            userId = userId,
             validUntil = validUntil
         )
-        saveToken(token, authResp)
+        saveToken(authenticationToken, authResp)
         return authResp
     }
 }
