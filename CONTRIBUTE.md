@@ -13,14 +13,22 @@ code-style.kotlin.tabs-and-indents.continuation-indent = 4
 
 ## How to submit the Code - Workflow
 1.  Create a personal fork of the project on Github and clone it locally.
+<<<<<<< HEAD
     Your remote repo on Github is called origin.
 2.  Add the original repository as a remote called upstream.
 3.  Pull upstream changes into your local repository if there are any.
 4.  Create a new branch to work on! Branch from develop if it exists, else from master.
+=======
+    Your remote repo on Github is calledÂ origin.
+2.  Add the original repository as a remote calledÂ upstream.
+3.  Pull upstream changes into your local repository if there are any.
+4.  Create a new branch to work on! Branch fromÂ developÂ if it exists, else fromÂ master.
+>>>>>>> master
 5.  Implement/fix your feature, comment your code.
 6.  Follow the code style of the project, including indentation.
 7.  Run the tests! Write new ones and adapt them as needed.
 8.  Add or change the documentation.
+<<<<<<< HEAD
 9.  Squash your commits into a single commit with git's interactive rebase.
 10. Push your branch to your fork on Github, the remote origin.
 11. From your fork open a pull request to the upstream repo.
@@ -29,6 +37,16 @@ code-style.kotlin.tabs-and-indents.continuation-indent = 4
     The PR will be updated automatically.
 13. Once the pull request is approved and merged you can pull the changes
     from upstream to your local repo and delete your extra branch(es).
+=======
+9.  Squash your commits into a single commit with git'sÂ interactive rebase.
+10. Push your branch to your fork on Github, the remoteÂ origin.
+11. From your fork open a pull request to the upstream repo.
+    Target the project'sÂ developÂ branch if there is one, else go forÂ master!
+12. If the maintainer requests further changes just push them to your branch.
+    The PR will be updated automatically.
+13. Once the pull request is approved and merged you can pull the changes
+    fromÂ upstreamÂ to your local repo and delete your extra branch(es).
+>>>>>>> master
 14. Implement/fix your feature, comment your code.
 15. Run the tests! Adapt and write new ones as needed.
 16. Add or change the documentation as needed.

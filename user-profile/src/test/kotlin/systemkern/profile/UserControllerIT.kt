@@ -3,27 +3,21 @@ package systemkern.profile
 import org.json.JSONObject
 import org.junit.Before
 import org.junit.Test
-import org.junit.runner.RunWith
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpHeaders.AUTHORIZATION
 import org.springframework.http.MediaType.APPLICATION_JSON
 import org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document
 import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders
 import org.springframework.restdocs.payload.JsonFieldType.STRING
-import org.springframework.restdocs.payload.PayloadDocumentation.*
-import org.springframework.test.context.junit4.SpringRunner
+import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
+import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
-import systemkern.CliEntryPoint
-import systemkern.IntegrationTest
 import java.util.*
 import kotlin.collections.HashMap
 
-@RunWith(SpringRunner::class)
-@SpringBootTest(webEnvironment = RANDOM_PORT, classes = [CliEntryPoint::class])
-
+@EnableAutoConfiguration
 internal class UserControllerIT : IntegrationTest() {
     private val nameExample = "AndresAusecha"
     private val nameExample1 = "RainerKern"
@@ -58,13 +52,11 @@ internal class UserControllerIT : IntegrationTest() {
             "Link to access verification tokens generated").type(STRING)
     )
     private val loginResponseFields = responseFields(listOf(
-    fieldWithPath("token").description("Token to authenticate the next requests")
-    .type(STRING),
+    fieldWithPath("token").description("Token to authenticate the next requests").type(STRING),
     fieldWithPath(username).description(usernameDesc).type(STRING),
     fieldWithPath("userId").description("Password of user to be created").type(STRING),
-    fieldWithPath("validUntil").description("Date and Time until session will expire")
-    .type(STRING)
-    ))
+    fieldWithPath("validUntil").description("Date and Time until session will expire").type(STRING)))
+
     @Autowired
     private lateinit var testDataCreator: UserProfileTestDataCreator
     private lateinit var userId: UUID

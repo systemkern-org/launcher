@@ -8,12 +8,15 @@ services:
 
 # -B batch mode makes Maven less verbose
 # Useles change
+<<<<<<< HEAD
 before_install:
   - docker pull djfarrelly/maildev
 
 install:
   - docker run -d -p 1080:80 -p 1025:25 djfarrelly/maildev
 
+=======
+>>>>>>> master
 script:
   - mvn -B clean verify
 

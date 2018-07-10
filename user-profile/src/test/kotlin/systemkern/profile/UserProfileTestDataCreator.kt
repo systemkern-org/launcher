@@ -1,10 +1,10 @@
 package systemkern.profile
 
-import org.springframework.stereotype.Component
+import org.springframework.boot.test.context.TestComponent
 import java.util.*
 
 /** Helper class to create persisted test data for Unit Tests */
-@Component
+@TestComponent
 class UserProfileTestDataCreator internal constructor(
     private val repo: UserProfileRepository
 ) {
