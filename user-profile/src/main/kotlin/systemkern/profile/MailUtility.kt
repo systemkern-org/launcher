@@ -1,11 +1,35 @@
 package systemkern.profile
 
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.context.annotation.Bean
 import org.springframework.mail.SimpleMailMessage
 import org.springframework.mail.javamail.JavaMailSender
 import org.springframework.stereotype.Component
 import java.net.InetAddress
 import java.util.*
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
+import org.springframework.context.annotation.ComponentScan
+import org.springframework.context.annotation.Configuration
+import org.springframework.mail.javamail.JavaMailSenderImpl
+import org.springframework.web.servlet.config.annotation.EnableWebMvc
+
+
+@Configuration
+@EnableWebMvc
+@ComponentScan(basePackages = ["systemkern.profile"])
+class WebConfig {
+    //CODE CODE CODE
+    @Bean
+    fun mailSender(): JavaMailSenderImpl {
+        val javaMailSender = JavaMailSenderImpl()
+
+        javaMailSender.host = "localhost"
+        javaMailSender.port = 1025
+
+        return javaMailSender
+    }
+
+}
 
 @Component
 internal class MailUtility(@Autowired
