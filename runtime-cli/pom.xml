@@ -21,8 +21,12 @@
     </description>
 
     <properties>
+        <swagger.version>2.8.0</swagger.version>
+        <swagger-maven-plugin-version>3.1.0</swagger-maven-plugin-version>
+
         <start.class>systemkern.CliEntryPointKt</start.class>
     </properties>
+
 
     <dependencies>
         <!-- Project Internal dependencies
@@ -42,6 +46,10 @@
             <artifactId>jackson-module-kotlin</artifactId>
         </dependency>
         <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-core</artifactId>
         </dependency>
@@ -49,9 +57,21 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
+
         <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>io.springfox</groupId>
+            <artifactId>springfox-swagger2</artifactId>
+            <version>${swagger.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.springfox</groupId>
+            <artifactId>springfox-swagger-ui</artifactId>
+            <version>${swagger.version}</version>
         </dependency>
     </dependencies>
 
@@ -68,6 +88,48 @@
                     <classifier>${project.parent.version}</classifier>
                 </configuration>
             </plugin>
+
+            <!--
+            <plugin>
+                <groupId>com.github.kongchen</groupId>
+                <artifactId>swagger-maven-plugin</artifactId>
+                <version>${swagger-maven-plugin-version}</version>
+                <configuration>
+                    <apiSources>
+                        <apiSource>
+                            <springmvc>true</springmvc>
+                            <locations>systemkern.profile</locations>
+                            <schemes>http,https</schemes>
+                            <host>localhost</host>
+                            <basePath>/</basePath>
+                            <info>
+                                <title>Swagger Maven Plugin Sample</title>
+                                <version>${project.parent.version}</version>
+                                <description>This is a sample for swagger-maven-plugin</description>
+                                <termsOfService>
+                                    http://www.github.com/kongchen/swagger-maven-plugin
+                                </termsOfService>
+                                <contact>
+                                    <email>kongchen@gmail.com</email>
+                                    <name>Kong Chen</name>
+                                    <url>http://kongch.com</url>
+                                </contact>
+                                <license>
+                                    <url>http://www.apache.org/licenses/LICENSE-2.0.html</url>
+                                    <name>Apache 2.0</name>
+                                </license>
+                            </info>
+                            <!- Support classpath or file absolute path here.
+                            1) classpath e.g: "classpath:/markdown.hbs", "classpath:/templates/hello.html"
+                            2) file e.g: "${basedir}/src/main/resources/markdown.hbs",
+                                "${basedir}/src/main/resources/template/hello.html" ->
+                            <outputPath>${build.directory}/open-api/document.html</outputPath>
+                            <swaggerDirectory>${build.directory}/swagger-ui</swaggerDirectory>
+                        </apiSource>
+                    </apiSources>
+                </configuration>
+            </plugin>
+            -->
         </plugins>
     </build>
 </project>
