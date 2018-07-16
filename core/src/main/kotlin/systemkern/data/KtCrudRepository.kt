@@ -12,6 +12,7 @@ interface KtCrudRepository<T, ID> : CrudRepository<T, ID> {
     override fun findById(var1: ID): Optional<T>
 }
 
+@Suppress("DEPRECATION")
 fun <T, ID : Serializable> KtCrudRepository<T, ID>.findById2(id: ID): T? =
     findById(id).orElse(null)
 
