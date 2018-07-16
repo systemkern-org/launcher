@@ -66,8 +66,7 @@ internal class KtCrudRepositoryIT {
 
     @Test(expected = NotFoundException::class)
     fun `Exception on getById for nonexistent id`() {
-        //repo is empty
-        val ret = repo.getById(randomUUID())
+        repo.getById(randomUUID())
     }
 
 }
