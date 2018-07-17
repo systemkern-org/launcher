@@ -36,20 +36,6 @@ java -jar {final-name}.jar --spring.profiles.active=myprofile2
 For more information please refer to the https://docs.spring.io/spring-boot/docs/current/reference/html/howto-properties-and-configuration.html#howto-set-active-spring-profiles[Spring Boot Documentation].
 
 
-= API Requests
-== Additional API Requests
-
-=== Echo
-Echo is a sample post request which returns exactly the same object as the one provided.
-It can be used to test Json Object mapper implementations
-
-operation::echo[snippets='curl-request,http-request,http-response,response-fields']
-
-=== Ping
-As simple ping signal which returns the current system timestamp
-
-operation::ping[snippets='curl-request,http-request,http-response,response-fields']
-
 === User
 User is a module created to answer CRUD(Create,read,update and delete) requests,
 it does not always return a json, but a Http code that show if was successful. The base url

@@ -1,0 +1,24 @@
+= {project-name} Module Documentation
+Systemkern <office@systemkern.com>
+VERSION, {localdate} {localtime}
+:doctype: book
+:icons: font
+:source-highlighter: highlightjs
+:highlightjs-theme: github
+:toc: left
+:toclevels: 2
+:sectlinks:
+:sectnums:
+
+= API Requests
+
+== Echo
+Echo is a sample post request which returns exactly the same object as the one provided.
+It can be used to test Json Object mapper implementations
+
+operation::echo[snippets='curl-request,http-request,http-response,response-fields']
+
+== Ping
+As simple ping signal which returns the current system timestamp
+
+operation::ping[snippets='curl-request,http-request,http-response,response-fields']
