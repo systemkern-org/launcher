@@ -12,7 +12,6 @@
 
     <artifactId>user-profile</artifactId>
 
-
     <dependencies>
         <!-- project internal dependencies -->
         <dependency>

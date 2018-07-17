@@ -16,7 +16,6 @@
         <org.springframework.restdocs.spring-restdocs-asciidoctor.version>2.0.1.RELEASE</org.springframework.restdocs.spring-restdocs-asciidoctor.version>
     </properties>
 
-
     <dependencies>
         <!-- dependency on the production code-->
         <dependency>
