@@ -21,7 +21,6 @@
     <modules>
         <module>core</module>
         <module>parent</module>
-        <module>integration-tests</module>
         <module>runtime-cli</module>
         <module>user-profile</module>
     </modules>
