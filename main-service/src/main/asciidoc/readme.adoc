@@ -6,7 +6,7 @@ VERSION, {localdate} {localtime}
 :source-highlighter: highlightjs
 :highlightjs-theme: github
 :toc: left
-:toclevels: 4
+:toclevels: 2
 :sectlinks:
 :sectnums:
 
@@ -50,11 +50,13 @@ access the user that have been created.
 
 operation::user_create[snippets='curl-request,http-request,http-response']
 
+
 ==== Login
 To login and access system, username and password must be sent to Url + /login. Some data is returned including
 an access token, which must be added in the header of future read and update requests.
 
 operation::user_login[snippets='curl-request,http-response']
+
 
 ==== Read
 The "id" of user should be added at the end of URL, the Http verb of request is GET but
@@ -64,8 +66,8 @@ then web service sends 200 ok status code and the body of response contains the 
 Remember to add the access token in a header called Authorization,the syntax is
 for example: "Bearer [token]"
 
-
 operation::user_read[snippets='curl-request,http-request,http-response,response-fields']
+
 
 ==== Update
 To update an user, the url is equal to the Read case. The difference is in the verb which is
@@ -76,6 +78,7 @@ Remember to add the access token in a header called Authorization,the syntax is
 for example: "Bearer [token]"
 
 operation::user_update[snippets='curl-request,http-request,http-response']
+
 
 ==== Delete
 User delete is forbidden

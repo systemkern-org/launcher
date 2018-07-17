@@ -20,8 +20,8 @@
 
     <modules>
         <module>core</module>
+        <module>main-service</module>
         <module>parent</module>
-        <module>runtime-cli</module>
         <module>user-profile</module>
     </modules>
 
