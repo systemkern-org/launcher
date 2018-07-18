@@ -10,8 +10,7 @@ import java.util.UUID.randomUUID
 @EntityListeners(UserProfileEntityListener::class)
 internal data class UserProfile(
     @Id
-    @Column(name = "id_user_profile")
-    val id_userProfile: UUID = randomUUID(),
+    val id: UUID = randomUUID(),
     val name: String,
 
     @JsonProperty(access = WRITE_ONLY)

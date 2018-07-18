@@ -43,6 +43,7 @@ internal class UserControllerIT : IntegrationTest() {
     private var urlToVerifyUserProfile = ""
     private var passwordResetEntityId: String = ""
     private var verifyEmailAccessToken: String = ""
+    private val tokenString = "token"
 
     private val entityResponseFields = listOf(
         fieldWithPath("id").description("The Id of the user entity").type(STRING),
@@ -56,7 +57,7 @@ internal class UserControllerIT : IntegrationTest() {
             "Link to access verification tokens generated").type(STRING)
     )
     private val loginResponseFields = responseFields(listOf(
-    fieldWithPath("token").description("To authenticate the next requests")
+    fieldWithPath(tokenString).description("To authenticate the next requests")
     .type(STRING),
     fieldWithPath(username).description(usernameDesc).type(STRING),
     fieldWithPath("userId").description("Password of user to be created").type(STRING),
@@ -98,7 +99,7 @@ internal class UserControllerIT : IntegrationTest() {
             .accept(APPLICATION_JSON))
             .andExpect(status().isOk)
             .andDo(document("user_verify", loginResponseFields))
-            .andReturn().response.contentAsString.let { verifyEmailAccessToken = JSONObject(it).get("token").toString() }
+            .andReturn().response.contentAsString.let { verifyEmailAccessToken = JSONObject(it).get(tokenString).toString() }
     }
 
     private fun loginFunction(username: String, password: String) {
@@ -109,7 +110,7 @@ internal class UserControllerIT : IntegrationTest() {
             .accept(APPLICATION_JSON))
             .andExpect(status().isOk)
             .andDo(document("user_login", loginResponseFields))
-            .andReturn().response.contentAsString.let { token = "Bearer " + JSONObject(it).get("token").toString() }
+            .andReturn().response.contentAsString.let { token = "Bearer " + JSONObject(it).get(tokenString).toString() }
     }
 
     private fun resetPasswordFunction(username: String, password: String) {

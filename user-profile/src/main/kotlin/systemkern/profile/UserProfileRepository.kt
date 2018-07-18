@@ -97,9 +97,7 @@ internal class RepositoryRestConfig : RepositoryRestConfigurer {
         conversionService: ConfigurableConversionService?) {
     }
 
-    override fun configureExceptionHandlerExceptionResolver(
-        exceptionResolver: ExceptionHandlerExceptionResolver?) {
-    }
+    override fun configureExceptionHandlerExceptionResolver(exceptionResolver: ExceptionHandlerExceptionResolver?) {}
 
     override fun configureHttpMessageConverters(
         messageConverters: MutableList<HttpMessageConverter<*>>?) {
@@ -112,9 +110,7 @@ internal class RepositoryRestConfig : RepositoryRestConfigurer {
         config.exposeIdsFor(UserProfile::class.java)
     }
 
-    override fun configureValidatingRepositoryEventListener(
-        validatingListener: ValidatingRepositoryEventListener?) {
-    }
+    override fun configureValidatingRepositoryEventListener(validatingListener: ValidatingRepositoryEventListener?) {}
 }
 
 
