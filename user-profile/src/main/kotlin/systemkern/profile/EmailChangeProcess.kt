@@ -1,6 +1,5 @@
 package systemkern.profile
 
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.repository.CrudRepository
 import org.springframework.http.HttpStatus.NOT_ACCEPTABLE
 import org.springframework.stereotype.Repository
@@ -15,7 +14,6 @@ import javax.persistence.*
 internal class EmailChangeController(
     val emailChangeService: EmailChangeService,
     val userProfileService: UserProfileService,
-    @Autowired
     val mailUtility: MailUtility,
     val timeUntilTokenIsValid :Long = 6
 ) {
@@ -60,8 +58,12 @@ internal class EmailChangeController(
 
 @Service
 internal class EmailChangeService(private val emailChangeRepository: EmailChangeRepository) {
-    internal fun save(emailChangeEntity: EmailChangeEntity) = emailChangeRepository.save(emailChangeEntity)
-    internal fun findById(id: UUID) = emailChangeRepository.findById(id)
+
+    internal fun save(emailChangeEntity: EmailChangeEntity)
+        = emailChangeRepository.save(emailChangeEntity)
+
+    internal fun findById(id: UUID)
+        = emailChangeRepository.findById(id)
 }
 
 @Repository
@@ -72,7 +74,6 @@ internal data class EmailChangeRequest(val newEmailAddress: String, val userProf
 @Entity
 internal data class EmailChangeEntity(
     @Id
-    @Column(name = "id_email_change_entity")
     val id: UUID,
     val creationDate: LocalDateTime,
     val validUntil: LocalDateTime,
