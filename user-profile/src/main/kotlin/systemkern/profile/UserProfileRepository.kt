@@ -28,10 +28,11 @@ import java.util.regex.Pattern
 import java.util.zip.DataFormatException
 
 @RestController
-internal class UserProfileController(val userProfileService: UserProfileService,
-                                     val emailVerificationService: EmailVerificationService,
-                                     @Autowired
-                                     val mailUtility: MailUtility
+internal class UserProfileController(
+     val userProfileService: UserProfileService,
+     val emailVerificationService: EmailVerificationService,
+     val mailUtility: MailUtility,
+     val timeUntilTokenExpires: Long = 6
 ) {
     @PostMapping("user-profiles")
     private fun saveUser(@RequestBody requestBody: UserProfile): SaveUserProfileResponse {
@@ -41,7 +42,7 @@ internal class UserProfileController(val userProfileService: UserProfileService,
         val emailVerificationEntity = EmailVerification(
             tokenId,
             localDateTime,
-            localDateTime.plusHours(6),
+            localDateTime.plusHours(timeUntilTokenExpires),
             localDateTime,
             requestBody
         )
@@ -68,7 +69,7 @@ internal class UserProfileEntityListener(
     private val emailPattern = Pattern.compile("^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*" +
         "@[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$")
 
-    fun validateEmail(hex: String)
+    private fun validateEmail(hex: String)
         = emailPattern.matcher(hex).matches()
 
     private fun executeValidation(emailToVal: String){
