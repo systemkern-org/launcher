@@ -53,7 +53,7 @@ internal class AuthenticationService(
         return buildResponseAndSave(
             authenticationToken = UUID.fromString(auth.credentials.toString()),
             username = user.username,
-            userId = user.id_userProfile,
+            userId = user.id,
             validUntil = now().plusMinutes(sessionTimeOut.toMinutes()))
     }
 
@@ -64,7 +64,7 @@ internal class AuthenticationService(
         return buildResponseAndSave(
             authenticationToken = UUID.randomUUID(),
             username = userProfile.username,
-            userId = userProfile.id_userProfile,
+            userId = userProfile.id,
             validUntil = now().plusMinutes(sessionTimeOut.toMinutes()))
     }
 

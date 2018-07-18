@@ -11,7 +11,7 @@ import javax.servlet.http.HttpServletRequest
 internal class AuthenticationController(
     val service: AuthenticationService
 ) {
-    @PostMapping("/login")
+    @PostMapping
     internal fun login(auth: Authentication,
                        @RequestHeader password: String) =
         service.authenticationProcess(auth, password)

@@ -39,12 +39,6 @@ internal class CustomWebSecurityConfigurerAdapter(
     val pattern2: String = "/user-profiles/{\\d+}"
 
     @Throws(Exception::class)
-    override fun configure(webSecurity: WebSecurity) {
-        webSecurity
-            .ignoring()
-    }
-
-    @Throws(Exception::class)
     override fun configure(http: HttpSecurity) {
         http.csrf()
             .disable()
@@ -74,7 +68,7 @@ internal class CustomWebSecurityConfigurerAdapter(
 
 internal class AuthenticationFilter(
     private val authenticationProvider: UPAuthenticationProvider,
-    val service: AuthenticationService
+    private val service: AuthenticationService
 ) : GenericFilterBean() {
 
     override fun doFilter(
