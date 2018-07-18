@@ -2,6 +2,7 @@ package systemkern.profile
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.springframework.beans.factory.annotation.Autowired
+import io.swagger.annotations.Api
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -54,6 +55,7 @@ internal class UserProfileController(val userProfileService: UserProfileService,
     private data class SaveUserProfileResponse(var url: String)
 }
 
+@Api
 @RepositoryRestResource(path = "user-profiles")
 internal interface UserProfileRepository : CrudRepository<UserProfile, UUID> {
     fun findByUsername(username: String): UserProfile
@@ -114,6 +116,7 @@ internal class UserProfileConfiguration {
 
     @Bean internal fun bcryptPasswordEncoderBean() =
         BCryptPasswordEncoder(bcryptEncodeRounds)
+
     @Bean internal fun sessTimeOutBean() =
         sessionTimeOut
 }
@@ -121,9 +124,7 @@ internal class UserProfileConfiguration {
 @Component
 internal class SessionListener(val sessionTimeOut: Duration) : HttpSessionListener {
 
-    override fun sessionDestroyed(p0: HttpSessionEvent?) {
-
-    }
+    override fun sessionDestroyed(p0: HttpSessionEvent?) {}
 
     override fun sessionCreated(event: HttpSessionEvent) {
         event.session.maxInactiveInterval =  sessionTimeOut.toMinutes().toInt()
