@@ -4,6 +4,7 @@ import org.json.JSONObject
 import org.junit.Before
 import org.junit.Ignore
 import org.junit.Test
+import org.junit.runner.RunWith
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration
 import org.springframework.http.HttpHeaders
@@ -12,8 +13,9 @@ import org.springframework.http.MediaType.APPLICATION_JSON
 import org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document
 import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*
 import org.springframework.restdocs.payload.JsonFieldType.STRING
-import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
-import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
+import org.springframework.restdocs.payload.PayloadDocumentation.*
+import org.springframework.test.context.junit4.SpringRunner
+import org.springframework.test.web.servlet.ResultActions
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import java.util.*
 import kotlin.collections.HashMap
@@ -24,6 +26,7 @@ internal class UserControllerIT : IntegrationTest() {
     private val nameExample = "AndresAusecha"
     private val nameExample1 = "RainerKern"
     private val usernameExample = nameExample + "18"
+    private val emailExample = nameExample + "@gmail.com"
     private val passwordExample = usernameExample.plus("*")
     private val usernameExample1 = nameExample + "19"
     private val passwordExample1 = usernameExample.plus("*")
@@ -34,25 +37,35 @@ internal class UserControllerIT : IntegrationTest() {
     private val httpHeaders = HttpHeaders()
     private val restUrl = "/user-profiles"
     private val restLogin = "/login"
+    private val passwordResetUrl = "/password-reset"
     private var token: String = ""
-    val headers: HashMap<String, String> = HashMap()
+    private val headers: HashMap<String, String> = HashMap()
     private var usernameDesc = "Username to log in"
     private var username = "username"
+    private var urlToVerifyUserProfile = ""
+    private var passwordResetEntityId: String = ""
+    private var verifyEmailAccessToken: String = ""
 
     private val entityResponseFields = listOf(
         fieldWithPath("id").description("The Id of the user entity").type(STRING),
         fieldWithPath("name").description("Name of the user").type(STRING),
         fieldWithPath(username).description(usernameDesc).type(STRING),
+        fieldWithPath("email").description("User's email").type(STRING),
+        fieldWithPath("_links.self.href").description("Link to access the created user").type(STRING),
         fieldWithPath("_links.self.href").description("Link to access the created user").type(STRING),
         fieldWithPath("_links.userProfile.href").description("Link to access the created user").type(
-            STRING)
+            STRING),
+        fieldWithPath("_links.emailVerificationList.href").description(
+            "Link to access verification tokens generated").type(STRING)
     )
     private val loginResponseFields = responseFields(listOf(
-        fieldWithPath("token").description("Token to authenticate the next requests").type(STRING),
-        fieldWithPath(username).description(usernameDesc).type(STRING),
-        fieldWithPath("userId").description("Password of user to be created").type(STRING),
-        fieldWithPath("validUntil").description("Date and Time until session will expire").type(STRING)))
-
+    fieldWithPath("token").description("Token to authenticate the next requests")
+    .type(STRING),
+    fieldWithPath(username).description(usernameDesc).type(STRING),
+    fieldWithPath("userId").description("Password of user to be created").type(STRING),
+    fieldWithPath("validUntil").description("Date and Time until session will expire")
+    .type(STRING)
+    ))
     @Autowired
     private lateinit var testDataCreator: UserProfileTestDataCreator
     private lateinit var userId: UUID
@@ -63,61 +76,123 @@ internal class UserControllerIT : IntegrationTest() {
         this.userId = testDataCreator.userId
     }
 
-    private fun `create user function`(user: TestUser) {
+    private fun createUser(user: TestUser,verify: Boolean) {
         this.mockMvc.perform(post(restUrl)
             .content(objectMapper.writeValueAsString(user))
             .contentType(APPLICATION_JSON)
             .accept(APPLICATION_JSON))
-            .andExpect(status().isCreated)
+            .andExpect(status().isOk)
             .andDo(document("user_create",
-                responseFields(entityResponseFields)
-            ))
+                responseFields(listOf(
+                    fieldWithPath("url").description("Url to verify user email").type(STRING))
+                )))
+            .andReturn().response.contentAsString.let { urlToVerifyUserProfile = "url" +
+                    JSONObject(it).get("url").toString() }
+        if(verify) {
+            verifyEmail(user.username,user.password)
+        }
     }
 
-    private fun `login function`(username: String, password: String) {
-        headers[this.username] = username
-        headers["password"] = password
-        httpHeaders.setAll(headers)
+    private fun verifyEmail(username: String, password: String) {
+        createHeadersObject(username, password)
+        this.mockMvc.perform(post(urlToVerifyUserProfile)
+            .headers(httpHeaders)
+            .contentType(APPLICATION_JSON)
+            .accept(APPLICATION_JSON))
+            .andExpect(status().isOk)
+            .andDo(document("user_verify", loginResponseFields))
+            .andReturn().response.contentAsString.let { verifyEmailAccessToken = JSONObject(it).get("token").toString() }
+    }
+
+    private fun loginFunction(username: String, password: String) {
+        createHeadersObject(username, password)
         this.mockMvc.perform(post(restLogin)
             .headers(httpHeaders)
             .contentType(APPLICATION_JSON)
             .accept(APPLICATION_JSON))
             .andExpect(status().isOk)
-            .andDo(document("user_login",loginResponseFields))
+            .andDo(document("user_login", loginResponseFields))
             .andReturn().response.contentAsString.let { token = "Bearer " + JSONObject(it).get("token").toString() }
+    }
+
+    private fun resetPasswordFunction(username: String, password: String) {
+        createHeadersObject(username, password)
+        headers[AUTHORIZATION] = verifyEmailAccessToken
+        buildResetPasswordFunction(passwordResetUrl)
+            .andDo(document("resetPassword", responseFields(listOf(
+                fieldWithPath("id").description("The Id of the user entity").type(STRING),
+                fieldWithPath("creationDate").description("Date which was created the request").type(STRING),
+                fieldWithPath("validUntil").description("Date until token is valid").type(STRING),
+                fieldWithPath("completionDate").description("Date in which request is confirmed").type(STRING)))))
+            .andReturn().response.contentAsString.let { passwordResetEntityId = JSONObject(it).get("id").toString() }
+    }
+
+    private fun resetPasswordFunctionWithId() {
+        buildResetPasswordFunction("$passwordResetUrl/$passwordResetEntityId")
+    }
+
+    private fun buildResetPasswordFunction(url: String): ResultActions =
+        this.mockMvc.perform(post(url
+        )
+            .headers(httpHeaders)
+            .contentType(APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(NewPasswordResetBody(password = "NewPassword*")))
+            .accept(APPLICATION_JSON)).andExpect(status().isOk)
+
+    private fun createHeadersObject(username: String, password: String) {
+        headers[this.username] = username
+        headers["password"] = password
+        httpHeaders.setAll(headers)
     }
 
     @Test
     fun `Can create a User`() {
-        `create user function`(TestUser(
+        createUser(TestUser(
             username = usernameExample,
             name = nameExample,
-            password = passwordExample
-        ))
+            password = passwordExample,
+            email = emailExample
+        ),true)
     }
 
     @Test
     fun `Can login User`() {
         val username = usernameExample3
         val password = passwordExample3
-        `create user function`(TestUser(
+        createUser(TestUser(
             username = username,
             name = nameExample1,
-            password = password
-        ))
-        `login function`(username, password)
+            password = password,
+            email = emailExample
+        ),false)
+    }
+
+    @Test
+    fun `Can reset password`() {
+        val username = usernameExample3
+        val password = passwordExample3
+        createUser(TestUser(
+            username = username,
+            name = nameExample1,
+            password = password,
+            email = emailExample
+        ),true)
+        verifyEmail(username, password)
+        resetPasswordFunction(username, password)
+        resetPasswordFunctionWithId()
     }
 
     @Test
     fun `Can read User`() {
         val username = usernameExample1
         val password = passwordExample1
-        `create user function`(TestUser(
+        createUser(TestUser(
             username = username,
             name = nameExample,
-            password = password
-        ))
-        `login function`(username, password)
+            password = password,
+            email = emailExample
+        ),true)
+        loginFunction(username, password)
         this.mockMvc.perform(get("$restUrl/$userId")
             .header(AUTHORIZATION, token)
             .contentType(APPLICATION_JSON)
@@ -132,12 +207,13 @@ internal class UserControllerIT : IntegrationTest() {
     fun `Can update User`() {
         val username = usernameExample2
         val password = passwordExample2
-        `create user function`(TestUser(
+        createUser(TestUser(
             username = username,
             name = nameExample,
-            password = password
-        ))
-        `login function`(username, password)
+            password = password,
+            email = emailExample
+        ),true)
+        loginFunction(username, password)
         this.mockMvc.perform(put("$restUrl/$userId")
             .header(AUTHORIZATION, token)
             .content(
@@ -145,7 +221,8 @@ internal class UserControllerIT : IntegrationTest() {
                     TestUser(
                         username = "TestUserToUpdate",
                         name = "Test user to update",
-                        password = "TestUserToUpdate*"
+                        password = "TestUserToUpdate*",
+                        email = emailExample
                     )
                 ))
             .contentType(APPLICATION_JSON)
@@ -169,5 +246,6 @@ internal class UserControllerIT : IntegrationTest() {
 private data class TestUser(
     val username: String,
     val name: String,
-    val password: String
+    val password: String,
+    val email: String
 )

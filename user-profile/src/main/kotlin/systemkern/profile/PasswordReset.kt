@@ -2,7 +2,6 @@ package systemkern.profile
 
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.repository.CrudRepository
-import org.springframework.security.core.Authentication
 import org.springframework.stereotype.Service
 import org.springframework.web.bind.annotation.*
 import java.time.LocalDateTime.now
@@ -58,7 +57,7 @@ internal class PasswordResetController(
     }
 }
 
-data class NewPasswordResetBody(val password: String)
+internal data class NewPasswordResetBody(val password: String)
 
 @Service
 internal class PasswordResetService(private val repo: PasswordResetRepository) {
