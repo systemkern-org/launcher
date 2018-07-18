@@ -6,8 +6,6 @@ import org.springframework.http.HttpMethod.POST
 import org.springframework.http.HttpMethod.PUT
 import org.springframework.http.HttpMethod.GET
 import org.springframework.http.HttpStatus.NOT_FOUND
-import org.springframework.http.HttpMethod.*
-import org.springframework.http.HttpStatus
 import org.springframework.security.access.AccessDeniedException
 import org.springframework.security.authentication.AuthenticationProvider
 import org.springframework.security.authentication.InternalAuthenticationServiceException
@@ -50,7 +48,7 @@ internal class CustomWebSecurityConfigurerAdapter(
                 "/swagger-ui.html",
                 "/webjars/**" ,
                 /*Probably not needed*/ "/swagger.json")
-            .permitAll();
+            .permitAll()
 
         http.csrf()
             .disable()

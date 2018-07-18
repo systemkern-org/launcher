@@ -4,7 +4,6 @@ import org.json.JSONObject
 import org.junit.Before
 import org.junit.Ignore
 import org.junit.Test
-import org.junit.runner.RunWith
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration
 import org.springframework.http.HttpHeaders
@@ -14,7 +13,6 @@ import org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document
 import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*
 import org.springframework.restdocs.payload.JsonFieldType.STRING
 import org.springframework.restdocs.payload.PayloadDocumentation.*
-import org.springframework.test.context.junit4.SpringRunner
 import org.springframework.test.web.servlet.ResultActions
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import java.util.*
@@ -52,14 +50,13 @@ internal class UserControllerIT : IntegrationTest() {
         fieldWithPath(username).description(usernameDesc).type(STRING),
         fieldWithPath("email").description("User's email").type(STRING),
         fieldWithPath("_links.self.href").description("Link to access the created user").type(STRING),
-        fieldWithPath("_links.self.href").description("Link to access the created user").type(STRING),
         fieldWithPath("_links.userProfile.href").description("Link to access the created user").type(
             STRING),
         fieldWithPath("_links.emailVerificationList.href").description(
             "Link to access verification tokens generated").type(STRING)
     )
     private val loginResponseFields = responseFields(listOf(
-    fieldWithPath("token").description("Token to authenticate the next requests")
+    fieldWithPath("token").description("To authenticate the next requests")
     .type(STRING),
     fieldWithPath(username).description(usernameDesc).type(STRING),
     fieldWithPath("userId").description("Password of user to be created").type(STRING),

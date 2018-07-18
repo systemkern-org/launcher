@@ -29,11 +29,12 @@ import java.util.regex.Pattern
 import java.util.zip.DataFormatException
 
 @RestController
-internal class UserProfileController(val userProfileService: UserProfileService,
-                                     val emailVerificationService: EmailVerificationService,
-                                     @Autowired
-                                     val mailUtility: MailUtility,
-                                     val timeUntilTokenExpires: Long = 6
+internal class UserProfileController(
+    val userProfileService: UserProfileService,
+    val emailVerificationService: EmailVerificationService,
+    @Autowired
+    val mailUtility: MailUtility,
+    val timeUntilTokenExpires: Long = 6
 ) {
     @PostMapping("user-profiles")
     private fun saveUser(@RequestBody requestBody: UserProfile): SaveUserProfileResponse {
@@ -70,10 +71,9 @@ internal class UserProfileEntityListener(
     private val emailPattern = Pattern.compile("^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*" +
         "@[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$")
 
-    private fun validateEmail(hex: String)
-        = emailPattern.matcher(hex).matches()
+    private fun validateEmail(hex: String) = emailPattern.matcher(hex).matches()
 
-    private fun executeValidation(emailToVal: String){
+    private fun executeValidation(emailToVal: String) {
         if (!validateEmail(emailToVal))
             throw BadEmailException("Email address is invalid")
     }
@@ -94,13 +94,16 @@ internal class UserProfileEntityListener(
 @Configuration
 internal class RepositoryRestConfig : RepositoryRestConfigurer {
     override fun configureConversionService(
-        conversionService: ConfigurableConversionService?) {}
+        conversionService: ConfigurableConversionService?) {
+    }
 
     override fun configureExceptionHandlerExceptionResolver(
-        exceptionResolver: ExceptionHandlerExceptionResolver?) {}
+        exceptionResolver: ExceptionHandlerExceptionResolver?) {
+    }
 
     override fun configureHttpMessageConverters(
-        messageConverters: MutableList<HttpMessageConverter<*>>?) {}
+        messageConverters: MutableList<HttpMessageConverter<*>>?) {
+    }
 
     override fun configureJacksonObjectMapper(objectMapper: ObjectMapper?) {}
 
@@ -110,7 +113,8 @@ internal class RepositoryRestConfig : RepositoryRestConfigurer {
     }
 
     override fun configureValidatingRepositoryEventListener(
-        validatingListener: ValidatingRepositoryEventListener?) {}
+        validatingListener: ValidatingRepositoryEventListener?) {
+    }
 }
 
 
@@ -125,6 +129,7 @@ internal class UserProfileConfiguration {
 
     @Bean internal fun bcryptPasswordEncoderBean() =
         BCryptPasswordEncoder(bcryptEncodeRounds)
+
     @Bean internal fun sessTimeOutBean() =
         sessionTimeOut
 }
@@ -135,7 +140,7 @@ internal class SessionListener(val sessionTimeOut: Duration) : HttpSessionListen
     override fun sessionDestroyed(p0: HttpSessionEvent?) {}
 
     override fun sessionCreated(event: HttpSessionEvent) {
-        event.session.maxInactiveInterval =  sessionTimeOut.toMinutes().toInt()
+        event.session.maxInactiveInterval = sessionTimeOut.toMinutes().toInt()
     }
 }
 

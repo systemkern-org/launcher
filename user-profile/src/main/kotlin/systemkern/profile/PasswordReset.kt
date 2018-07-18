@@ -43,8 +43,9 @@ internal class PasswordResetController(
     }
 
     @PostMapping("/password-reset/{id}")
-    internal fun confirmPasswordReset(@PathVariable("id") passwordResetId: UUID,
-                                      @RequestBody newPasswordResetBody: NewPasswordResetBody
+    internal fun confirmPasswordReset(
+        @PathVariable("id") passwordResetId: UUID,
+        @RequestBody newPasswordResetBody: NewPasswordResetBody
     ): AuthenticationResponse {
         val passwordResetEntity = passwordResetService.findById(passwordResetId).get()
         val completionDate = LocalDateTime.now()
