@@ -2,29 +2,31 @@ package systemkern.profile
 
 import org.json.JSONObject
 import org.junit.Before
+import org.junit.Ignore
 import org.junit.Test
-import org.junit.runner.RunWith
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpHeaders.AUTHORIZATION
 import org.springframework.http.MediaType.APPLICATION_JSON
 import org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document
 import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders
+import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*
 import org.springframework.restdocs.payload.JsonFieldType.STRING
+<<<<<<< HEAD:integration-tests/src/test/kotlin/systemkern/profile/UserControllerIT.kt
 import org.springframework.restdocs.payload.PayloadDocumentation.*
 import org.springframework.test.context.junit4.SpringRunner
 import org.springframework.test.web.servlet.ResultActions
+=======
+import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
+import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
+>>>>>>> master:user-profile/src/test/kotlin/systemkern/profile/UserControllerIT.kt
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
-import systemkern.CliEntryPoint
-import systemkern.IntegrationTest
 import java.util.*
 import kotlin.collections.HashMap
 
-@RunWith(SpringRunner::class)
-@SpringBootTest(webEnvironment = RANDOM_PORT, classes = [CliEntryPoint::class])
-
+@Ignore("Swagger Swagger Shaggy")
+@EnableAutoConfiguration
 internal class UserControllerIT : IntegrationTest() {
     private val nameExample = "AndresAusecha"
     private val nameExample1 = "RainerKern"
@@ -62,13 +64,11 @@ internal class UserControllerIT : IntegrationTest() {
             "Link to access verification tokens generated").type(STRING)
     )
     private val loginResponseFields = responseFields(listOf(
-    fieldWithPath("token").description("Token to authenticate the next requests")
-    .type(STRING),
+    fieldWithPath("token").description("Token to authenticate the next requests").type(STRING),
     fieldWithPath(username).description(usernameDesc).type(STRING),
     fieldWithPath("userId").description("Password of user to be created").type(STRING),
-    fieldWithPath("validUntil").description("Date and Time until session will expire")
-    .type(STRING)
-    ))
+    fieldWithPath("validUntil").description("Date and Time until session will expire").type(STRING)))
+
     @Autowired
     private lateinit var testDataCreator: UserProfileTestDataCreator
     private lateinit var userId: UUID
@@ -79,8 +79,13 @@ internal class UserControllerIT : IntegrationTest() {
         this.userId = testDataCreator.userId
     }
 
+<<<<<<< HEAD:integration-tests/src/test/kotlin/systemkern/profile/UserControllerIT.kt
     private fun createUser(user: TestUser,verify: Boolean) {
         this.mockMvc.perform(RestDocumentationRequestBuilders.post(restUrl)
+=======
+    private fun `create user function`(user: TestUser) {
+        this.mockMvc.perform(post(restUrl)
+>>>>>>> master:user-profile/src/test/kotlin/systemkern/profile/UserControllerIT.kt
             .content(objectMapper.writeValueAsString(user))
             .contentType(APPLICATION_JSON)
             .accept(APPLICATION_JSON))
@@ -96,6 +101,7 @@ internal class UserControllerIT : IntegrationTest() {
         }
     }
 
+<<<<<<< HEAD:integration-tests/src/test/kotlin/systemkern/profile/UserControllerIT.kt
     private fun verifyEmail(username: String, password: String) {
         createHeadersObject(username, password)
         this.mockMvc.perform(RestDocumentationRequestBuilders.post(urlToVerifyUserProfile)
@@ -110,6 +116,13 @@ internal class UserControllerIT : IntegrationTest() {
     private fun loginFunction(username: String, password: String) {
         createHeadersObject(username, password)
         this.mockMvc.perform(RestDocumentationRequestBuilders.post(restLogin)
+=======
+    private fun `login function`(username: String, password: String) {
+        headers[this.username] = username
+        headers["password"] = password
+        httpHeaders.setAll(headers)
+        this.mockMvc.perform(post(restLogin)
+>>>>>>> master:user-profile/src/test/kotlin/systemkern/profile/UserControllerIT.kt
             .headers(httpHeaders)
             .contentType(APPLICATION_JSON)
             .accept(APPLICATION_JSON))
@@ -192,11 +205,18 @@ internal class UserControllerIT : IntegrationTest() {
         createUser(TestUser(
             username = username,
             name = nameExample,
+<<<<<<< HEAD:integration-tests/src/test/kotlin/systemkern/profile/UserControllerIT.kt
             password = password,
             email = emailExample
         ),true)
         loginFunction(username, password)
         this.mockMvc.perform(RestDocumentationRequestBuilders.get("$restUrl/$userId")
+=======
+            password = password
+        ))
+        `login function`(username, password)
+        this.mockMvc.perform(get("$restUrl/$userId")
+>>>>>>> master:user-profile/src/test/kotlin/systemkern/profile/UserControllerIT.kt
             .header(AUTHORIZATION, token)
             .contentType(APPLICATION_JSON)
             .accept(APPLICATION_JSON))
@@ -213,11 +233,18 @@ internal class UserControllerIT : IntegrationTest() {
         createUser(TestUser(
             username = username,
             name = nameExample,
+<<<<<<< HEAD:integration-tests/src/test/kotlin/systemkern/profile/UserControllerIT.kt
             password = password,
             email = emailExample
         ),true)
         loginFunction(username, password)
         this.mockMvc.perform(RestDocumentationRequestBuilders.put("$restUrl/$userId")
+=======
+            password = password
+        ))
+        `login function`(username, password)
+        this.mockMvc.perform(put("$restUrl/$userId")
+>>>>>>> master:user-profile/src/test/kotlin/systemkern/profile/UserControllerIT.kt
             .header(AUTHORIZATION, token)
             .content(
                 objectMapper.writeValueAsString(
@@ -238,7 +265,7 @@ internal class UserControllerIT : IntegrationTest() {
 
     @Test
     fun `Cannot delete User`() {
-        this.mockMvc.perform(RestDocumentationRequestBuilders.delete("$restUrl/$userId")
+        this.mockMvc.perform(delete("$restUrl/$userId")
             .contentType(APPLICATION_JSON)
             .accept(APPLICATION_JSON))
             .andExpect(status().isForbidden)

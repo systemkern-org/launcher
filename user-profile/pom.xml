@@ -12,8 +12,24 @@
 
     <artifactId>user-profile</artifactId>
 
+    <properties>
+        <swagger.version>2.9.2</swagger.version>
+        <swagger-maven-plugin-version>3.1.0</swagger-maven-plugin-version>
+
+        <start.class>systemkern.CliEntryPointKt</start.class>
+    </properties>
+
 
     <dependencies>
+        <!-- project internal dependencies -->
+        <dependency>
+            <groupId>com.systemkern</groupId>
+            <artifactId>core</artifactId>
+            <type>test-jar</type>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- external dependencies -->
         <dependency>
             <groupId>com.fasterxml.jackson.module</groupId>
             <artifactId>jackson-module-kotlin</artifactId>
@@ -39,19 +55,14 @@
             <artifactId>spring-security-config</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.hsqldb</groupId>
-            <artifactId>hsqldb</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-web</artifactId>
         </dependency>
 
         <dependency>
-            <groupId>org.springframework.integration</groupId>
-            <artifactId>spring-integration-core</artifactId>
-            <version>${spring-integration-core}</version>
+            <groupId>io.springfox</groupId>
+            <artifactId>springfox-swagger2</artifactId>
+            <version>${swagger.version}</version>
         </dependency>
 
         <dependency>

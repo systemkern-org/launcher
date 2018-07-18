@@ -3,13 +3,15 @@ package systemkern.profile
 import org.springframework.http.HttpStatus.NOT_FOUND
 import org.springframework.security.core.Authentication
 import org.springframework.web.bind.annotation.*
+import java.time.Duration
 import java.time.LocalDateTime
 import java.util.UUID
 import javax.servlet.http.HttpServletRequest
 
-@RestController
+@RestController("/auth")
 internal class AuthenticationController(
-    val service: AuthenticationService
+    val service: AuthenticationService,
+    val sessionTimeOut: Duration
 ) {
     @PostMapping("/login")
     internal fun login(auth: Authentication,
@@ -17,10 +19,10 @@ internal class AuthenticationController(
         service.authenticationProcess(auth, password)
 
 
-    @PostMapping("/logout")
-    internal fun logout(@RequestHeader authorization: String,
-                        request: HttpServletRequest) {
-        service.deleteToken(UUID.fromString(authorization.split(" ")[1]))
+
+    @DeleteMapping("{id}")
+    internal fun logout(@PathVariable id: UUID, request: HttpServletRequest) {
+        service.deleteToken(id)
         request.session.invalidate()
     }
 }
