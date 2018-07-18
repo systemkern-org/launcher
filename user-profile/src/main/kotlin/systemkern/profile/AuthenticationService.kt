@@ -15,7 +15,8 @@ internal class AuthenticationService(
     val userProfileRepository: UserProfileRepository,
     val emailVerificationRepository: EmailVerificationRepository,
     val passwordEncoder: BCryptPasswordEncoder,
-    val sessionTimeOut: Duration
+    val sessionTimeOut: Duration,
+    val auxNumToConvertSecstoMillis:Int = 1000
 ) {
 
     val tokens: HashMap<UUID, AuthenticationResponse> = HashMap()
@@ -24,7 +25,7 @@ internal class AuthenticationService(
 
     internal fun isValidToken(token: UUID, request: HttpServletRequest): Boolean {
         val inactiveInterval = System.currentTimeMillis() - request.session.lastAccessedTime
-        val maxInactiveIntervalMilis = request.session.maxInactiveInterval * 1000
+        val maxInactiveIntervalMilis = request.session.maxInactiveInterval * auxNumToConvertSecstoMillis
         if (tokens.containsKey(token)) {
             return inactiveInterval <= maxInactiveIntervalMilis
         }

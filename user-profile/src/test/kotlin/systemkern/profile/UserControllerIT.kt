@@ -48,7 +48,6 @@ internal class UserControllerIT : IntegrationTest() {
         fieldWithPath(username).description(usernameDesc).type(STRING),
         fieldWithPath("email").description("User's email").type(STRING),
         fieldWithPath("_links.self.href").description("Link to access the created user").type(STRING),
-        fieldWithPath("_links.self.href").description("Link to access the created user").type(STRING),
         fieldWithPath("_links.userProfile.href").description("Link to access the created user").type(
             STRING),
         fieldWithPath("_links.emailVerificationList.href").description(
