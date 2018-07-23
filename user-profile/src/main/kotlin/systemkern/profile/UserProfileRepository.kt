@@ -55,8 +55,8 @@ internal class UserProfileController(
         return SaveUserProfileResponse(mailUtility.urlToVerify)
     }
 
-    private data class SaveUserProfileResponse(var url: String)
 }
+private data class SaveUserProfileResponse(var url: String)
 
 @Api
 @RepositoryRestResource(path = "user-profiles")
