@@ -1,13 +1,11 @@
 package systemkern.profile
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import io.swagger.annotations.Api
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.core.convert.support.ConfigurableConversionService
 import org.springframework.data.repository.CrudRepository
-import org.springframework.data.rest.core.annotation.RepositoryRestResource
 import org.springframework.data.rest.core.config.RepositoryRestConfiguration
 import org.springframework.data.rest.core.event.ValidatingRepositoryEventListener
 import org.springframework.data.rest.webmvc.config.RepositoryRestConfigurer
@@ -28,35 +26,48 @@ import java.util.zip.DataFormatException
 
 @RestController
 internal class UserProfileController(
-     val userProfileService: UserProfileService,
-     val emailVerificationService: EmailVerificationService,
-     val mailUtility: MailUtility,
-     val timeUntilTokenExpires: Long = 6
-) {
-    @PostMapping("user-profiles")
-    private fun saveUser(@RequestBody requestBody: UserProfile): SaveUserProfileResponse {
-        userProfileService.save(requestBody)
+    val userProfileService: UserProfileService,
+    val emailVerificationService: EmailVerificationService,
+    val mailUtility: MailUtility,
+    val timeUntilTokenExpires: Long = 6) {
+
+    @PostMapping("/user-profiles")
+    private fun saveUser(@RequestBody requestedDataClass: RequestedDataClass): SaveUserProfileResponse {
         val localDateTime = LocalDateTime.now()
         val tokenId = UUID.randomUUID()
-        val emailVerificationEntity = EmailVerification(
+        emailVerificationService.save(EmailVerification(
             tokenId,
             localDateTime,
             localDateTime.plusHours(timeUntilTokenExpires),
             localDateTime,
-            requestBody
-        )
-        emailVerificationService.save(emailVerificationEntity)
-        mailUtility.createEmailMessage(requestBody.email, tokenId, "/verify-email/",
+            userProfileService.save(userProfileService.mapFromNewUser(requestedDataClass))
+        ))
+        mailUtility.createEmailMessage(requestedDataClass.email, tokenId, "/verify-email/",
             "Verify launcher account")
         mailUtility.sendMessage()
         return SaveUserProfileResponse(mailUtility.urlToVerify)
     }
 
-    private data class SaveUserProfileResponse(var url: String)
+    @GetMapping("/user-profiles/{id}")
+    private fun findById(@PathVariable("id") id: UUID)
+        = userProfileService.findById(id).get()
+
+    @PutMapping("/user-profiles/{id}")
+    private fun updateById(
+        @RequestBody updateRequest: RequestedDataClass,
+        @PathVariable("id") id: UUID)
+        = userProfileService.update(updateRequest, id)
 }
 
-@Api
-@RepositoryRestResource(path = "user-profiles")
+private data class SaveUserProfileResponse(var url: String)
+
+internal data class RequestedDataClass(
+    val name: String,
+    val password: String,
+    val username: String,
+    val email: String
+)
+
 internal interface UserProfileRepository : CrudRepository<UserProfile, UUID> {
     fun findByUsername(username: String): UserProfile
 }
@@ -68,23 +79,17 @@ internal class UserProfileEntityListener(
     private val emailPattern = Pattern.compile("^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*" +
         "@[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$")
 
-    private fun validateEmail(hex: String)
-        = emailPattern.matcher(hex).matches()
-
-    private fun executeValidation(emailToVal: String){
-        if (!validateEmail(emailToVal))
-            throw BadEmailException("Email address is invalid")
-    }
+    private fun validateEmail(hex: String) = emailPattern.matcher(hex).matches()
 
     @PrePersist
     internal fun handleUserCreate(userProfile: UserProfile) {
-        executeValidation(userProfile.email)
+        if (!validateEmail(userProfile.email))
+            throw BadEmailException("Email address is invalid")
         userProfile.password = passwordEncoder.encode(userProfile.password)
     }
 
     @PreUpdate
     internal fun handleUserUpdate(userProfile: UserProfile) {
-        executeValidation(userProfile.email)
         userProfile.password = passwordEncoder.encode(userProfile.password)
     }
 }
@@ -127,7 +132,7 @@ internal class SessionListener(val sessionTimeOut: Duration) : HttpSessionListen
     override fun sessionDestroyed(p0: HttpSessionEvent?) {}
 
     override fun sessionCreated(event: HttpSessionEvent) {
-        event.session.maxInactiveInterval =  sessionTimeOut.toMinutes().toInt()
+        event.session.maxInactiveInterval = sessionTimeOut.toMinutes().toInt()
     }
 }
 

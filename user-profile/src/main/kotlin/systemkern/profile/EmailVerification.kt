@@ -1,13 +1,17 @@
 package systemkern.profile
 
 import org.springframework.data.repository.CrudRepository
-import org.springframework.http.HttpStatus
-import org.springframework.security.core.Authentication
+import org.springframework.http.HttpStatus.UNAUTHORIZED
 import org.springframework.stereotype.Service
 import org.springframework.web.bind.annotation.*
+import java.time.LocalDateTime.now
 import java.time.LocalDateTime
-import java.util.*
-import javax.persistence.*
+import java.util.UUID
+import javax.persistence.JoinColumn
+import javax.persistence.FetchType.LAZY
+import javax.persistence.Entity
+import javax.persistence.ManyToOne
+import javax.persistence.Id
 
 @RestController
 internal class EmailVerificationController(
@@ -15,18 +19,15 @@ internal class EmailVerificationController(
     val authenticationService: AuthenticationService) {
 
     @PostMapping("/verify-email/{id}")
-    fun verifyUserByToken(@PathVariable("id") tokenId: String,
-                          @RequestHeader password: String,
-                          auth: Authentication): AuthenticationResponse {
-
-        val emailVerification = emailVerificationService.findById(UUID.fromString(tokenId)).get()
-        val completionDate = LocalDateTime.now()
-        if (LocalDateTime.now() <= emailVerification.validUntil) {
+    fun verifyUserByToken(@PathVariable("id") tokenId: UUID): AuthenticationResponse {
+        val emailVerification = emailVerificationService.findById(tokenId).get()
+        val completionDate = now()
+        if (completionDate <= emailVerification.validUntil) {
             emailVerification.completionDate = completionDate
             emailVerificationService.save(emailVerification)
-            return authenticationService.authenticationProcess(auth, password)
+            return authenticationService.authProcessEmailVerification(tokenId)
         }
-        throw ExpiredTokenException("Token has expired")
+        throw ExpiredTokenException()
     }
 }
 
@@ -44,15 +45,14 @@ internal interface EmailVerificationRepository : CrudRepository<EmailVerificatio
 @Entity
 internal data class EmailVerification(
     @Id
-    @Column(name = "id_email_verification")
     val id_email_verification: UUID,
     val creationDate: LocalDateTime,
     val validUntil: LocalDateTime,
     var completionDate: LocalDateTime,
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "id_user_profile", nullable = false)
     val userProfile: UserProfile
 )
 
-@ResponseStatus(HttpStatus.UNAUTHORIZED)
-internal class ExpiredTokenException(message: String?) : RuntimeException()
+@ResponseStatus(UNAUTHORIZED)
+internal class ExpiredTokenException : RuntimeException()

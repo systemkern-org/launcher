@@ -15,12 +15,12 @@ internal class EmailChangeController(
     val emailChangeService: EmailChangeService,
     val userProfileService: UserProfileService,
     val mailUtility: MailUtility,
-    val timeUntilTokenIsValid :Long = 6
-) {
+    val timeUntilTokenIsValid :Long = 6,
+    val authenticationService: AuthenticationService) {
+
     @PostMapping("/email-change")
     internal fun saveRequest(@RequestBody emailChangeRequest: EmailChangeRequest
     ): EmailChangeResponse {
-
         val now = now()
         val emailChangeRequestId = UUID.randomUUID()
         val userProfile = userProfileService.findById(emailChangeRequest.userProfileId).get()
@@ -44,15 +44,15 @@ internal class EmailChangeController(
     }
 
     @PostMapping("/email-change/{id}")
-    internal fun confirmEmail(@PathVariable("id") emailChangeRequestId: UUID
-    ): EmailChangeEntity {
+    internal fun confirmEmail(@PathVariable("id") emailChangeRequestId: UUID): AuthenticationResponse {
         val emailChangeEntity = emailChangeService.findById(emailChangeRequestId).get()
-        val now = now()
-        if(emailChangeEntity.validUntil < now)
-            throw EmailTokenExpired()
-        emailChangeEntity.completionDate = now
-        emailChangeEntity.userProfile.email = emailChangeEntity.newEmailAddress
-        return emailChangeService.save(emailChangeEntity)
+        emailChangeEntity.completionDate = now()
+        if(emailChangeEntity.completionDate < emailChangeEntity.validUntil){
+            emailChangeEntity.userProfile.email = emailChangeEntity.newEmailAddress
+            emailChangeService.save(emailChangeEntity)
+            return authenticationService.authProcessEmailChange(emailChangeRequestId)
+        }
+        throw EmailTokenExpired()
     }
 }
 

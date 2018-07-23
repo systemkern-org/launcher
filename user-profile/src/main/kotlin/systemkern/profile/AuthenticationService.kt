@@ -4,6 +4,7 @@ import org.springframework.security.core.Authentication
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.stereotype.Service
 import java.time.LocalDateTime
+import java.time.LocalDateTime.now
 import java.util.*
 import javax.servlet.http.HttpServletRequest
 import kotlin.collections.HashMap
@@ -11,6 +12,8 @@ import java.time.Duration
 
 @Service
 internal class AuthenticationService(
+    val emailVerificationRepository: EmailVerificationRepository,
+     val emailChangeRepository: EmailChangeRepository,
      val repo: UserProfileRepository,
      val passwordEncoder: BCryptPasswordEncoder,
      val sessionTimeOut: Duration,
@@ -48,14 +51,51 @@ internal class AuthenticationService(
             && emailVerification.completionDate <= emailVerification.creationDate)
             throw UserNotFoundException("UserNotFoundException")
         val token: UUID = UUID.fromString(auth.credentials.toString())
-        val validUntil = LocalDateTime.now().plusMinutes(sessionTimeOut.toMinutes())
+        val validUntil = now().plusMinutes(sessionTimeOut.toMinutes())
         val authResp = AuthenticationResponse(
             token = token,
             username = user.username,
-            userId = user.id_userProfile,
+            userId = user.id,
             validUntil = validUntil
         )
         saveToken(token, authResp)
+        return authResp
+    }
+
+    internal fun authProcessEmailVerification(verifyEmailToken: UUID): AuthenticationResponse {
+        val emailVerification = emailVerificationRepository.findById(verifyEmailToken).get()
+        val userProfile = emailVerification.userProfile
+
+        return buildResponseAndSave(
+            authenticationToken = UUID.randomUUID(),
+            username = userProfile.username,
+            userId = userProfile.id,
+            validUntil = now().plusMinutes(sessionTimeOut.toMinutes()))
+    }
+
+    internal fun authProcessEmailChange(emailChangeToken: UUID): AuthenticationResponse {
+        val emailChangeEntity = emailChangeRepository.findById(emailChangeToken).get()
+        val userProfile = emailChangeEntity.userProfile
+
+        return buildResponseAndSave(
+            authenticationToken = UUID.randomUUID(),
+            username = userProfile.username,
+            userId = userProfile.id,
+            validUntil = now().plusMinutes(sessionTimeOut.toMinutes()))
+    }
+
+    private fun buildResponseAndSave(
+        authenticationToken: UUID,
+        validUntil: LocalDateTime,
+        username: String,
+        userId: UUID): AuthenticationResponse {
+        val authResp = AuthenticationResponse(
+            token = authenticationToken,
+            username = username,
+            userId = userId,
+            validUntil = validUntil
+        )
+        saveToken(authenticationToken, authResp)
         return authResp
     }
 }

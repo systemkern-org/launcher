@@ -29,9 +29,8 @@ internal class AuthenticationController(
             val authResp = AuthenticationResponse(
                 token = token,
                 username = user.username,
-                userId = user.id_userProfile,
-                validUntil = validUntil
-            )
+                userId = user.id,
+                validUntil = validUntil)
             service.saveToken(token, authResp)
             return authResp
         } catch (e: EmptyResultDataAccessException) {

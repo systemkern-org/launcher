@@ -17,13 +17,12 @@ import java.util.UUID.randomUUID
 @EntityListeners(UserProfileEntityListener::class)
 internal data class UserProfile(
     @Id
-    @Column(name = "id_user_profile")
-    val id_userProfile: UUID = randomUUID(),
-    val name: String,
+    val id: UUID = randomUUID(),
+    var name: String,
 
     @JsonProperty(access = WRITE_ONLY)
     var password: String, /*This attribute is var because of how repository event handler works*/
-    val username: String,
+    var username: String,
     var email: String,
 
     @OneToMany(fetch = LAZY)
