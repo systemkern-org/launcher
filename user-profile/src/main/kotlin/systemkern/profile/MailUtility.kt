@@ -25,7 +25,10 @@ internal class MailUtility(
         message.text = urlToVerify
     }
 
-    private fun buildLink(tokenId: UUID, baseUrl: String){
+    private fun buildLink(
+        tokenId: UUID,
+        baseUrl: String
+    ){
         urlToVerify = ""
         urlToVerify += "http://"
         urlToVerify += InetAddress.getLocalHost().hostAddress

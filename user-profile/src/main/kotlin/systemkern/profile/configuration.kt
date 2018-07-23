@@ -32,9 +32,10 @@ import javax.servlet.http.HttpServletResponse.SC_OK
 internal class CustomWebSecurityConfigurerAdapter(
     val service: AuthenticationService
 ) : WebSecurityConfigurerAdapter() {
-    val pattern: String = "/user-profiles"
-    val pattern1: String = "/user-profiles/"
-    val pattern2: String = "/user-profiles/{\\d+}"
+    val pattern = "/user-profiles"
+    val pattern1 = "/user-profiles/"
+    val pattern2 = "/user-profiles/{\\d+}"
+    val patrernEmailChangeUrl = "/email-change"
 
     @Throws(Exception::class)
     override fun configure(http: HttpSecurity) {
@@ -60,7 +61,7 @@ internal class CustomWebSecurityConfigurerAdapter(
 
             .antMatchers(GET, pattern2)
             .authenticated()
-            .antMatchers(GET, pattern, pattern1)
+            .antMatchers(GET, pattern, pattern1,patrernEmailChangeUrl)
             .denyAll()
 
             .and()

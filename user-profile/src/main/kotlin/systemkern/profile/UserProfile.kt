@@ -19,10 +19,8 @@ internal data class UserProfile(
     var username: String,
     var email: String,
 
-    @JsonIgnore
-    @OneToMany
+    @JsonIgnore @OneToMany
     val emailVerificationList: List<EmailVerification> = ArrayList(),
 
-    @JsonIgnore
-    @OneToMany
+    @JsonIgnore @OneToMany
     val emailChangeList: List<EmailChangeEntity> = ArrayList())

@@ -14,10 +14,11 @@ import javax.persistence.Id
 @RestController
 internal class EmailVerificationController(
     val emailVerificationService: EmailVerificationService,
-    val authenticationService: AuthenticationService) {
-
+    val authenticationService: AuthenticationService
+) {
     @PostMapping("/verify-email/{id}")
-    fun verifyUserByToken(@PathVariable("id") tokenId: UUID): AuthenticationResponse {
+    fun verifyUserByToken(@PathVariable("id") tokenId: UUID
+    ):AuthenticationResponse {
         val emailVerification = emailVerificationService.findById(tokenId).get()
         val completionDate = now()
         if (completionDate <= emailVerification.validUntil) {

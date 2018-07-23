@@ -17,9 +17,9 @@ internal class AuthenticationService(
     val emailChangeRepository: EmailChangeRepository,
     val passwordEncoder: BCryptPasswordEncoder,
     val sessionTimeOut: Duration,
-    val auxNumToConvertSecstoMillis:Int = 1000) {
+    val auxNumToConvertSecstoMillis: Int = 1000,
     val tokens: HashMap<UUID, AuthenticationResponse> = HashMap()
-
+) {
     internal fun findByUsername(username: String) =
         userProfileRepository.findByUsername(username)
 
@@ -36,8 +36,9 @@ internal class AuthenticationService(
 
     internal fun saveToken(
         token: UUID,
-        auth: AuthenticationResponse) {
-            tokens[token] = auth
+        auth: AuthenticationResponse
+    ) {
+        tokens[token] = auth
     }
 
     internal fun deleteToken(token: UUID) {
@@ -62,7 +63,9 @@ internal class AuthenticationService(
             validUntil = now().plusMinutes(sessionTimeOut.toMinutes()))
     }
 
-    internal fun authProcessEmailVerification(verifyEmailToken: UUID): AuthenticationResponse {
+    internal fun authProcessEmailVerification(
+        verifyEmailToken: UUID
+    ): AuthenticationResponse {
         val emailVerification = emailVerificationRepository.findById(verifyEmailToken).get()
         val userProfile = emailVerification.userProfile
 
@@ -72,7 +75,8 @@ internal class AuthenticationService(
             userId = userProfile.id,
             validUntil = now().plusMinutes(sessionTimeOut.toMinutes()))
     }
-    internal fun authProcessEmailChange(emailChangeToken: UUID): AuthenticationResponse {
+
+    internal fun authProcessEmailChange(emailChangeToken: UUID) : AuthenticationResponse {
         val emailChangeEntity = emailChangeRepository.findById(emailChangeToken).get()
         val userProfile = emailChangeEntity.userProfile
 

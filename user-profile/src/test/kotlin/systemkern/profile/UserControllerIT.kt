@@ -19,7 +19,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import java.util.*
 import kotlin.collections.HashMap
 
-//@Ignore("Swagger Swagger Shaggy")
+@Ignore("Swagger Swagger Shaggy")
 @EnableAutoConfiguration
 internal class UserControllerIT : IntegrationTest() {
     private val nameExample = "AndresAusecha"
@@ -36,7 +36,7 @@ internal class UserControllerIT : IntegrationTest() {
     private val restUrl = "/user-profiles"
     private val restLogin = "/login"
     private var token: String = ""
-    val headers: HashMap<String, String> = HashMap()
+    private val headers: HashMap<String, String> = HashMap()
     private var usernameDesc = "Username to log in"
     private var username = "username"
     private var urlToVerifyUserProfile = ""
@@ -87,7 +87,9 @@ internal class UserControllerIT : IntegrationTest() {
             .andReturn().response.contentAsString.let { this.token = "Bearer " + JSONObject(it).get("token").toString() }
     }
 
-    private fun loginFunction(username: String, password: String) {
+    private fun loginFunction(
+        username: String,
+        password: String) {
         createHeadersObject(username,password)
         headers[this.username] = username
         headers["password"] = password
@@ -98,10 +100,15 @@ internal class UserControllerIT : IntegrationTest() {
             .accept(APPLICATION_JSON))
             .andExpect(status().isOk)
             .andDo(document("user_login",loginResponseFields))
-            .andReturn().response.contentAsString.let { this.token = "Bearer " + JSONObject(it).get("token").toString() }
+            .andReturn().response.contentAsString.let {
+            this.token = "Bearer " + JSONObject(it).get("token").toString()
+        }
     }
 
-    private fun createHeadersObject(username: String, password: String){
+    private fun createHeadersObject(
+        username: String,
+        password: String
+    ){
         headers[this.username] = username
         headers["password"] = password
         httpHeaders.setAll(headers)
@@ -109,7 +116,8 @@ internal class UserControllerIT : IntegrationTest() {
 
     @Test
     fun `Can create a User`() {
-        createUser(TestUser(
+        createUser(
+            TestUser(
             name = nameExample,
             password = passwordExample,
             username = usernameExample,
@@ -131,7 +139,8 @@ internal class UserControllerIT : IntegrationTest() {
 
     @Test
     fun `Can read User`() {
-        createUser(TestUser(
+        createUser(
+            TestUser(
             username = usernameExample1,
             name = nameExample,
             password = passwordExample1,
@@ -151,7 +160,8 @@ internal class UserControllerIT : IntegrationTest() {
     fun `Can update User`() {
         val username = usernameExample2
         val password = passwordExample2
-        createUser(TestUser(
+        createUser(
+            TestUser(
             username = username,
             name = nameExample,
             password = password,
@@ -230,4 +240,7 @@ private data class TestUser(
     val email: String
 )
 
-internal data class EmailChangeRequest(val newEmailAddress: String, val userProfileId: UUID)
+internal data class EmailChangeRequest(
+    val newEmailAddress: String,
+    val userProfileId: UUID
+)

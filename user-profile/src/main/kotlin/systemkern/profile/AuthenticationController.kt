@@ -9,7 +9,8 @@ import javax.servlet.http.HttpServletRequest
 
 @RestController("/auth")
 internal class AuthenticationController(
-    val service: AuthenticationService) {
+    val service: AuthenticationService
+) {
 
     @PostMapping
     internal fun login(

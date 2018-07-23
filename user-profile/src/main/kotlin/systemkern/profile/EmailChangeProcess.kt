@@ -40,7 +40,8 @@ internal class EmailChangeController(
 
     internal fun sendEmails(
         emailAddress: String,
-        id: UUID){
+        id: UUID
+    ){
         mailUtility.createEmailMessage(
             emailAddress,
             id,
@@ -50,7 +51,8 @@ internal class EmailChangeController(
     }
 
     @PostMapping("/email-change/{id}")
-    internal fun confirmEmail(@PathVariable("id") emailChangeRequestId: UUID): AuthenticationResponse {
+    internal fun confirmEmail(@PathVariable("id") emailChangeRequestId: UUID
+    ): AuthenticationResponse {
         val emailChangeEntity = emailChangeService.findById(emailChangeRequestId)
         emailChangeEntity.completionDate = now()
         if(emailChangeEntity.completionDate < emailChangeEntity.validUntil){
