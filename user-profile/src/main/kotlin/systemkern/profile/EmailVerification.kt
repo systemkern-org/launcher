@@ -18,7 +18,7 @@ internal class EmailVerificationController(
 ) {
     @PostMapping("/verify-email/{id}")
     fun verifyUserByToken(@PathVariable("id") tokenId: UUID
-    ):AuthenticationResponse {
+    ): AuthenticationResponse {
         val emailVerification = emailVerificationService.findById(tokenId).get()
         val completionDate = now()
         if (completionDate <= emailVerification.validUntil) {

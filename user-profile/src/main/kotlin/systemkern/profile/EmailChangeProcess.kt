@@ -16,7 +16,8 @@ internal class EmailChangeController(
     val userProfileService: UserProfileService,
     val mailUtility: MailUtility,
     val timeUntilTokenIsValid :Long = 6,
-    val authenticationService: AuthenticationService) {
+    val authenticationService: AuthenticationService
+) {
 
     @PostMapping("/email-change")
     internal fun saveRequest(@RequestBody emailChangeRequest: EmailChangeRequest
@@ -79,7 +80,8 @@ internal interface EmailChangeRepository : CrudRepository<EmailChangeEntity, UUI
 
 internal data class EmailChangeRequest(
     val newEmailAddress: String,
-    val userProfileId: UUID)
+    val userProfileId: UUID
+)
 
 @Entity
 internal data class EmailChangeEntity(
@@ -93,7 +95,10 @@ internal data class EmailChangeEntity(
     val userProfile: UserProfile
 )
 
-internal data class EmailChangeResponse(val emailChangeReqId: UUID, val validUntil: LocalDateTime)
+internal data class EmailChangeResponse(
+    val emailChangeReqId: UUID,
+    val validUntil: LocalDateTime
+)
 
 @ResponseStatus(NOT_ACCEPTABLE)
 internal class EmailTokenExpired: RuntimeException()
