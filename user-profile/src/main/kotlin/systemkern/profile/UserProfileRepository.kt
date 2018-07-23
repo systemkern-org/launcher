@@ -1,20 +1,16 @@
 package systemkern.profile
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import io.swagger.annotations.Api
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.core.convert.support.ConfigurableConversionService
 import org.springframework.data.repository.CrudRepository
-import org.springframework.data.rest.core.annotation.RepositoryRestResource
-import org.springframework.data.rest.core.annotation.RestResource
 import org.springframework.data.rest.core.config.RepositoryRestConfiguration
 import org.springframework.data.rest.core.event.ValidatingRepositoryEventListener
 import org.springframework.data.rest.webmvc.config.RepositoryRestConfigurer
 import org.springframework.http.HttpStatus.NOT_ACCEPTABLE
 import org.springframework.http.converter.HttpMessageConverter
-import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.stereotype.Component
 import org.springframework.web.bind.annotation.*
@@ -37,17 +33,15 @@ internal class UserProfileController(
 
     @PostMapping("/user-profiles")
     private fun saveUser(@RequestBody requestedDataClass: RequestedDataClass): SaveUserProfileResponse {
-        val userProf =  userProfileService.save(userProfileService.mapFromNewUser(requestedDataClass))
         val localDateTime = LocalDateTime.now()
         val tokenId = UUID.randomUUID()
-        val emailVerificationEntity = EmailVerification(
+        emailVerificationService.save(EmailVerification(
             tokenId,
             localDateTime,
             localDateTime.plusHours(timeUntilTokenExpires),
             localDateTime,
-            userProf
-        )
-        emailVerificationService.save(emailVerificationEntity)
+            userProfileService.save(userProfileService.mapFromNewUser(requestedDataClass))
+        ))
         mailUtility.createEmailMessage(requestedDataClass.email, tokenId, "/verify-email/",
             "Verify launcher account")
         mailUtility.sendMessage()

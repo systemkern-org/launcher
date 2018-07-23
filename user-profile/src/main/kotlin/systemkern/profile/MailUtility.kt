@@ -25,6 +25,7 @@ internal class MailUtility(private val emailSender: JavaMailSender,
     }
 
     private fun buildLink(tokenId: UUID, baseUrl: String){
+        urlToVerify = ""
         urlToVerify += "http://"
         urlToVerify += InetAddress.getLocalHost().hostAddress
         urlToVerify += ":8080"
