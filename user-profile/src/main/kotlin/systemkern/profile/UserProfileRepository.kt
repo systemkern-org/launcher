@@ -8,11 +8,13 @@ import org.springframework.context.annotation.Configuration
 import org.springframework.core.convert.support.ConfigurableConversionService
 import org.springframework.data.repository.CrudRepository
 import org.springframework.data.rest.core.annotation.RepositoryRestResource
+import org.springframework.data.rest.core.annotation.RestResource
 import org.springframework.data.rest.core.config.RepositoryRestConfiguration
 import org.springframework.data.rest.core.event.ValidatingRepositoryEventListener
 import org.springframework.data.rest.webmvc.config.RepositoryRestConfigurer
 import org.springframework.http.HttpStatus.NOT_ACCEPTABLE
 import org.springframework.http.converter.HttpMessageConverter
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.stereotype.Component
 import org.springframework.web.bind.annotation.*
@@ -27,14 +29,15 @@ import java.util.regex.Pattern
 import java.util.zip.DataFormatException
 
 @RestController
-internal class UserProfileController(val userProfileService: UserProfileService,
-                                     val emailVerificationService: EmailVerificationService,
-                                     val mailUtility: MailUtility,
-                                     val timeUntilTokenExpires: Long = 6
-) {
-    @PostMapping("user-profiles")
-    private fun saveUser(@RequestBody requestBody: UserProfile): SaveUserProfileResponse {
-        userProfileService.save(requestBody)
+internal class UserProfileController(
+    val userProfileService: UserProfileService,
+    val emailVerificationService: EmailVerificationService,
+    val mailUtility: MailUtility,
+    val timeUntilTokenExpires: Long = 6) {
+
+    @PostMapping("/user-profiles")
+    private fun saveUser(@RequestBody requestedDataClass: RequestedDataClass): SaveUserProfileResponse {
+        val userProf =  userProfileService.save(userProfileService.mapFromNewUser(requestedDataClass))
         val localDateTime = LocalDateTime.now()
         val tokenId = UUID.randomUUID()
         val emailVerificationEntity = EmailVerification(
@@ -42,20 +45,33 @@ internal class UserProfileController(val userProfileService: UserProfileService,
             localDateTime,
             localDateTime.plusHours(timeUntilTokenExpires),
             localDateTime,
-            requestBody
+            userProf
         )
         emailVerificationService.save(emailVerificationEntity)
-        mailUtility.createEmailMessage(requestBody.email, tokenId, "/verify-email/",
+        mailUtility.createEmailMessage(requestedDataClass.email, tokenId, "/verify-email/",
             "Verify launcher account")
         mailUtility.sendMessage()
         return SaveUserProfileResponse(mailUtility.urlToVerify)
     }
 
-    private data class SaveUserProfileResponse(var url: String)
+    @GetMapping("/user-profiles/{id}")
+    private fun findById(@PathVariable("id") id: UUID) = userProfileService.findById(id).get()
+
+    @PutMapping("/user-profiles/{id}")
+    private fun updateById(
+        @RequestBody updateRequest: RequestedDataClass,
+        @PathVariable("id") id: UUID) = userProfileService.update(updateRequest, id)
 }
 
-@Api
-@RepositoryRestResource(path = "user-profiles")
+private data class SaveUserProfileResponse(var url: String)
+
+internal data class RequestedDataClass(
+    val name: String,
+    val password: String,
+    val username: String,
+    val email: String
+)
+
 internal interface UserProfileRepository : CrudRepository<UserProfile, UUID> {
     fun findByUsername(username: String): UserProfile
 }
@@ -67,8 +83,7 @@ internal class UserProfileEntityListener(
     private val emailPattern = Pattern.compile("^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*" +
         "@[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$")
 
-    private fun validateEmail(hex: String)
-        = emailPattern.matcher(hex).matches()
+    private fun validateEmail(hex: String) = emailPattern.matcher(hex).matches()
 
     @PrePersist
     internal fun handleUserCreate(userProfile: UserProfile) {
@@ -121,7 +136,7 @@ internal class SessionListener(val sessionTimeOut: Duration) : HttpSessionListen
     override fun sessionDestroyed(p0: HttpSessionEvent?) {}
 
     override fun sessionCreated(event: HttpSessionEvent) {
-        event.session.maxInactiveInterval =  sessionTimeOut.toMinutes().toInt()
+        event.session.maxInactiveInterval = sessionTimeOut.toMinutes().toInt()
     }
 }
 

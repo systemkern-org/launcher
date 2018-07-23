@@ -16,8 +16,6 @@ internal class AuthenticationController(
                        @RequestHeader password: String) =
         service.authenticationProcess(auth, password)
 
-
-
     @DeleteMapping("{id}")
     internal fun logout(@PathVariable id: UUID, request: HttpServletRequest) {
         service.deleteToken(id)

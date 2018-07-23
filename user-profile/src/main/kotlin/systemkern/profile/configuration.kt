@@ -39,6 +39,15 @@ internal class CustomWebSecurityConfigurerAdapter(
 
     @Throws(Exception::class)
     override fun configure(http: HttpSecurity) {
+        http.authorizeRequests()
+            .antMatchers(
+                "/v2/api-docs",
+                "/swagger-resources/**",
+                "/swagger-ui.html",
+                "/webjars/**" ,
+                /*Probably not needed*/ "/swagger.json")
+            .permitAll()
+
         http.csrf()
             .disable()
             .authorizeRequests()
@@ -47,20 +56,23 @@ internal class CustomWebSecurityConfigurerAdapter(
 
             .antMatchers(PUT, pattern2)
             .authenticated()
+
+            .antMatchers(POST, pattern)
+            .permitAll()
+
             .antMatchers(PUT, pattern, pattern1)
             .denyAll()
 
             .antMatchers(GET, pattern2)
             .authenticated()
-            .antMatchers(GET, pattern, pattern1)
+            .antMatchers(GET, pattern)
             .denyAll()
 
-            .antMatchers(POST,"/verify-email/{\\d+}")
-            .permitAll()
-
             .and()
-            .addFilterBefore(AuthenticationFilter(UPAuthenticationProvider(), service),
-                BasicAuthenticationFilter::class.java)
+            .addFilterBefore(
+                AuthenticationFilter(UPAuthenticationProvider(), service),
+                BasicAuthenticationFilter::class.java
+            )
     }
 
 }
