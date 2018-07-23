@@ -7,8 +7,6 @@ import org.springframework.web.bind.annotation.*
 import java.time.LocalDateTime.now
 import java.time.LocalDateTime
 import java.util.UUID
-import javax.persistence.JoinColumn
-import javax.persistence.FetchType.LAZY
 import javax.persistence.Entity
 import javax.persistence.ManyToOne
 import javax.persistence.Id

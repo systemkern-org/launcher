@@ -9,8 +9,8 @@ import java.util.*
 @Component
 internal class MailUtility(
     private val emailSender: JavaMailSender,
-    internal var urlToVerify: String = "") {
-
+    internal var urlToVerify: String = ""
+) {
     internal val message: SimpleMailMessage = SimpleMailMessage()
 
     internal fun createEmailMessage(

@@ -21,10 +21,8 @@ internal data class UserProfile(
 
     @JsonIgnore
     @OneToMany
-    @JoinColumn(name = "id_user_profile")
     val emailVerificationList: List<EmailVerification> = ArrayList(),
 
     @JsonIgnore
     @OneToMany
-    @JoinColumn(name = "id_user_profile")
     val emailChangeList: List<EmailChangeEntity> = ArrayList())
