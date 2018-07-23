@@ -12,8 +12,9 @@ internal class UserProfileService(private val repo: UserProfileRepository) {
     internal fun findById(id: UUID)
         = repo.findById(id)
 
-    internal fun update(updateRequest: RequestedDataClass,id: UUID)
-        = save(mapAttributes(repo.findById(id).get(),updateRequest))
+    internal fun update(
+        updateRequest: RequestedDataClass,
+        id: UUID) = save(mapAttributes(repo.findById(id).get(),updateRequest))
 
     internal fun mapFromNewUser(updateRequest: RequestedDataClass)
         = UserProfile(
@@ -22,7 +23,10 @@ internal class UserProfileService(private val repo: UserProfileRepository) {
         username = updateRequest.username,
         email = updateRequest.email)
 
-    internal fun mapAttributes(userProfile:UserProfile, updateRequest: RequestedDataClass) : UserProfile {
+    internal fun mapAttributes(
+        userProfile:UserProfile,
+        updateRequest: RequestedDataClass
+    ) : UserProfile {
         userProfile.name = updateRequest.name
         userProfile.password = updateRequest.password
         userProfile.username = updateRequest.username

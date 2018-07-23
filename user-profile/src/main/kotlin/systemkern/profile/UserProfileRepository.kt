@@ -42,7 +42,9 @@ internal class UserProfileController(
             localDateTime,
             userProfileService.save(userProfileService.mapFromNewUser(requestedDataClass))
         ))
-        mailUtility.createEmailMessage(requestedDataClass.email, tokenId, "/verify-email/",
+        mailUtility.createEmailMessage(requestedDataClass.email,
+            tokenId,
+            "/verify-email/",
             "Verify launcher account")
         mailUtility.sendMessage()
         return SaveUserProfileResponse(mailUtility.urlToVerify)

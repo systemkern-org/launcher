@@ -19,10 +19,13 @@ internal class AuthenticationService(
     val sessionTimeOut: Duration,
     val auxNumToConvertSecstoMillis:Int = 1000) {
     val tokens: HashMap<UUID, AuthenticationResponse> = HashMap()
+
     internal fun findByUsername(username: String) =
         userProfileRepository.findByUsername(username)
 
-    internal fun isValidToken(token: UUID, request: HttpServletRequest): Boolean {
+    internal fun isValidToken(
+        token: UUID,
+        request: HttpServletRequest): Boolean {
         val inactiveInterval = System.currentTimeMillis() - request.session.lastAccessedTime
         val maxInactiveIntervalMilis = request.session.maxInactiveInterval * auxNumToConvertSecstoMillis
         if (tokens.containsKey(token)) {
@@ -31,8 +34,10 @@ internal class AuthenticationService(
         return false
     }
 
-    internal fun saveToken(token: UUID, auth: AuthenticationResponse) {
-        tokens[token] = auth
+    internal fun saveToken(
+        token: UUID,
+        auth: AuthenticationResponse) {
+            tokens[token] = auth
     }
 
     internal fun deleteToken(token: UUID) {

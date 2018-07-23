@@ -137,31 +137,30 @@ internal class AuthenticationFilter(
         return responseAuthentication
     }
 
-    private fun usernamePasswordAuth(username: String,
-                                     password: String
-    ): Authentication {
-        val requestAuthentication = UsernamePasswordAuthenticationToken(username, password)
-        return tryToAuthenticate(requestAuthentication)
+    private fun usernamePasswordAuth(
+        username: String,
+        password: String): Authentication {
+            val requestAuthentication = UsernamePasswordAuthenticationToken(username, password)
+            return tryToAuthenticate(requestAuthentication)
     }
 }
 
 internal class UPAuthenticationProvider : AuthenticationProvider {
 
     override fun authenticate(auth: Authentication?): Authentication {
-        if (auth?.principal.toString().isNotBlank() && auth?.credentials.toString().isNotBlank()) {
+        if (auth?.principal.toString().isNotBlank()
+            && auth?.credentials.toString().isNotBlank()) {
             val authRes: Authentication = PreAuthenticatedAuthenticationToken(
                 auth?.principal.toString(),
                 UUID.randomUUID()
             )
             authRes.isAuthenticated = true
-
             return authRes
         }
         throw MissingDataException("No login data found")
     }
 
     override fun supports(p0: Class<*>?): Boolean = true
-
 }
 
 @ResponseStatus(NOT_FOUND)

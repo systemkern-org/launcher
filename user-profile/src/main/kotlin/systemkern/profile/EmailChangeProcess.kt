@@ -27,7 +27,8 @@ internal class EmailChangeController(
         sendEmails(userProfile.email,emailChangeRequestId)
         sendEmails(emailChangeRequest.newEmailAddress,emailChangeRequestId)
         val validUntil = now.plusHours(timeUntilTokenIsValid)
-        emailChangeService.save(EmailChangeEntity(
+        emailChangeService.save(
+            EmailChangeEntity(
             emailChangeRequestId,
             now,
             validUntil,
@@ -37,15 +38,20 @@ internal class EmailChangeController(
         return EmailChangeResponse(emailChangeRequestId,validUntil )
     }
 
-    internal fun sendEmails(emailAddress: String,id: UUID){
-        mailUtility.createEmailMessage(emailAddress, id, "/email-change",
+    internal fun sendEmails(
+        emailAddress: String,
+        id: UUID){
+        mailUtility.createEmailMessage(
+            emailAddress,
+            id,
+            "/email-change",
             "Verify new email for launcher")
         mailUtility.sendMessage()
     }
 
     @PostMapping("/email-change/{id}")
     internal fun confirmEmail(@PathVariable("id") emailChangeRequestId: UUID): AuthenticationResponse {
-        val emailChangeEntity = emailChangeService.findById(emailChangeRequestId).get()
+        val emailChangeEntity = emailChangeService.findById(emailChangeRequestId)
         emailChangeEntity.completionDate = now()
         if(emailChangeEntity.completionDate < emailChangeEntity.validUntil){
             emailChangeEntity.userProfile.email = emailChangeEntity.newEmailAddress
@@ -63,13 +69,15 @@ internal class EmailChangeService(private val emailChangeRepository: EmailChange
         = emailChangeRepository.save(emailChangeEntity)
 
     internal fun findById(id: UUID)
-        = emailChangeRepository.findById(id)
+        = emailChangeRepository.findById(id).get()
 }
 
 @Repository
 internal interface EmailChangeRepository : CrudRepository<EmailChangeEntity, UUID>
 
-internal data class EmailChangeRequest(val newEmailAddress: String, val userProfileId: UUID)
+internal data class EmailChangeRequest(
+    val newEmailAddress: String,
+    val userProfileId: UUID)
 
 @Entity
 internal data class EmailChangeEntity(
@@ -79,8 +87,7 @@ internal data class EmailChangeEntity(
     val validUntil: LocalDateTime,
     var completionDate: LocalDateTime,
     val newEmailAddress: String,
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_user_profile", nullable = false)
+    @ManyToOne
     val userProfile: UserProfile
 )
 

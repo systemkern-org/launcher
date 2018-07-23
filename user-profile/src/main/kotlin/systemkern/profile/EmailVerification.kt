@@ -49,8 +49,7 @@ internal data class EmailVerification(
     val creationDate: LocalDateTime,
     val validUntil: LocalDateTime,
     var completionDate: LocalDateTime,
-    @ManyToOne(fetch = LAZY)
-    @JoinColumn(name = "id_user_profile", nullable = false)
+    @ManyToOne
     val userProfile: UserProfile
 )
 

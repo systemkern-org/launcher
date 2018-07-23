@@ -4,16 +4,13 @@ import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.annotation.JsonProperty.Access.WRITE_ONLY
 import java.util.UUID
-import javax.persistence.FetchType.LAZY
-
 import java.util.UUID.randomUUID
 import javax.persistence.*
 
 @Entity
 @EntityListeners(UserProfileEntityListener::class)
 internal data class UserProfile(
-    @Id
-    @JsonIgnore
+    @Id @JsonIgnore
     val id: UUID = randomUUID(),
     var name: String,
 
@@ -23,12 +20,11 @@ internal data class UserProfile(
     var email: String,
 
     @JsonIgnore
-    @OneToMany(fetch = FetchType.LAZY)
+    @OneToMany
     @JoinColumn(name = "id_user_profile")
     val emailVerificationList: List<EmailVerification> = ArrayList(),
 
     @JsonIgnore
-    @OneToMany(fetch = LAZY)
+    @OneToMany
     @JoinColumn(name = "id_user_profile")
-    val emailChangeList: List<EmailChangeEntity> = ArrayList()
-)
+    val emailChangeList: List<EmailChangeEntity> = ArrayList())

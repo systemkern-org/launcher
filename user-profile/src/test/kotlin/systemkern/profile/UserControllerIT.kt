@@ -19,7 +19,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import java.util.*
 import kotlin.collections.HashMap
 
-@Ignore("Swagger Swagger Shaggy")
+//@Ignore("Swagger Swagger Shaggy")
 @EnableAutoConfiguration
 internal class UserControllerIT : IntegrationTest() {
     private val nameExample = "AndresAusecha"
@@ -193,7 +193,7 @@ internal class UserControllerIT : IntegrationTest() {
             username = usernameExample,
             email = emailExample))
 
-       this.mockMvc.perform(post("$emailChangeURL")
+       this.mockMvc.perform(post(emailChangeURL)
             .content(objectMapper.writeValueAsString(
                 EmailChangeRequest(
                     newEmailAddress = "testChangeEmail@gmail.com",
