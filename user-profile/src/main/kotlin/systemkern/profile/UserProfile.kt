@@ -1,22 +1,19 @@
 package systemkern.profile
 
+import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.annotation.JsonProperty.Access.WRITE_ONLY
 import java.util.UUID
-import javax.persistence.Entity
-import javax.persistence.EntityListeners
-import javax.persistence.Id
-import javax.persistence.Column
-import javax.persistence.OneToMany
 import javax.persistence.FetchType.LAZY
-import javax.persistence.JoinColumn
 
 import java.util.UUID.randomUUID
+import javax.persistence.*
 
 @Entity
 @EntityListeners(UserProfileEntityListener::class)
 internal data class UserProfile(
     @Id
+    @JsonIgnore
     val id: UUID = randomUUID(),
     var name: String,
 
@@ -25,11 +22,13 @@ internal data class UserProfile(
     var username: String,
     var email: String,
 
-    @OneToMany(fetch = LAZY)
+    @JsonIgnore
+    @OneToMany(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_user_profile")
-    val emailChangeList: List<EmailChangeEntity> = ArrayList(),
+    val emailVerificationList: List<EmailVerification> = ArrayList(),
 
+    @JsonIgnore
     @OneToMany(fetch = LAZY)
     @JoinColumn(name = "id_user_profile")
-    val emailVerificationList: List<EmailVerification> = ArrayList()
+    val emailChangeList: List<EmailChangeEntity> = ArrayList()
 )

@@ -33,7 +33,6 @@ import javax.servlet.http.HttpServletResponse.SC_OK
 internal class CustomWebSecurityConfigurerAdapter(
     val service: AuthenticationService
 ) : WebSecurityConfigurerAdapter() {
-//    val emailChangePattern = "/email-change/{\\d+}"
     val pattern: String = "/user-profiles"
     val pattern1: String = "/user-profiles/"
     val pattern2: String = "/user-profiles/{\\d+}"
@@ -64,9 +63,6 @@ internal class CustomWebSecurityConfigurerAdapter(
             .authenticated()
             .antMatchers(GET, pattern, pattern1)
             .denyAll()
-
-/*            .antMatchers(POST, emailChangePattern)
-            .permitAll()*/
 
             .and()
             .addFilterBefore(
