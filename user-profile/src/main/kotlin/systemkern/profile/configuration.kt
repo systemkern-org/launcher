@@ -1,7 +1,6 @@
 package systemkern.profile
 
 import org.springframework.context.annotation.Configuration
-import org.springframework.http.HttpMethod.POST
 import org.springframework.http.HttpMethod.GET
 import org.springframework.http.HttpMethod.PUT
 import org.springframework.http.HttpMethod.DELETE
