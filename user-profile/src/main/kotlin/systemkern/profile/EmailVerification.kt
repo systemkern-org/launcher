@@ -19,7 +19,8 @@ internal class EmailVerificationController(
     val authenticationService: AuthenticationService) {
 
     @PostMapping("/verify-email/{id}")
-    fun verifyUserByToken(@PathVariable("id") tokenId: UUID): AuthenticationResponse {
+    fun verifyUserByToken(@PathVariable("id") tokenId: UUID
+    ): AuthenticationResponse {
         val emailVerification = emailVerificationService.findById(tokenId).get()
         val completionDate = now()
         if (completionDate <= emailVerification.validUntil) {
@@ -49,8 +50,7 @@ internal data class EmailVerification(
     val creationDate: LocalDateTime,
     val validUntil: LocalDateTime,
     var completionDate: LocalDateTime,
-    @ManyToOne(fetch = LAZY)
-    @JoinColumn(name = "id_user_profile", nullable = false)
+    @ManyToOne
     val userProfile: UserProfile
 )
 

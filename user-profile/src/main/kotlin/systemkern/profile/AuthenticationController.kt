@@ -12,12 +12,15 @@ internal class AuthenticationController(
     val service: AuthenticationService
 ) {
     @PostMapping
-    internal fun login(auth: Authentication,
-                       @RequestHeader password: String) =
+    internal fun login(
+        auth: Authentication,
+        @RequestHeader password: String) =
         service.authenticationProcess(auth, password)
 
     @DeleteMapping("{id}")
-    internal fun logout(@PathVariable id: UUID, request: HttpServletRequest) {
+    internal fun logout(
+        @PathVariable id: UUID,
+        request: HttpServletRequest) {
         service.deleteToken(id)
         request.session.invalidate()
     }

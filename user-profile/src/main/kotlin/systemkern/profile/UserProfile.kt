@@ -21,7 +21,6 @@ internal data class UserProfile(
     var email: String,
 
     @JsonIgnore
-    @OneToMany(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_user_profile")
+    @OneToMany
     val emailVerificationList: List<EmailVerification> = ArrayList()
 )

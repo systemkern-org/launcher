@@ -4,8 +4,9 @@ import org.springframework.stereotype.Service
 import java.util.*
 
 @Service
-internal class UserProfileService(private val repo: UserProfileRepository) {
-
+internal class UserProfileService(
+    private val repo: UserProfileRepository
+) {
     internal fun save(requestBody: UserProfile) =
         repo.save(requestBody)
 
@@ -21,7 +22,8 @@ internal class UserProfileService(private val repo: UserProfileRepository) {
         name = updateRequest.name,
         password = updateRequest.password,
         username = updateRequest.username,
-        email = updateRequest.email)
+        email = updateRequest.email
+    )
 
     internal fun mapAttributes(userProfile:UserProfile, updateRequest: RequestedDataClass) : UserProfile {
         userProfile.name = updateRequest.name

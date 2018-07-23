@@ -23,7 +23,10 @@ internal class AuthenticationService(
     internal fun findByUsername(username: String) =
         userProfileRepository.findByUsername(username)
 
-    internal fun isValidToken(token: UUID, request: HttpServletRequest): Boolean {
+    internal fun isValidToken(
+        token: UUID,
+        request: HttpServletRequest
+    ): Boolean {
         val inactiveInterval = System.currentTimeMillis() - request.session.lastAccessedTime
         val maxInactiveIntervalMilis = request.session.maxInactiveInterval * auxNumToConvertSecstoMillis
         if (tokens.containsKey(token)) {
@@ -32,7 +35,10 @@ internal class AuthenticationService(
         return false
     }
 
-    internal fun saveToken(token: UUID, auth: AuthenticationResponse) {
+    internal fun saveToken(
+        token: UUID,
+        auth: AuthenticationResponse
+    ) {
         tokens[token] = auth
     }
 
@@ -58,7 +64,8 @@ internal class AuthenticationService(
             validUntil = now().plusMinutes(sessionTimeOut.toMinutes()))
     }
 
-    internal fun authProcessEmailVerification(verifyEmailToken: UUID): AuthenticationResponse {
+    internal fun authProcessEmailVerification(verifyEmailToken: UUID
+    ): AuthenticationResponse {
         val emailVerification = emailVerificationRepository.findById(verifyEmailToken).get()
         val userProfile = emailVerification.userProfile
 

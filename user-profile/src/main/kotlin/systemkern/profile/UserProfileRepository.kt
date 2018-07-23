@@ -29,10 +29,12 @@ internal class UserProfileController(
     val userProfileService: UserProfileService,
     val emailVerificationService: EmailVerificationService,
     val mailUtility: MailUtility,
-    val timeUntilTokenExpires: Long = 6) {
+    val timeUntilTokenExpires: Long = 6
+) {
 
     @PostMapping("/user-profiles")
-    private fun saveUser(@RequestBody requestedDataClass: RequestedDataClass): SaveUserProfileResponse {
+    private fun saveUser(@RequestBody requestedDataClass: RequestedDataClass
+    ): SaveUserProfileResponse {
         val localDateTime = LocalDateTime.now()
         val tokenId = UUID.randomUUID()
         emailVerificationService.save(EmailVerification(
@@ -49,12 +51,14 @@ internal class UserProfileController(
     }
 
     @GetMapping("/user-profiles/{id}")
-    private fun findById(@PathVariable("id") id: UUID) = userProfileService.findById(id).get()
+    private fun findById(@PathVariable("id") id: UUID)
+        = userProfileService.findById(id).get()
 
     @PutMapping("/user-profiles/{id}")
     private fun updateById(
         @RequestBody updateRequest: RequestedDataClass,
-        @PathVariable("id") id: UUID) = userProfileService.update(updateRequest, id)
+        @PathVariable("id") id: UUID)
+        = userProfileService.update(updateRequest, id)
 }
 
 private data class SaveUserProfileResponse(var url: String)
