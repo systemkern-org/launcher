@@ -7,10 +7,11 @@ import java.net.InetAddress
 import java.util.*
 
 @Component
-internal class MailUtility(private val emailSender: JavaMailSender,
-                           internal var urlToVerify: String = ""
-) {
+internal class MailUtility(
+    private val emailSender: JavaMailSender,
+    internal var urlToVerify: String = "",
     internal val message: SimpleMailMessage = SimpleMailMessage()
+) {
 
     internal fun createEmailMessage(
         emailAddress: String,
@@ -24,7 +25,10 @@ internal class MailUtility(private val emailSender: JavaMailSender,
         message.text = urlToVerify
     }
 
-    private fun buildLink(tokenId: UUID, baseUrl: String){
+    private fun buildLink(
+        tokenId: UUID,
+        baseUrl: String
+    ){
         urlToVerify = ""
         urlToVerify += "http://"
         urlToVerify += InetAddress.getLocalHost().hostAddress

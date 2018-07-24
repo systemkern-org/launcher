@@ -35,6 +35,7 @@ internal class CustomWebSecurityConfigurerAdapter(
 ) : WebSecurityConfigurerAdapter() {
     val patternVerifyEmailId: String = "/verify-email/{\\d+}"
     val patternPasswordResetId: String = "/password-reset/{\\d+}"
+    val patternPasswordReset: String = "/password-reset"
     val pattern: String = "/user-profiles"
     val pattern1: String = "/user-profiles/"
     val pattern2: String = "/user-profiles/{\\d+}"
@@ -63,7 +64,7 @@ internal class CustomWebSecurityConfigurerAdapter(
 
             .antMatchers(GET, pattern2)
             .authenticated()
-            .antMatchers(GET, pattern, pattern1)
+            .antMatchers(GET, pattern, pattern1, patternPasswordReset)
             .denyAll()
 
             .antMatchers(POST,patternPasswordResetId)
@@ -137,7 +138,9 @@ internal class AuthenticationFilter(
         httpResponse.status = SC_OK
     }
 
-    private fun tryToAuthenticate(requestAuthentication: Authentication): Authentication {
+    private fun tryToAuthenticate(
+        requestAuthentication: Authentication
+    ): Authentication {
         val responseAuthentication: Authentication =
             authenticationProvider.authenticate(requestAuthentication)
         if (!responseAuthentication.isAuthenticated) {
@@ -147,8 +150,9 @@ internal class AuthenticationFilter(
         return responseAuthentication
     }
 
-    private fun usernamePasswordAuth(username: String,
-                                     password: String
+    private fun usernamePasswordAuth(
+        username: String,
+        password: String
     ): Authentication {
         val requestAuthentication = UsernamePasswordAuthenticationToken(username, password)
         return tryToAuthenticate(requestAuthentication)

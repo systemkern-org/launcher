@@ -11,8 +11,11 @@ import org.springframework.data.repository.CrudRepository
 import org.springframework.data.rest.core.annotation.RepositoryRestResource
 import org.springframework.data.rest.core.config.RepositoryRestConfiguration
 import org.springframework.data.rest.core.event.ValidatingRepositoryEventListener
+import org.springframework.data.rest.webmvc.RepositoryRestController
 import org.springframework.data.rest.webmvc.config.RepositoryRestConfigurer
 import org.springframework.http.HttpStatus.NOT_ACCEPTABLE
+import org.springframework.http.HttpStatus.OK
+import org.springframework.http.ResponseEntity
 import org.springframework.http.converter.HttpMessageConverter
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.stereotype.Component
@@ -28,16 +31,15 @@ import javax.servlet.http.HttpSessionListener
 import java.util.regex.Pattern
 import java.util.zip.DataFormatException
 
-@RestController
+@RepositoryRestController
 internal class UserProfileController(
     val userProfileService: UserProfileService,
     val emailVerificationService: EmailVerificationService,
-    @Autowired
     val mailUtility: MailUtility,
     val timeUntilTokenExpires: Long = 6
 ) {
-    @PostMapping("user-profiles")
-    private fun saveUser(@RequestBody requestBody: UserProfile): SaveUserProfileResponse {
+    @PostMapping("/user-profiles")
+    private fun saveUser(@RequestBody requestBody: UserProfile): ResponseEntity<SaveUserProfileResponse> {
         userProfileService.save(requestBody)
         val localDateTime = LocalDateTime.now()
         val tokenId = UUID.randomUUID()
@@ -52,14 +54,13 @@ internal class UserProfileController(
         mailUtility.createEmailMessage(requestBody.email, tokenId, "/verify-email/",
             "Verify launcher account")
         mailUtility.sendMessage()
-        return SaveUserProfileResponse(mailUtility.urlToVerify)
+        return ResponseEntity(SaveUserProfileResponse(mailUtility.urlToVerify),OK)
     }
-
 }
 private data class SaveUserProfileResponse(var url: String)
 
 @Api
-@RepositoryRestResource(path = "user-profiles")
+@RepositoryRestResource(path = "/user-profiles")
 internal interface UserProfileRepository : CrudRepository<UserProfile, UUID> {
     fun findByUsername(username: String): UserProfile
 }

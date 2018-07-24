@@ -8,20 +8,22 @@ import java.time.LocalDateTime
 import java.util.UUID
 import javax.servlet.http.HttpServletRequest
 
-@RestController("/auth")
+@RestController
 internal class AuthenticationController(
-    val service: AuthenticationService,
-    val sessionTimeOut: Duration
+    val service: AuthenticationService
 ) {
-    @PostMapping("/login")
-    internal fun login(auth: Authentication,
-                       @RequestHeader password: String) =
-        service.authenticationProcess(auth, password)
+    @PostMapping("/auth")
+    internal fun login(
+        auth: Authentication,
+        @RequestHeader password: String
+    ) =
+         service.authenticationProcess(auth, password)
 
-
-
-    @DeleteMapping("{id}")
-    internal fun logout(@PathVariable id: UUID, request: HttpServletRequest) {
+    @DeleteMapping("auth/{id}")
+    internal fun logout(
+        @PathVariable id: UUID,
+        request: HttpServletRequest
+    ) {
         service.deleteToken(id)
         request.session.invalidate()
     }

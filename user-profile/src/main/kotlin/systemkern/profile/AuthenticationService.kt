@@ -22,7 +22,10 @@ internal class AuthenticationService(
     internal fun findByUsername(username: String) =
         userProfileRepository.findByUsername(username)
 
-    internal fun isValidToken(token: UUID, request: HttpServletRequest): Boolean {
+    internal fun isValidToken(
+        token: UUID,
+        request: HttpServletRequest
+    ): Boolean {
         val inactiveInterval = System.currentTimeMillis() - request.session.lastAccessedTime
         val maxInactiveIntervalMilis = request.session.maxInactiveInterval * auxNumToConvertSecstoMillis
         if (tokens.containsKey(token)) {
@@ -31,8 +34,10 @@ internal class AuthenticationService(
         return false
     }
 
-    internal fun saveToken(token: UUID, auth: AuthenticationResponse) {
-        tokens[token] = auth
+    internal fun saveToken(
+        token: UUID,
+        auth: AuthenticationResponse) {
+            tokens[token] = auth
     }
 
     internal fun deleteToken(token: UUID) {
@@ -41,8 +46,8 @@ internal class AuthenticationService(
 
     @Throws(UserNotFoundException::class)
     internal fun authenticationProcess(
-        auth: Authentication,
-        password: String
+       auth: Authentication,
+       password: String
     ): AuthenticationResponse {
         val user = findByUsername(auth.principal.toString())
         val emailVerification = user.emailVerificationList.last()

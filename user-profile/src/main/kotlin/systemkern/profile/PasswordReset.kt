@@ -15,12 +15,14 @@ internal class PasswordResetController(
     val passwordResetService: PasswordResetService,
     val userProfileService: UserProfileService,
     val authenticationService: AuthenticationService,
-    @Autowired
     val mailUtility: MailUtility,
     val timeUntilTokenExpiresInHours: Long = 6
 ) {
+
     @PostMapping("/password-reset")
-    internal fun requestPasswordReset(@RequestHeader("username") username: String): RequestPasswordResetEntity {
+    internal fun requestPasswordReset(
+        @RequestHeader("username") username: String
+    ): RequestPasswordResetEntity {
         val localTime = now()
         val userProfile = userProfileService.findByUsername(username)
         val tokenId = randomUUID()
@@ -32,14 +34,19 @@ internal class PasswordResetController(
                 localTime)
 
         passwordResetService.save(passwordResetEntity)
-        mailUtility.createEmailMessage(userProfile.email, tokenId, "/password-reset/"
-            , "Reset password request")
+        mailUtility.createEmailMessage(
+            userProfile.email,
+            tokenId,
+            "/password-reset/",
+            "Reset password request")
         mailUtility.sendMessage()
 
-        return RequestPasswordResetEntity(tokenId,
+        return RequestPasswordResetEntity(
+            tokenId,
             localTime,
             localTime.plusHours(timeUntilTokenExpiresInHours),
-            localTime)
+            localTime
+        )
     }
 
     @PostMapping("/password-reset/{id}")
@@ -76,18 +83,18 @@ internal interface PasswordResetRepository : CrudRepository<PasswordResetEntity,
 @Entity
 internal data class PasswordResetEntity(
     @Id
-    @Column(name = "id_password_reset_entity")
     val id_password_reset_entity: UUID,
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_user_profile", nullable = false)
+    @ManyToOne
     val userProfile: UserProfile,
     val creationDate: LocalDateTime,
     val validUntil: LocalDateTime,
-    var completionDate: LocalDateTime)
+    var completionDate: LocalDateTime
+)
 
 internal data class RequestPasswordResetEntity(
     val id: UUID,
     val creationDate: LocalDateTime,
     val validUntil: LocalDateTime,
-    val completionDate: LocalDateTime)
+    val completionDate: LocalDateTime
+)

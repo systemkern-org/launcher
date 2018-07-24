@@ -12,13 +12,15 @@ import javax.persistence.*
 @RestController
 internal class EmailVerificationController(
     val emailVerificationService: EmailVerificationService,
-    val authenticationService: AuthenticationService) {
+    val authenticationService: AuthenticationService
+) {
 
     @PostMapping("/verify-email/{id}")
-    fun verifyUserByToken(@PathVariable("id") tokenId: String,
-                          @RequestHeader password: String,
-                          auth: Authentication): AuthenticationResponse {
-
+    fun verifyUserByToken(
+        @PathVariable("id") tokenId: String,
+        @RequestHeader password: String,
+        auth: Authentication
+    ): AuthenticationResponse {
         val emailVerification = emailVerificationService.findById(UUID.fromString(tokenId)).get()
         val completionDate = LocalDateTime.now()
         if (completionDate <= emailVerification.validUntil) {
@@ -44,13 +46,11 @@ internal interface EmailVerificationRepository : CrudRepository<EmailVerificatio
 @Entity
 internal data class EmailVerification(
     @Id
-    @Column(name = "id_email_verification")
     val id_email_verification: UUID,
     val creationDate: LocalDateTime,
     val validUntil: LocalDateTime,
     var completionDate: LocalDateTime,
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_user_profile", nullable = false)
+    @ManyToOne
     val userProfile: UserProfile
 )
 
