@@ -7,17 +7,17 @@ import java.time.LocalDateTime
 import java.util.UUID
 import javax.servlet.http.HttpServletRequest
 
-@RestController("/auth")
+@RestController
 internal class AuthenticationController(
     val service: AuthenticationService
 ) {
-    @PostMapping
+    @PostMapping("/auth")
     internal fun login(
         auth: Authentication,
         @RequestHeader password: String) =
         service.authenticationProcess(auth, password)
 
-    @DeleteMapping("{id}")
+    @DeleteMapping("/auth/{id}")
     internal fun logout(
         @PathVariable id: UUID,
         request: HttpServletRequest) {
