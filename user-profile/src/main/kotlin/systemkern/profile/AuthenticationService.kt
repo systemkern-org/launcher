@@ -12,13 +12,14 @@ import java.time.LocalDateTime
 
 @Service
 internal class AuthenticationService(
-    val userProfileRepository: UserProfileRepository,
-    val passwordEncoder: BCryptPasswordEncoder,
-    val sessionTimeOut: Duration,
-    val auxNumToConvertSecstoMillis:Int = 1000
+    val userProfileRepository : UserProfileRepository,
+    val emailVerificationRepository : EmailVerificationRepository,
+    val passwordEncoder : BCryptPasswordEncoder,
+    val sessionTimeOut : Duration,
+    val auxNumToConvertSecstoMillis : Int = 1000
 ) {
-    val tokens: HashMap<UUID, AuthenticationResponse> = HashMap()
 
+    val tokens: HashMap<UUID, AuthenticationResponse> = HashMap()
     internal fun findByUsername(username: String) =
         userProfileRepository.findByUsername(username)
 
@@ -35,9 +36,10 @@ internal class AuthenticationService(
     }
 
     internal fun saveToken(
-        token: UUID,
-        auth: AuthenticationResponse) {
-            tokens[token] = auth
+      token: UUID,
+      auth: AuthenticationResponse
+    ) {
+         tokens[token] = auth
     }
 
     internal fun deleteToken(token: UUID) {
@@ -46,19 +48,31 @@ internal class AuthenticationService(
 
     @Throws(UserNotFoundException::class)
     internal fun authenticationProcess(
-       auth: Authentication,
-       password: String
+        auth: Authentication,
+        password: String
     ): AuthenticationResponse {
         val user = findByUsername(auth.principal.toString())
         val emailVerification = user.emailVerificationList.last()
         if (!passwordEncoder.matches(password, user.password)
             && emailVerification.completionDate <= emailVerification.creationDate)
-            throw UserNotFoundException("User Not Found Or Not Verified")
+            throw UserNotFoundException("UserNotFoundException")
 
-        return buildResponseAndSaveToken(
+        return buildResponseAndSave(
             authenticationToken = UUID.fromString(auth.credentials.toString()),
             username = user.username,
             userId = user.id,
+            validUntil = now().plusMinutes(sessionTimeOut.toMinutes()))
+    }
+
+    internal fun authProcessEmailVerification(verifyEmailToken: UUID
+    ): AuthenticationResponse {
+        val emailVerification = emailVerificationRepository.findById(verifyEmailToken).get()
+        val userProfile = emailVerification.userProfile
+
+        return buildResponseAndSave(
+            authenticationToken = UUID.randomUUID(),
+            username = userProfile.username,
+            userId = userProfile.id,
             validUntil = now().plusMinutes(sessionTimeOut.toMinutes()))
     }
 
@@ -71,16 +85,16 @@ internal class AuthenticationService(
 
         if (completionDate <= passwordResetEntity.validUntil
             && emailVerification.completionDate > emailVerification.creationDate) {
-            return buildResponseAndSaveToken(
+            return buildResponseAndSave(
                 authenticationToken = UUID.randomUUID(),
                 username = userProfile.username,
                 userId = userProfile.id,
                 validUntil = now().plusMinutes(sessionTimeOut.toMinutes()))
         }
-        throw ExpiredTokenException("Token has expired")
+        throw ExpiredTokenException()
     }
 
-    private fun buildResponseAndSaveToken(
+    private fun buildResponseAndSave(
         authenticationToken: UUID,
         validUntil: LocalDateTime,
         username: String,
@@ -94,4 +108,5 @@ internal class AuthenticationService(
         saveToken(authenticationToken, authResp)
         return authResp
     }
+
 }

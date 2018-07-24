@@ -75,7 +75,9 @@ internal class UserControllerIT : IntegrationTest() {
                 responseFields(listOf(
                     fieldWithPath("url").description("Url to verify user email").type(STRING))
                 )))
-            .andReturn().response.contentAsString.let { this.urlToVerifyUserProfile = JSONObject(it).get("url").toString() }
+            .andReturn().response.contentAsString.let {
+            this.urlToVerifyUserProfile = JSONObject(it).get("url").toString()
+        }
         verifyEmail()
     }
 
@@ -99,7 +101,9 @@ internal class UserControllerIT : IntegrationTest() {
             .accept(APPLICATION_JSON))
             .andExpect(status().isOk)
             .andDo(document("user_login",loginResponseFields))
-            .andReturn().response.contentAsString.let { this.token = "Bearer " + JSONObject(it).get("token").toString() }
+            .andReturn().response.contentAsString.let {
+                this.token = "Bearer " + JSONObject(it).get("token").toString()
+        }
     }
 
     private fun createHeadersObject(username: String, password: String){
