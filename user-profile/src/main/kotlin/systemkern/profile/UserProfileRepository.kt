@@ -38,26 +38,30 @@ internal class UserProfileController(
     val mailUtility: MailUtility,
     val timeUntilTokenExpires: Long = 6
 ) {
+    //Url mapping must be here, because @PostMapping alone in two controllers give errors
     @PostMapping("/user-profiles")
     private fun saveUser(@RequestBody requestBody: UserProfile): ResponseEntity<SaveUserProfileResponse> {
-        userProfileService.save(requestBody)
         val localDateTime = LocalDateTime.now()
         val tokenId = UUID.randomUUID()
+        val userProfile = userProfileService.save(requestBody)
         val emailVerificationEntity = EmailVerification(
             tokenId,
             localDateTime,
             localDateTime.plusHours(timeUntilTokenExpires),
             localDateTime,
-            requestBody
+            userProfile
         )
+        userProfile.emailVerificationList.plus(emailVerificationEntity)
         emailVerificationService.save(emailVerificationEntity)
+        userProfileService.save(userProfile)
         mailUtility.createEmailMessage(requestBody.email, tokenId, "/verify-email/",
             "Verify launcher account")
         mailUtility.sendMessage()
-        return ResponseEntity(SaveUserProfileResponse(mailUtility.urlToVerify),OK)
+        return ResponseEntity(SaveUserProfileResponse(mailUtility.urlToVerify), OK)
     }
 }
-private data class SaveUserProfileResponse(var url: String)
+
+private data class SaveUserProfileResponse(var url : String)
 
 @Api
 @RepositoryRestResource(path = "/user-profiles")
@@ -67,7 +71,7 @@ internal interface UserProfileRepository : CrudRepository<UserProfile, UUID> {
 
 @Component
 internal class UserProfileEntityListener(
-    internal val passwordEncoder: BCryptPasswordEncoder = BCryptPasswordEncoder()
+    internal val passwordEncoder : BCryptPasswordEncoder = BCryptPasswordEncoder()
 ) {
     private val emailPattern = Pattern.compile("^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*" +
         "@[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$")

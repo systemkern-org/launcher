@@ -20,7 +20,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import java.util.*
 import kotlin.collections.HashMap
 
-//@Ignore("Swagger Swagger Shaggy")
+@Ignore("Swagger Swagger Shaggy")
 @EnableAutoConfiguration
 internal class UserControllerIT : IntegrationTest() {
     private val nameExample = "AndresAusecha"
@@ -33,9 +33,11 @@ internal class UserControllerIT : IntegrationTest() {
     private val passwordExample2 = usernameExample.plus("*")
     private val usernameExample3 = nameExample + "21"
     private val passwordExample3 = usernameExample.plus("*")
+    private val usernameExample4 = nameExample + "22"
+    private val passwordExample4 = usernameExample.plus("*")
     private val httpHeaders = HttpHeaders()
     private val restUrl = "/user-profiles"
-    private val restLogin = "/login"
+    private val restLogin = "/auth"
     private var token: String = ""
     val headers: HashMap<String, String> = HashMap()
     private var usernameDesc = "Username to log in"
@@ -47,7 +49,13 @@ internal class UserControllerIT : IntegrationTest() {
     private val entityResponseFields = listOf(
         fieldWithPath("name").description("Name of the user").type(STRING),
         fieldWithPath(username).description(usernameDesc).type(STRING),
-        fieldWithPath("email").description("User's email").type(STRING)
+        fieldWithPath("email").description("User's email").type(STRING),
+        fieldWithPath("_links.self.href").description("User's email").type(STRING),
+        fieldWithPath("_links.userProfile.href").description("Link to access user profile").type(STRING),
+        fieldWithPath("_links.passwordResetList.href")
+            .description("Link to access password reset children").type(STRING),
+        fieldWithPath("_links.emailVerificationList.href")
+            .description("Link to access Email verification children").type(STRING)
     )
     private val loginResponseFields = responseFields(listOf(
         fieldWithPath("token").description("Token to authenticate the next requests").type(STRING),
@@ -129,8 +137,7 @@ internal class UserControllerIT : IntegrationTest() {
     }
 
     private fun buildResetPasswordFunction(url: String): ResultActions =
-        this.mockMvc.perform(post(url
-        )
+        this.mockMvc.perform(post(url)
             .headers(httpHeaders)
             .contentType(APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(NewPasswordResetBody(password = "NewPassword*")))
@@ -162,13 +169,14 @@ internal class UserControllerIT : IntegrationTest() {
 
     @Test
     fun `Can login User`() {
-        val username = usernameExample3
-        val password = passwordExample3
+        val username = usernameExample4
+        val password = passwordExample4
         createUser(TestUser(
             username = username,
             name = nameExample,
             password = password,
-            email = emailExample))
+            email = emailExample
+        ))
         loginFunction(username, password)
     }
 
