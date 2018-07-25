@@ -43,7 +43,9 @@ internal class CustomWebSecurityConfigurerAdapter(
                 "/swagger-ui.html",
                 "/webjars/**" ,
                 /*Probably not needed*/ "/swagger.json")
-            .permitAll();
+            .permitAll()
+
+        http.csrf().disable()
 
         return
         http.csrf()
