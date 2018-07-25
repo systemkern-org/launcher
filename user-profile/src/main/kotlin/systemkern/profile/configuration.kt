@@ -82,56 +82,57 @@ internal class AuthenticationFilter(
     private val service: AuthenticationService
 ) : GenericFilterBean() {
 
-    override fun doFilter(
-        request: ServletRequest,
-        response: ServletResponse,
-        filter: FilterChain
-    ) {
-        request as HttpServletRequest
-        response as HttpServletResponse
-        try {
-            val token: UUID = UUID.fromString(
-                request.getHeader("Authorization").split(" ")[1])
-            if (!service.isValidToken(token, request)) {
-                clearContext()
-            } else {
-                val authRes: Authentication =
-                    PreAuthenticatedAuthenticationToken(token, UUID.randomUUID())
-                authRes.isAuthenticated = true
-                getContext().authentication = authRes
-            }
-        } catch (E: IllegalStateException) {
+        override fun doFilter(
+            request: ServletRequest,
+            response: ServletResponse,
+            filter: FilterChain
+        ) {
+             request as HttpServletRequest
+             response as HttpServletResponse
+             try {
+                val token: UUID = UUID.fromString(
+                    request.getHeader("Authorization").split(" ")[1])
+                if (!service.isValidToken(token, request)) {
+                    clearContext()
+                } else {
+                    val authRes: Authentication =
+                        PreAuthenticatedAuthenticationToken(token, UUID.randomUUID())
+                    authRes.isAuthenticated = true
+                    getContext().authentication = authRes
+                }
+             } catch (E: IllegalStateException) {
 
-            val headerNames = request.headerNames.toList()
-            if (
-                headerNames.contains("username") &&
-                headerNames.contains("password")
-            ) {
-                procUsernamePasswordAuth(request,
-                    response,
-                    request.getHeader("username"),
-                    request.getHeader("password"))
+                val headerNames = request.headerNames.toList()
+                if (
+                    headerNames.contains("username") &&
+                    headerNames.contains("password")
+                ) {
+                    procUsernamePasswordAuth(request,
+                        response,
+                        request.getHeader("username"),
+                        request.getHeader("password"))
 
-            } else {
-                clearContext()
-            }
+                } else {
+                    clearContext()
+                }
 
-        }
-        filter.doFilter(request, response)
+             }
+             filter.doFilter(request, response)
     }
 
-    private fun procUsernamePasswordAuth(request: HttpServletRequest,
-                                         httpResponse: HttpServletResponse,
-                                         username: String,
-                                         password: String) {
+    private fun procUsernamePasswordAuth(
+        request: HttpServletRequest,
+        httpResponse: HttpServletResponse,
+        username: String,
+        password: String
+    ) {
+         val resultOfAuthentication: Authentication =
+             usernamePasswordAuth(username, password)
 
-        val resultOfAuthentication: Authentication =
-            usernamePasswordAuth(username, password)
+         request.session.setAttribute("token", resultOfAuthentication.credentials.toString())
 
-        request.session.setAttribute("token", resultOfAuthentication.credentials.toString())
-
-        getContext().authentication = resultOfAuthentication
-        httpResponse.status = SC_OK
+         getContext().authentication = resultOfAuthentication
+         httpResponse.status = SC_OK
     }
 
     private fun tryToAuthenticate(requestAuthentication: Authentication): Authentication {
@@ -144,9 +145,7 @@ internal class AuthenticationFilter(
         return responseAuthentication
     }
 
-    private fun usernamePasswordAuth(username: String,
-                                     password: String
-    ): Authentication {
+    private fun usernamePasswordAuth(username: String, password: String): Authentication {
         val requestAuthentication = UsernamePasswordAuthenticationToken(username, password)
         return tryToAuthenticate(requestAuthentication)
     }

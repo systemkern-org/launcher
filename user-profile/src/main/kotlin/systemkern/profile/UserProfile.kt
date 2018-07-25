@@ -20,7 +20,8 @@ internal data class UserProfile(
     var username: String,
     var email: String,
 
-    @JsonIgnore
     @OneToMany
+    @JsonIgnore
+    @JoinColumn(name = "user_profile_id")
     val emailVerificationList: List<EmailVerification> = ArrayList()
 )
