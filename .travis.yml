@@ -16,15 +16,3 @@ install:
 
 script:
   - mvn -B clean verify
-
-git:
-  if: branch IS master
-    after_success:
-      # copy generated documentation to github pages directory
-      - cp $TRAVIS_BUILD_DIR/integration-tests/target/generated-docs/readme.html $TRAVIS_BUILD_DIR/docs/index.html
-      - git config user.name "${GH_USER_NAME}"
-      - git config user.email "${GH_USER_EMAIL}"
-      - git checkout master
-      - git add .
-      - git commit -m "Deploy to GitHub Pages number ${TRAVIS_BUILD_NUMBER} [ci skip]"
-      - git push --quiet "https://${GH_TOKEN}@${GH_REF}"
