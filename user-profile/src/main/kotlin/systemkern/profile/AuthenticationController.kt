@@ -7,21 +7,19 @@ import java.time.LocalDateTime
 import java.util.UUID
 import javax.servlet.http.HttpServletRequest
 
-@RestController("/auth")
+@RestController
 internal class AuthenticationController(
     val service: AuthenticationService
 ) {
 
-    @PostMapping
+    @PostMapping("/auth") //PostMapping alone generates confusion to spring, there fore mapping here
     internal fun login(
         auth: Authentication,
-        @RequestHeader password: String) =
-            service.authenticationProcess(auth, password)
+        @RequestHeader password: String
+    ) = service.authenticationProcess(auth, password)
 
-    @DeleteMapping("{id}")
-    internal fun logout(
-        @PathVariable id: UUID,
-        request: HttpServletRequest) {
+    @DeleteMapping("/auth/{id}")
+    internal fun logout(@PathVariable id: UUID, request: HttpServletRequest) {
             service.deleteToken(id)
             request.session.invalidate()
     }

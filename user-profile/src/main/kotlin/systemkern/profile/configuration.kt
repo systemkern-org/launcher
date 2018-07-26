@@ -140,7 +140,8 @@ internal class AuthenticationFilter(
 
     private fun usernamePasswordAuth(
         username: String,
-        password: String): Authentication {
+        password: String
+    ): Authentication {
             val requestAuthentication = UsernamePasswordAuthenticationToken(username, password)
             return tryToAuthenticate(requestAuthentication)
     }

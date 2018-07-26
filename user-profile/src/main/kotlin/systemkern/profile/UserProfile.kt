@@ -10,7 +10,8 @@ import javax.persistence.*
 @Entity
 @EntityListeners(UserProfileEntityListener::class)
 internal data class UserProfile(
-    @Id @JsonIgnore
+    @Id
+    @JsonIgnore
     val id: UUID = randomUUID(),
     var name: String,
 
@@ -19,8 +20,13 @@ internal data class UserProfile(
     var username: String,
     var email: String,
 
-    @JsonIgnore @OneToMany
+    @OneToMany
+    @JoinColumn(name = "user_profile_id")
+    @JsonIgnore
     val emailVerificationList: List<EmailVerification> = ArrayList(),
 
-    @JsonIgnore @OneToMany
-    val emailChangeList: List<EmailChangeEntity> = ArrayList())
+    @OneToMany
+    @JoinColumn(name = "user_profile_id")
+    @JsonIgnore
+    val emailChangeList: List<EmailChangeEntity> = ArrayList()
+)

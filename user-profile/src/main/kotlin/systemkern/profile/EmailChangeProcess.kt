@@ -20,34 +20,31 @@ internal class EmailChangeController(
 ) {
 
     @PostMapping("/email-change")
-    internal fun saveRequest(@RequestBody emailChangeRequest: EmailChangeRequest
-    ): EmailChangeResponse {
+    internal fun saveRequest(@RequestBody emailChangeRequest: EmailChangeRequest) : EmailChangeResponse {
         val now = now()
-        val emailChangeRequestId = UUID.randomUUID()
         val userProfile = userProfileService.findById(emailChangeRequest.userProfileId).get()
-        sendEmails(userProfile.email,emailChangeRequestId)
-        sendEmails(emailChangeRequest.newEmailAddress,emailChangeRequestId)
         val validUntil = now.plusHours(timeUntilTokenIsValid)
-        emailChangeService.save(
+        val emailChangeRequestId = emailChangeService.save(
             EmailChangeEntity(
-            emailChangeRequestId,
+            UUID.randomUUID(),
             now,
             validUntil,
             now,
             emailChangeRequest.newEmailAddress,
-            userProfile))
-        return EmailChangeResponse(emailChangeRequestId,validUntil )
+            userProfile
+        )).id
+        sendEmails(userProfile.email,emailChangeRequestId)
+        sendEmails(emailChangeRequest.newEmailAddress,emailChangeRequestId)
+        return EmailChangeResponse(emailChangeRequestId,validUntil)
     }
 
-    internal fun sendEmails(
-        emailAddress: String,
-        id: UUID
-    ){
+    internal fun sendEmails(emailAddress: String, id: UUID){
         mailUtility.createEmailMessage(
             emailAddress,
             id,
             "/email-change",
-            "Verify new email for launcher")
+            "Verify new email for launcher"
+        )
         mailUtility.sendMessage()
     }
 
@@ -55,8 +52,10 @@ internal class EmailChangeController(
     internal fun confirmEmail(@PathVariable("id") emailChangeRequestId: UUID
     ): AuthenticationResponse {
         val emailChangeEntity = emailChangeService.findById(emailChangeRequestId)
+        val last = emailChangeEntity.userProfile.emailVerificationList.last()
         emailChangeEntity.completionDate = now()
-        if(emailChangeEntity.completionDate < emailChangeEntity.validUntil){
+        if(emailChangeEntity.completionDate < emailChangeEntity.validUntil
+            && last.creationDate < last.completionDate){
             emailChangeEntity.userProfile.email = emailChangeEntity.newEmailAddress
             emailChangeService.save(emailChangeEntity)
             return authenticationService.authProcessEmailChange(emailChangeRequestId)
@@ -66,12 +65,12 @@ internal class EmailChangeController(
 }
 
 @Service
-internal class EmailChangeService(private val emailChangeRepository: EmailChangeRepository) {
+internal class EmailChangeService(private val emailChangeRepository : EmailChangeRepository) {
 
-    internal fun save(emailChangeEntity: EmailChangeEntity)
+    internal fun save(emailChangeEntity : EmailChangeEntity)
         = emailChangeRepository.save(emailChangeEntity)
 
-    internal fun findById(id: UUID)
+    internal fun findById(id : UUID)
         = emailChangeRepository.findById(id).get()
 }
 
@@ -86,7 +85,7 @@ internal data class EmailChangeRequest(
 @Entity
 internal data class EmailChangeEntity(
     @Id
-    val id: UUID,
+    val id: UUID = UUID.randomUUID(),
     val creationDate: LocalDateTime,
     val validUntil: LocalDateTime,
     var completionDate: LocalDateTime,

@@ -19,7 +19,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import java.util.*
 import kotlin.collections.HashMap
 
-@Ignore("Swagger Swagger Shaggy")
+//@Ignore("Swagger Swagger Shaggy")
 @EnableAutoConfiguration
 internal class UserControllerIT : IntegrationTest() {
     private val nameExample = "AndresAusecha"
@@ -34,7 +34,7 @@ internal class UserControllerIT : IntegrationTest() {
     private val passwordExample3 = usernameExample.plus("*")
     private val httpHeaders = HttpHeaders()
     private val restUrl = "/user-profiles"
-    private val restLogin = "/login"
+    private val restLogin = "/auth"
     private var token: String = ""
     private val headers: HashMap<String, String> = HashMap()
     private var usernameDesc = "Username to log in"
@@ -46,8 +46,15 @@ internal class UserControllerIT : IntegrationTest() {
     private val entityResponseFields = listOf(
         fieldWithPath("name").description("Name of the user").type(STRING),
         fieldWithPath(username).description(usernameDesc).type(STRING),
-        fieldWithPath("email").description("User's email").type(STRING)
+        fieldWithPath("email").description("User's email").type(STRING),
+        fieldWithPath("_links.self.href").description("User's email").type(STRING),
+        fieldWithPath("_links.userProfile.href").description("Link to access user profile").type(STRING),
+        fieldWithPath("_links.emailChangeList.href")
+            .description("Link to access Email Change children").type(STRING),
+        fieldWithPath("_links.emailVerificationList.href")
+            .description("Link to access Email verification children").type(STRING)
     )
+
     private val loginResponseFields = responseFields(listOf(
         fieldWithPath("token").description("Token to authenticate the next requests").type(STRING),
         fieldWithPath(username).description(usernameDesc).type(STRING),
@@ -84,7 +91,11 @@ internal class UserControllerIT : IntegrationTest() {
             .contentType(APPLICATION_JSON)
             .accept(APPLICATION_JSON))
             .andExpect(status().isOk)
-            .andReturn().response.contentAsString.let { this.token = "Bearer " + JSONObject(it).get("token").toString() }
+            .andReturn().response.contentAsString.let {
+                val jsonObjectRes = JSONObject(it)
+                this.token = "Bearer " + jsonObjectRes.get("token").toString()
+                this.userId = UUID.fromString(jsonObjectRes.get("userId").toString())
+        }
     }
 
     private fun loginFunction(
@@ -201,7 +212,8 @@ internal class UserControllerIT : IntegrationTest() {
             name = nameExample,
             password = passwordExample,
             username = usernameExample,
-            email = emailExample))
+            email = emailExample
+        ))
 
        this.mockMvc.perform(post(emailChangeURL)
             .content(objectMapper.writeValueAsString(
