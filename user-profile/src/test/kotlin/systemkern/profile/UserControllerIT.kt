@@ -95,7 +95,11 @@ internal class UserControllerIT : IntegrationTest() {
             .contentType(APPLICATION_JSON)
             .accept(APPLICATION_JSON))
             .andExpect(status().isOk)
-            .andReturn().response.contentAsString.let { this.token = "Bearer " + JSONObject(it).get("token").toString() }
+            .andReturn().response.contentAsString.let {
+                val jsonObjectRes = JSONObject(it)
+                this.token = "Bearer " + jsonObjectRes.get("token").toString()
+                this.userId = UUID.fromString(jsonObjectRes.get("userId").toString())
+            }
     }
 
     private fun loginFunction(username: String, password: String) {
