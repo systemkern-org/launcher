@@ -35,3 +35,6 @@ maven-wrapper.properties
 
 #.bak files
 *.bak
+parent/detekt/detekt-checkstyle.xml
+parent/detekt/detekt-plain.txt
+parent/detekt/detekt-report.html
