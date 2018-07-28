@@ -1,7 +1,6 @@
 package systemkern.profile
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import org.springframework.beans.factory.annotation.Autowired
 import io.swagger.annotations.Api
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.context.annotation.Bean
@@ -30,6 +29,7 @@ import javax.servlet.http.HttpSessionEvent
 import javax.servlet.http.HttpSessionListener
 import java.util.regex.Pattern
 import java.util.zip.DataFormatException
+
 
 @RepositoryRestController
 internal class UserProfileController(
