@@ -15,6 +15,7 @@ import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*
 import org.springframework.restdocs.payload.JsonFieldType.STRING
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
 import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
+import org.springframework.test.web.servlet.ResultActions
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import java.util.*
 import kotlin.collections.HashMap
@@ -32,6 +33,8 @@ internal class UserControllerIT : IntegrationTest() {
     private val passwordExample2 = usernameExample.plus("*")
     private val usernameExample3 = nameExample + "21"
     private val passwordExample3 = usernameExample.plus("*")
+    private val usernameExample4 = nameExample + "22"
+    private val passwordExample4 = usernameExample.plus("*")
     private val httpHeaders = HttpHeaders()
     private val restUrl = "/user-profiles"
     private val restLogin = "/auth"
@@ -40,6 +43,8 @@ internal class UserControllerIT : IntegrationTest() {
     private var usernameDesc = "Username to log in"
     private var username = "username"
     private var urlToVerifyUserProfile = ""
+    private var passwordResetEntityId: String = ""
+    private val passwordResetUrl = "/password-reset"
 
     private val entityResponseFields = listOf(
         fieldWithPath("name").description("Name of the user").type(STRING),
@@ -47,15 +52,17 @@ internal class UserControllerIT : IntegrationTest() {
         fieldWithPath("email").description("User's email").type(STRING),
         fieldWithPath("_links.self.href").description("User's email").type(STRING),
         fieldWithPath("_links.userProfile.href").description("Link to access user profile").type(STRING),
+        fieldWithPath("_links.passwordResetList.href")
+            .description("Link to access password reset children").type(STRING),
         fieldWithPath("_links.emailVerificationList.href")
             .description("Link to access Email verification children").type(STRING)
     )
 
     private val loginResponseFields = responseFields(listOf(
-    fieldWithPath("token").description("Token to authenticate the next requests").type(STRING),
-    fieldWithPath(username).description(usernameDesc).type(STRING),
-    fieldWithPath("userId").description("Password of user to be created").type(STRING),
-    fieldWithPath("validUntil").description("Date and Time until session will expire").type(STRING)))
+        fieldWithPath("token").description("Token to authenticate the next requests").type(STRING),
+        fieldWithPath(username).description(usernameDesc).type(STRING),
+        fieldWithPath("userId").description("Password of user to be created").type(STRING),
+        fieldWithPath("validUntil").description("Date and Time until session will expire").type(STRING)))
 
     @Autowired
     private lateinit var testDataCreator: UserProfileTestDataCreator
@@ -77,7 +84,9 @@ internal class UserControllerIT : IntegrationTest() {
                 responseFields(listOf(
                     fieldWithPath("url").description("Url to verify user email").type(STRING))
                 )))
-            .andReturn().response.contentAsString.let { this.urlToVerifyUserProfile = JSONObject(it).get("url").toString() }
+            .andReturn().response.contentAsString.let {
+            this.urlToVerifyUserProfile = JSONObject(it).get("url").toString()
+        }
         verifyEmail()
     }
 
@@ -87,7 +96,11 @@ internal class UserControllerIT : IntegrationTest() {
             .contentType(APPLICATION_JSON)
             .accept(APPLICATION_JSON))
             .andExpect(status().isOk)
-            .andReturn().response.contentAsString.let { this.token = "Bearer " + JSONObject(it).get("token").toString() }
+            .andReturn().response.contentAsString.let {
+                val jsonObjectRes = JSONObject(it)
+                this.token = "Bearer " + jsonObjectRes.get("token").toString()
+                this.userId = UUID.fromString(jsonObjectRes.get("userId").toString())
+            }
     }
 
     private fun loginFunction(username: String, password: String) {
@@ -101,7 +114,9 @@ internal class UserControllerIT : IntegrationTest() {
             .accept(APPLICATION_JSON))
             .andExpect(status().isOk)
             .andDo(document("user_login",loginResponseFields))
-            .andReturn().response.contentAsString.let { this.token = "Bearer " + JSONObject(it).get("token").toString() }
+            .andReturn().response.contentAsString.let {
+                this.token = "Bearer " + JSONObject(it).get("token").toString()
+        }
     }
 
     private fun createHeadersObject(username: String, password: String){
@@ -109,6 +124,29 @@ internal class UserControllerIT : IntegrationTest() {
         headers["password"] = password
         httpHeaders.setAll(headers)
     }
+
+    private fun resetPasswordFunction(username: String, password: String) {
+        createHeadersObject(username, password)
+        headers[AUTHORIZATION] = token
+        buildResetPasswordFunction(passwordResetUrl)
+            .andDo(document("resetPassword", responseFields(listOf(
+                fieldWithPath("id").description("The Id of the user entity").type(STRING),
+                fieldWithPath("creationDate").description("Date which was created the request").type(STRING),
+                fieldWithPath("validUntil").description("Date until token is valid").type(STRING),
+                fieldWithPath("completionDate").description("Date in which request is confirmed").type(STRING)))))
+            .andReturn().response.contentAsString.let { passwordResetEntityId = JSONObject(it).get("id").toString() }
+    }
+
+    private fun resetPasswordFunctionWithId() {
+        buildResetPasswordFunction("$passwordResetUrl/$passwordResetEntityId")
+    }
+
+    private fun buildResetPasswordFunction(url: String): ResultActions =
+        this.mockMvc.perform(post(url)
+            .headers(httpHeaders)
+            .contentType(APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(NewPasswordResetBody(password = "NewPassword*")))
+            .accept(APPLICATION_JSON)).andExpect(status().isOk)
 
     @Test
     fun `Can create a User`() {
@@ -121,15 +159,30 @@ internal class UserControllerIT : IntegrationTest() {
     }
 
     @Test
+    fun `Can reset password`() {
+        val username = usernameExample3
+        val password = passwordExample3
+        createUser(TestUser(
+            username = username,
+            name = nameExample,
+            password = password,
+            email = emailExample
+        ))
+        resetPasswordFunction(username, password)
+        resetPasswordFunctionWithId()
+    }
+
+    @Test
     fun `Can login User`() {
-            val username = usernameExample3
-            val password = passwordExample3
-            createUser(TestUser(
-                username = username,
-                name = nameExample,
-                password = password,
-                email = emailExample))
-            loginFunction(username, password)
+        val username = usernameExample4
+        val password = passwordExample4
+        createUser(TestUser(
+            username = username,
+            name = nameExample,
+            password = password,
+            email = emailExample
+        ))
+        loginFunction(username, password)
     }
 
     @Test

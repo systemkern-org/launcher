@@ -44,7 +44,7 @@ internal interface EmailVerificationRepository : CrudRepository<EmailVerificatio
 @Entity
 internal data class EmailVerification(
     @Id
-    val id_email_verification: UUID,
+    val idEmailVerification: UUID,
     val creationDate: LocalDateTime,
     val validUntil: LocalDateTime,
     var completionDate: LocalDateTime,

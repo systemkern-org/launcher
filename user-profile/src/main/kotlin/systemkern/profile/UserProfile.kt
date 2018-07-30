@@ -17,11 +17,16 @@ internal data class UserProfile(
 
     @JsonProperty(access = WRITE_ONLY)
     var password: String, /*This attribute is var because of how repository event handler works*/
-    var username: String,
-    var email: String,
+    val username: String,
+    val email: String,
 
     @OneToMany
     @JsonIgnore
     @JoinColumn(name = "user_profile_id")
-    val emailVerificationList: List<EmailVerification> = ArrayList()
+    val emailVerificationList: List<EmailVerification> = ArrayList(),
+
+    @OneToMany
+    @JsonIgnore
+    @JoinColumn(name = "user_profile_id")
+    val passwordResetList: List<PasswordResetEntity> = ArrayList()
 )

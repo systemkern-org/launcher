@@ -5,6 +5,10 @@ import org.springframework.http.HttpMethod.POST
 import org.springframework.http.HttpMethod.GET
 import org.springframework.http.HttpMethod.PUT
 import org.springframework.http.HttpMethod.DELETE
+import org.springframework.http.HttpMethod.DELETE
+import org.springframework.http.HttpMethod.POST
+import org.springframework.http.HttpMethod.PUT
+import org.springframework.http.HttpMethod.GET
 import org.springframework.http.HttpStatus.NOT_FOUND
 import org.springframework.security.access.AccessDeniedException
 import org.springframework.security.authentication.AuthenticationProvider
@@ -33,10 +37,14 @@ import javax.servlet.http.HttpServletResponse
 internal class CustomWebSecurityConfigurerAdapter(
     val service: AuthenticationService
 ) : WebSecurityConfigurerAdapter() {
-    val pattern = "/user-profiles"
-    val pattern1 = "/user-profiles/"
-    val pattern2 = "/user-profiles/{\\d+}"
-    val emailVerificationUrl = "/verify-email"
+  
+    val patternVerifyEmailId: String = "/verify-email/{\\d+}"
+    val patternVerifyEmail: String = "/verify-email"
+    val patternPasswordResetId: String = "/password-reset/{\\d+}"
+    val patternPasswordReset: String = "/password-reset"
+    val pattern: String = "/user-profiles"
+    val pattern1: String = "/user-profiles/"
+    val pattern2: String = "/user-profiles/{\\d+}"
 
     @Throws(Exception::class)
     override fun configure(http: HttpSecurity) {
@@ -52,12 +60,12 @@ internal class CustomWebSecurityConfigurerAdapter(
         http.csrf()
             .disable()
             .authorizeRequests()
-            .antMatchers(DELETE, pattern, pattern1, pattern2)
+            .antMatchers(DELETE, pattern, pattern1, pattern2, patternPasswordReset, patternVerifyEmail)
             .denyAll()
 
             .antMatchers(PUT, pattern2)
             .authenticated()
-            .antMatchers(PUT, pattern, pattern1)
+            .antMatchers(PUT, pattern, pattern1, patternPasswordReset)
             .denyAll()
 
             .antMatchers(POST, pattern)
@@ -65,8 +73,15 @@ internal class CustomWebSecurityConfigurerAdapter(
 
             .antMatchers(GET, pattern2)
             .authenticated()
-            .antMatchers(GET, pattern, pattern1, emailVerificationUrl)
+      
+            .antMatchers(GET, pattern, pattern1, patternPasswordReset, patternVerifyEmail)
             .denyAll()
+
+            .antMatchers(POST,patternPasswordResetId)
+            .permitAll()
+
+            .antMatchers(POST,patternVerifyEmailId)
+            .permitAll()
 
             .and()
             .addFilterBefore(
@@ -82,42 +97,40 @@ internal class AuthenticationFilter(
     private val service: AuthenticationService
 ) : GenericFilterBean() {
 
-        override fun doFilter(
-            request: ServletRequest,
-            response: ServletResponse,
-            filter: FilterChain
-        ) {
-             request as HttpServletRequest
-             response as HttpServletResponse
-             try {
-                val token: UUID = UUID.fromString(
-                    request.getHeader("Authorization").split(" ")[1])
-                if (!service.isValidToken(token, request)) {
-                    clearContext()
-                } else {
-                    val authRes: Authentication =
-                        PreAuthenticatedAuthenticationToken(token, UUID.randomUUID())
-                    authRes.isAuthenticated = true
-                    getContext().authentication = authRes
-                }
-             } catch (E: IllegalStateException) {
+    override fun doFilter(
+        request: ServletRequest,
+        response: ServletResponse,
+        filter: FilterChain
+    ) {
+        request as HttpServletRequest
+        response as HttpServletResponse
+        try {
+            val token: UUID = UUID.fromString(request.getHeader("Authorization").split(" ")[1])
+            if (!service.isValidToken(token, request)) {
+                clearContext()
+            } else {
+                val authRes: Authentication =
+                    PreAuthenticatedAuthenticationToken(token, UUID.randomUUID())
+                authRes.isAuthenticated = true
+                getContext().authentication = authRes
+            }
+        } catch (E: IllegalStateException) {
 
-                val headerNames = request.headerNames.toList()
-                if (
-                    headerNames.contains("username") &&
-                    headerNames.contains("password")
-                ) {
-                    procUsernamePasswordAuth(request,
-                        response,
-                        request.getHeader("username"),
-                        request.getHeader("password"))
-
-                } else {
-                    clearContext()
-                }
-
-             }
-             filter.doFilter(request, response)
+            val headerNames = request.headerNames.toList()
+            if (
+                headerNames.contains("username") &&
+                headerNames.contains("password")
+            ) {
+                procUsernamePasswordAuth(request,
+                    response,
+                    request.getHeader("username"),
+                    request.getHeader("password")
+                )
+            } else {
+                clearContext()
+            }
+        }
+        filter.doFilter(request, response)
     }
 
     private fun procUsernamePasswordAuth(
@@ -135,7 +148,9 @@ internal class AuthenticationFilter(
          httpResponse.status = SC_OK
     }
 
-    private fun tryToAuthenticate(requestAuthentication: Authentication): Authentication {
+    private fun tryToAuthenticate(
+        requestAuthentication: Authentication
+    ): Authentication {
         val responseAuthentication: Authentication =
             authenticationProvider.authenticate(requestAuthentication)
         if (!responseAuthentication.isAuthenticated) {
