@@ -9,10 +9,10 @@ import java.util.*
 @Component
 internal class MailUtility(
     private val emailSender: JavaMailSender,
-    internal var urlToVerify: String = ""
-) {
+    internal var urlToVerify: String = "",
     internal val message: SimpleMailMessage = SimpleMailMessage()
-
+) {
+  
     internal fun createEmailMessage(
         emailAddress: String,
         tokenId: UUID,
@@ -28,7 +28,7 @@ internal class MailUtility(
     private fun buildLink(
         tokenId: UUID,
         baseUrl: String
-    ){
+    ) {
         urlToVerify = ""
         urlToVerify += "http://"
         urlToVerify += InetAddress.getLocalHost().hostAddress

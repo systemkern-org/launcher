@@ -5,7 +5,6 @@ import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.annotation.JsonProperty.Access.WRITE_ONLY
 import java.util.UUID
 import java.util.UUID.randomUUID
-import javax.persistence.*
 
 @Entity
 @EntityListeners(UserProfileEntityListener::class)
@@ -17,16 +16,16 @@ internal data class UserProfile(
 
     @JsonProperty(access = WRITE_ONLY)
     var password: String, /*This attribute is var because of how repository event handler works*/
-    var username: String,
-    var email: String,
+    val username: String,
+    val email: String,
 
     @OneToMany
-    @JoinColumn(name = "user_profile_id")
     @JsonIgnore
+    @JoinColumn(name = "user_profile_id")
     val emailVerificationList: List<EmailVerification> = ArrayList(),
 
     @OneToMany
-    @JoinColumn(name = "user_profile_id")
     @JsonIgnore
-    val emailChangeList: List<EmailChangeEntity> = ArrayList()
+    @JoinColumn(name = "user_profile_id")
+    val passwordResetList: List<PasswordResetEntity> = ArrayList()
 )

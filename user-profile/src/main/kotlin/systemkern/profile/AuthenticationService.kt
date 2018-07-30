@@ -12,42 +12,40 @@ import java.time.LocalDateTime
 
 @Service
 internal class AuthenticationService(
-    val userProfileRepository: UserProfileRepository,
-    val emailVerificationRepository: EmailVerificationRepository,
-    val emailChangeRepository: EmailChangeRepository,
-    val passwordEncoder: BCryptPasswordEncoder,
-    val sessionTimeOut: Duration,
-    val auxNumToConvertSecstoMillis: Int = 1000,
-    val tokens: HashMap<UUID, AuthenticationResponse> = HashMap()
+    val userProfileRepository : UserProfileRepository,
+    val emailVerificationRepository : EmailVerificationRepository,
+    val passwordEncoder : BCryptPasswordEncoder,
+    val sessionTimeOut : Duration,
+    val auxNumToConvertSecstoMillis : Int = 1000
 ) {
-    internal fun findByUsername(username: String) =
+
+    val tokens : HashMap<UUID, AuthenticationResponse> = HashMap()
+    internal fun findByUsername(username : String) =
         userProfileRepository.findByUsername(username)
 
-    internal fun isValidToken(token: UUID, request: HttpServletRequest) : Boolean {
-        val inactiveInterval = System.currentTimeMillis() - request.session.lastAccessedTime
-        val maxInactiveIntervalMilis = request.session.maxInactiveInterval * auxNumToConvertSecstoMillis
-        if (tokens.containsKey(token)) {
-            return inactiveInterval <= maxInactiveIntervalMilis
-        }
-        return false
+    internal fun isValidToken(token : UUID, request : HttpServletRequest) : Boolean {
+         val inactiveInterval = System.currentTimeMillis() - request.session.lastAccessedTime
+         val maxInactiveIntervalMilis = request.session.maxInactiveInterval * auxNumToConvertSecstoMillis
+         if (tokens.containsKey(token)) {
+             return inactiveInterval <= maxInactiveIntervalMilis
+         }
+         return false
     }
 
-    internal fun saveToken(
-        token: UUID,
-        auth: AuthenticationResponse
-    ) {
-        tokens[token] = auth
+    internal fun saveToken(token : UUID, auth : AuthenticationResponse) {
+         tokens[token] = auth
+
     }
 
-    internal fun deleteToken(token: UUID) {
+    internal fun deleteToken(token : UUID) {
         tokens.remove(token)
     }
 
     @Throws(UserNotFoundException::class)
     internal fun authenticationProcess(
-        auth: Authentication,
-        password: String
-    ): AuthenticationResponse {
+        auth : Authentication,
+        password : String
+    ) : AuthenticationResponse {
         val user = findByUsername(auth.principal.toString())
         val emailVerification = user.emailVerificationList.last()
         if (!passwordEncoder.matches(password, user.password)
@@ -61,9 +59,7 @@ internal class AuthenticationService(
             validUntil = now().plusMinutes(sessionTimeOut.toMinutes()))
     }
 
-    internal fun authProcessEmailVerification(
-        verifyEmailToken: UUID
-    ): AuthenticationResponse {
+    internal fun authProcessEmailVerification(verifyEmailToken : UUID) : AuthenticationResponse {
         val emailVerification = emailVerificationRepository.findById(verifyEmailToken).get()
         val userProfile = emailVerification.userProfile
 
@@ -74,30 +70,32 @@ internal class AuthenticationService(
             validUntil = now().plusMinutes(sessionTimeOut.toMinutes()))
     }
 
-    internal fun authProcessEmailChange(emailChangeToken: UUID) : AuthenticationResponse {
-        val emailChangeEntity = emailChangeRepository.findById(emailChangeToken).get()
-        val userProfile = emailChangeEntity.userProfile
-
-        return buildResponseAndSave(
-            authenticationToken = UUID.randomUUID(),
-            username = userProfile.username,
-            userId = userProfile.id,
-            validUntil = now().plusMinutes(sessionTimeOut.toMinutes()))
+    internal fun authProcessPasswordReset(
+        passwordResetEntity : PasswordResetEntity,
+        completionDate : LocalDateTime
+    ) : AuthenticationResponse {
+         val userProfile = passwordResetEntity.userProfile
+         return buildResponseAndSave(
+             authenticationToken = UUID.randomUUID(),
+             username = userProfile.username,
+             userId = userProfile.id,
+             validUntil = now().plusMinutes(sessionTimeOut.toMinutes()))
     }
 
     private fun buildResponseAndSave(
-        authenticationToken: UUID,
-        validUntil: LocalDateTime,
-        username: String,
-        userId: UUID): AuthenticationResponse {
-        val authResp = AuthenticationResponse(
-            token = authenticationToken,
-            username = username,
-            userId = userId,
-            validUntil = validUntil
-        )
-        saveToken(authenticationToken, authResp)
-        return authResp
+        authenticationToken : UUID,
+        validUntil : LocalDateTime,
+        username : String,
+        userId : UUID
+    ) : AuthenticationResponse {
+         val authResp = AuthenticationResponse(
+             token = authenticationToken,
+             username = username,
+             userId = userId,
+             validUntil = validUntil
+         )
+         saveToken(authenticationToken, authResp)
+         return authResp
     }
 }
 

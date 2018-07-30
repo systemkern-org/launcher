@@ -69,33 +69,42 @@ internal interface UserProfileRepository : CrudRepository<UserProfile, UUID> {
 
 @Component
 internal class UserProfileEntityListener(
-    internal val passwordEncoder: BCryptPasswordEncoder = BCryptPasswordEncoder()
+    internal val passwordEncoder : BCryptPasswordEncoder = BCryptPasswordEncoder()
 ) {
     private val emailPattern = Pattern.compile("^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*" +
         "@[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$")
-
+  
     private fun validateEmail(hex: String) = emailPattern.matcher(hex).matches()
+
+    private fun executeValidation(emailToVal: String) {
+        if (!validateEmail(emailToVal))
+            throw BadEmailException("Email address is invalid")
+    }
 
     @PrePersist
     internal fun handleUserCreate(userProfile: UserProfile) {
-        if (!validateEmail(userProfile.email))
-            throw BadEmailException("Email address is invalid")
+        executeValidation(userProfile.email)
         userProfile.password = passwordEncoder.encode(userProfile.password)
     }
 
     @PreUpdate
     internal fun handleUserUpdate(userProfile: UserProfile) {
+        executeValidation(userProfile.email)
         userProfile.password = passwordEncoder.encode(userProfile.password)
     }
 }
 
 @Configuration
 internal class RepositoryRestConfig : RepositoryRestConfigurer {
-    override fun configureConversionService(conversionService: ConfigurableConversionService?) {}
+    override fun configureConversionService(
+        conversionService: ConfigurableConversionService?) {
+    }
 
     override fun configureExceptionHandlerExceptionResolver(exceptionResolver: ExceptionHandlerExceptionResolver?) {}
 
-    override fun configureHttpMessageConverters(messageConverters: MutableList<HttpMessageConverter<*>>?) {}
+    override fun configureHttpMessageConverters(
+        messageConverters: MutableList<HttpMessageConverter<*>>?) {
+    }
 
     override fun configureJacksonObjectMapper(objectMapper: ObjectMapper?) {}
 
@@ -111,8 +120,11 @@ internal class RepositoryRestConfig : RepositoryRestConfigurer {
 @Configuration
 @ConfigurationProperties("user-profile")
 internal class UserProfileConfiguration {
-    var bcryptEncodeRounds: Int = 10
-    var sessionTimeOut: Duration = Duration.ofMinutes(30)
+
+    companion object {
+        const val bcryptEncodeRounds: Int = 10
+        val sessionTimeOut: Duration = Duration.ofMinutes(30)
+    }
 
     @Bean internal fun bcryptPasswordEncoderBean() =
         BCryptPasswordEncoder(bcryptEncodeRounds)

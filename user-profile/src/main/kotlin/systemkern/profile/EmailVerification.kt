@@ -14,8 +14,8 @@ import javax.persistence.Id
 @RestController
 internal class EmailVerificationController(
     val emailVerificationService: EmailVerificationService,
-    val authenticationService: AuthenticationService
-) {
+    val authenticationService: AuthenticationService) {
+
     @PostMapping("/verify-email/{id}")
     fun verifyUserByToken(@PathVariable("id") tokenId: UUID
     ): AuthenticationResponse {
@@ -44,7 +44,7 @@ internal interface EmailVerificationRepository : CrudRepository<EmailVerificatio
 @Entity
 internal data class EmailVerification(
     @Id
-    val id_email_verification: UUID,
+    val idEmailVerification: UUID,
     val creationDate: LocalDateTime,
     val validUntil: LocalDateTime,
     var completionDate: LocalDateTime,

@@ -1,4 +1,5 @@
-# Launcher #
+Launcher
+================
 Launcher is a template for Web technology based Applications.
 Based on Spring Boot it offers a specialised opinionated view on
 how to modularise, implement and deploy such applications.
@@ -8,17 +9,18 @@ It is to be used and applied on an 'as is' basis with no guarantee of functional
 [![Build Status](https://travis-ci.org/systemkern/launcher.svg?branch=master)](https://travis-ci.org/systemkern/launcher)
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/1223c155302d4815a262b3c192158901)](https://www.codacy.com/app/systemkern/launcher?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=systemkern/launcher&amp;utm_campaign=Badge_Grade)
 
-### Table of Contents
+
+
+Table of Contents
+----------------
 
 * [Launcher](#launcher)
-  * [The Idea](#the-idea)
   * [What is provided by this Template](#what-is-provided-by-this-template)
 * [Application](#application)
   * [Application Configuration](#application-configuration)
   * [Logging Configuration](#logging-configuration)
   * [Assembly and Distribution](#assembly-and-distribution)
   * [Distribution configuration](#distribution-configuration)
-* [Contribution](#contribution)
 
 ___
 If you'd like to contribute please read the [Contribution Guidelines](CONTRIBUTE.md)
@@ -26,7 +28,8 @@ This code is licensed under the [UNLICENSE](LICENSE)
 
 
 
-### The Idea
+The Goal
+----------------
 Even tough each project is different is different in a business sense,
 there are still a lot of functionalities which overlap even between very
 heterogeneous projects. Launcher aims to identify those overlaps and provide
@@ -36,7 +39,10 @@ This application template represents a strong opinionated view on the layout of 
 The layout is aimed at building a a _modularised monolith_ , which can easily be separated into
 micro services at any point in time.
 
-### What is provided by this Template
+
+
+What is provided by this Template
+----------------
 * runtime for local execution including 
   * application configuration
   * logging configuration
@@ -52,7 +58,40 @@ micro services at any point in time.
 * Template for a customer readme.html
 
 
-# Application #
+
+Backlog 
+================
+* Integration Tests
+* Project Setup
+  * CI 
+  * code analysis
+  * CD
+  * Runtime
+  * Externalised Configuration
+  * Modules
+  * Docker
+  * Security
+* Rest API 
+  * Documentation for Frontend Developers
+  * Automatic client generation with Swagger
+* Automatic Database Migration
+* User Module
+  * Registration & Confirmation
+  * Authentication Provider
+  * Password Reset
+  * GDPR / DSGVO Compliance
+  * Authentication Providers via Facebook, Google, Twitter, …
+* Web Frontend
+
+
+
+
+
+
+
+
+Application
+================
 
 ### Application Configuration
 Application configuration is done via standard spring-boot config providers
