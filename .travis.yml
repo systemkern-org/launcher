@@ -6,8 +6,6 @@ language: java
 services:
   - docker
 
-# -B batch mode makes Maven less verbose
-# Useles change
 before_install:
   - docker pull djfarrelly/maildev
 
@@ -15,4 +13,5 @@ install:
   - docker run -d -p 1080:80 -p 1025:25 djfarrelly/maildev
 
 script:
+# -B batch mode makes Maven less verbose
   - mvn -B clean verify
