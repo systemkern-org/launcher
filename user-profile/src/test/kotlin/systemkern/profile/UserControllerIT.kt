@@ -55,9 +55,9 @@ internal class UserControllerIT : IntegrationTest() {
         fieldWithPath("_links.passwordResetList.href")
             .description("Link to access password reset children").type(STRING),
         fieldWithPath("_links.emailVerificationList.href")
-            .description("Link to access Email verification children").type(STRING)
+            .description("Link to access Email verification children").type(STRING),
           fieldWithPath("_links.emailChangeList.href")
-            .description("Link to access Email Change children").type(STRING),
+            .description("Link to access Email Change children").type(STRING)
     )
 
     private val loginResponseFields = responseFields(listOf(
@@ -287,6 +287,7 @@ private data class TestUser(
     val name: String,
     val password: String,
     val email: String
+)
 
 internal data class EmailChangeRequest(
     val newEmailAddress: String,
