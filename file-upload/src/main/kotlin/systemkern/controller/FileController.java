@@ -48,7 +48,7 @@ public class FileController {
 				.collect(Collectors.toList());
 	}
 
-    @PostMapping("/hello1")
+    @GetMapping("/hello1")
     public void hello() {
         System.out.println("hello post");
     }

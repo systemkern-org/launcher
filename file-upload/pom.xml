@@ -38,6 +38,11 @@
             <artifactId>spring-security-config</artifactId>
             <version>RELEASE</version>
         </dependency>
+        <dependency>
+            <groupId>com.systemkern</groupId>
+            <artifactId>user-profile</artifactId>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
 
