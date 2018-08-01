@@ -1,10 +1,10 @@
 package systemkern.profile
 
 import org.springframework.context.annotation.Configuration
-import org.springframework.http.HttpMethod.DELETE
 import org.springframework.http.HttpMethod.POST
-import org.springframework.http.HttpMethod.PUT
 import org.springframework.http.HttpMethod.GET
+import org.springframework.http.HttpMethod.PUT
+import org.springframework.http.HttpMethod.DELETE
 import org.springframework.http.HttpStatus.NOT_FOUND
 import org.springframework.security.access.AccessDeniedException
 import org.springframework.security.authentication.AuthenticationProvider
@@ -13,28 +13,29 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter
+import org.springframework.web.filter.GenericFilterBean
+import javax.servlet.FilterChain
+import javax.servlet.ServletRequest
+import javax.servlet.ServletResponse
+import javax.servlet.http.HttpServletRequest
 import org.springframework.security.core.Authentication
 import org.springframework.security.core.context.SecurityContextHolder.clearContext
 import org.springframework.security.core.context.SecurityContextHolder.getContext
 import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter
-import org.springframework.web.bind.annotation.ResponseStatus
-import org.springframework.web.filter.GenericFilterBean
+import org.springframework.web.bind.annotation.*
 import java.util.*
-import javax.servlet.FilterChain
-import javax.servlet.ServletRequest
-import javax.servlet.ServletResponse
-import javax.servlet.http.HttpServletRequest
-import javax.servlet.http.HttpServletResponse
 import javax.servlet.http.HttpServletResponse.SC_OK
+import javax.servlet.http.HttpServletResponse
 
 @Configuration
 @EnableWebSecurity
 internal class CustomWebSecurityConfigurerAdapter(
     val service: AuthenticationService
-) : WebSecurityConfigurerAdapter() {    
+) : WebSecurityConfigurerAdapter() {
+  
     val patternVerifyEmailId: String = "/verify-email/{\\d+}"
-    val patternVerifyEmail: String = "/verify-email/{\\d+}"
+    val patternVerifyEmail: String = "/verify-email"
     val patternPasswordResetId: String = "/password-reset/{\\d+}"
     val patternPasswordReset: String = "/password-reset"
     val pattern: String = "/user-profiles"
@@ -64,8 +65,12 @@ internal class CustomWebSecurityConfigurerAdapter(
             .antMatchers(PUT, pattern, pattern1, patternPasswordReset)
             .denyAll()
 
+            .antMatchers(POST, pattern)
+            .permitAll()
+
             .antMatchers(GET, pattern2)
             .authenticated()
+      
             .antMatchers(GET, pattern, pattern1, patternPasswordReset, patternVerifyEmail)
             .denyAll()
 
@@ -130,13 +135,13 @@ internal class AuthenticationFilter(
         username: String,
         password: String
     ) {
-        val resultOfAuthentication: Authentication =
-            usernamePasswordAuth(username, password)
+         val resultOfAuthentication: Authentication =
+             usernamePasswordAuth(username, password)
 
-        request.session.setAttribute("token", resultOfAuthentication.credentials.toString())
+         request.session.setAttribute("token", resultOfAuthentication.credentials.toString())
 
-        getContext().authentication = resultOfAuthentication
-        httpResponse.status = SC_OK
+         getContext().authentication = resultOfAuthentication
+         httpResponse.status = SC_OK
     }
 
     private fun tryToAuthenticate(
@@ -151,24 +156,22 @@ internal class AuthenticationFilter(
         return responseAuthentication
     }
 
-    private fun usernamePasswordAuth(
-        username: String,
-        password: String
-    ): Authentication {
-            val requestAuthentication = UsernamePasswordAuthenticationToken(username, password)
-            return tryToAuthenticate(requestAuthentication)
+  private fun usernamePasswordAuth(username: String, password: String): Authentication {
+        val requestAuthentication = UsernamePasswordAuthenticationToken(username, password)
+        return tryToAuthenticate(requestAuthentication)
     }
 }
 
 internal class UPAuthenticationProvider : AuthenticationProvider {
 
     override fun authenticate(auth: Authentication?): Authentication {
-        if (auth?.principal.toString().isNotBlank()
-            && auth?.credentials.toString().isNotBlank()) {
-            val authRes: Authentication = PreAuthenticatedAuthenticationToken(
-                auth?.principal.toString(),
-                UUID.randomUUID()
-            )
+
+        if (auth?.principal.toString().isNotBlank() &&
+            auth?.credentials.toString().isNotBlank()) {
+
+            val authRes: Authentication =
+                PreAuthenticatedAuthenticationToken(auth?.principal.toString(),
+                    UUID.randomUUID())
             authRes.isAuthenticated = true
             return authRes
         }

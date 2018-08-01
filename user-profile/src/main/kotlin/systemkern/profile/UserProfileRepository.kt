@@ -36,6 +36,7 @@ internal class UserProfileController(
     val mailUtility: MailUtility,
     val timeUntilTokenExpires: Long = 6
 ) {
+  
     //Url mapping must be here, because @PostMapping alone in two controllers give errors
     @PostMapping("/user-profiles")
     private fun saveUser(@RequestBody requestBody: UserProfile): ResponseEntity<SaveUserProfileResponse> {
