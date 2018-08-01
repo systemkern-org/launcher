@@ -55,6 +55,7 @@ internal class UserControllerIT : IntegrationTest() {
         fieldWithPath("_links.emailVerificationList.href")
             .description("Link to access Email verification children").type(STRING)
     )
+
     private val loginResponseFields = responseFields(listOf(
         fieldWithPath("token").description("Token to authenticate the next requests").type(STRING),
         fieldWithPath(username).description(usernameDesc).type(STRING),

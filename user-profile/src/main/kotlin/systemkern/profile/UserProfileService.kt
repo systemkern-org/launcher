@@ -1,6 +1,7 @@
 package systemkern.profile
 
 import org.springframework.stereotype.Service
+
 @Service
 internal class UserProfileService (
     val repository: UserProfileRepository

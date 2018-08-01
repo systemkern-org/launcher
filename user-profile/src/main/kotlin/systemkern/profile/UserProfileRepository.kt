@@ -23,13 +23,11 @@ import org.springframework.web.servlet.mvc.method.annotation.ExceptionHandlerExc
 import java.time.LocalDateTime
 import java.time.Duration
 import java.util.*
-import javax.persistence.PrePersist
-import javax.persistence.PreUpdate
+import javax.persistence.*
 import javax.servlet.http.HttpSessionEvent
 import javax.servlet.http.HttpSessionListener
 import java.util.regex.Pattern
 import java.util.zip.DataFormatException
-
 
 @RepositoryRestController
 internal class UserProfileController(
@@ -38,6 +36,7 @@ internal class UserProfileController(
     val mailUtility: MailUtility,
     val timeUntilTokenExpires: Long = 6
 ) {
+  
     //Url mapping must be here, because @PostMapping alone in two controllers give errors
     @PostMapping("/user-profiles")
     private fun saveUser(@RequestBody requestBody: UserProfile): ResponseEntity<SaveUserProfileResponse> {

@@ -13,7 +13,7 @@ internal data class UserProfile(
     @Id
     @JsonIgnore
     val id: UUID = randomUUID(),
-    val name: String,
+    var name: String,
 
     @JsonProperty(access = WRITE_ONLY)
     var password: String, /*This attribute is var because of how repository event handler works*/

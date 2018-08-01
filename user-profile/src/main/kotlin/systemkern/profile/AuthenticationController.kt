@@ -8,6 +8,7 @@ import java.util.UUID
 import javax.servlet.http.HttpServletRequest
 
 @RestController
+
 internal class AuthenticationController(val service : AuthenticationService) {
     @PostMapping("/auth")
     internal fun login(auth : Authentication, @RequestHeader password : String)
