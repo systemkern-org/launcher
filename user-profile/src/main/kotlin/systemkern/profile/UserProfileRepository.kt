@@ -74,7 +74,7 @@ internal class UserProfileEntityListener(
 ) {
     private val emailPattern = Pattern.compile("^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*" +
         "@[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$")
-
+  
     private fun validateEmail(hex: String) = emailPattern.matcher(hex).matches()
 
     private fun executeValidation(emailToVal: String) {
