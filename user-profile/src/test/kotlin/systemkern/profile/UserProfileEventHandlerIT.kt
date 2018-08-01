@@ -15,7 +15,7 @@ import org.springframework.test.context.junit4.SpringRunner
 @ActiveProfiles("integration-test")
 @SpringBootTest(classes = [
     UserProfileRepository::class,
-    UserProfileEntiyListener::class,
+    UserProfileEntityListener::class,
     UserProfileConfiguration::class,
     UserProfile::class
 ])
@@ -32,7 +32,8 @@ internal class UserEventHandlerIT {
             UserProfile(
                 username = "userTest",
                 name = "Test User",
-                password = "password"
+                password = "password",
+                email = "userTest@gmail.com"
             ))
 
         assertThat(persistedUser.password).isNotBlank()
