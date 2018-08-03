@@ -17,7 +17,7 @@ script:
   - mvn -B clean verify
 
 after_success:
-- cp $TRAVIS_BUILD_DIR/user-profile/target/generated-docs/readme.html $TRAVIS_BUILD_DIR/index.html
+- cp $TRAVIS_BUILD_DIR/integration-tests/target/generated-docs/readme.html $TRAVIS_BUILD_DIR/index.html
 
 deploy:
   provider: pages
