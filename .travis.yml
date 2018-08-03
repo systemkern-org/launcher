@@ -15,3 +15,14 @@ install:
 script:
 # -B batch mode makes Maven less verbose
   - mvn -B clean verify
+
+after_success:
+- cp $TRAVIS_BUILD_DIR/user-profile/target/generated-docs/readme.html $TRAVIS_BUILD_DIR/index.html
+
+deploy:
+  provider: pages
+  skip-cleanup: true
+  github-token: $GITHUB_TOKEN  # Set in the settings page of your repository, as a secure variable
+  keep-history: true
+  on:
+    branch: master
