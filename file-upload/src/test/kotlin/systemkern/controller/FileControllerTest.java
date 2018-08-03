@@ -3,100 +3,104 @@ package systemkern.controller;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
-import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import systemkern.configuration.FileStorageProperties;
 import systemkern.service.FileStorageService;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileWriter;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.io.*;
+import java.util.Objects;
 
 import static org.hamcrest.core.Is.is;
-import static org.mockito.BDDMockito.given;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.httpBasic;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-
+//@AutoConfigureMockMvc(secure = false)
 @RunWith(SpringRunner.class)
-@WebMvcTest(controllers = {FileController.class})
+@WebMvcTest(FileController.class)
+@ContextConfiguration(classes = {FileController.class, FileStorageService.class, FileStorageProperties.class})
 public class FileControllerTest {
 
-    private HttpHeaders httpHeaders = new HttpHeaders();
-
     @Autowired
-    MockMvc mockMvc;
+    private MockMvc mockMvc;
 
-    @MockBean
-    FileStorageService fileStorageServiceMock;
-
-
+    @Value("${file.upload-dir}")
+    private String fileUploadDir;
 
     @Test
-    public void testCreateClientSuccessfully() throws Exception {
+    public void uploadFile() throws Exception {
 
-        final String noSuffixInFile = null;
+        final String noSuffixInFile = ".tmp";
 
-        File file = File.createTempFile("prueba", noSuffixInFile, new File(System.getProperty("java.io.tmpdir")));
-        file.deleteOnExit();
+        File tempFile = File.createTempFile("tempfile", ".tmp");
+        tempFile.deleteOnExit();
 
-        BufferedWriter bw = null;
-        FileWriter fw = new FileWriter(file);
-        bw = new BufferedWriter(fw);
-        bw.write("fileContent");
+        writeInFile(tempFile, "This is temp file content.");
 
-        FileInputStream fi1 = new FileInputStream(file);
+        FileInputStream fi1 = new FileInputStream(tempFile);
 
         final MockMultipartFile avatar = new MockMultipartFile("file", "test.dat", "application/octet-stream", fi1);
 
-        given(fileStorageServiceMock.storeFile(avatar)).willReturn("Foo");
-
-
         mockMvc.perform(MockMvcRequestBuilders.multipart("/uploadFile")
                 .file(avatar)
-                .characterEncoding("UTF-8").with(SecurityMockMvcRequestPostProcessors.csrf()).header(HttpHeaders.AUTHORIZATION,
-                        "Basic 4a7dce31-b0c4-4887-8ddf-08d405f3836c" ))
+                .with(httpBasic("user", "password")).with(csrf())
+                .characterEncoding("UTF-8"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.fileName", is("Foo")))
-                .andReturn();
+                .andExpect(jsonPath("$.fileName", is(avatar.getOriginalFilename())));
+
+        File convFile = new File(fileUploadDir.concat("/").concat(Objects.requireNonNull(avatar.getOriginalFilename())));
+
+        deleteFile(convFile);
     }
 
     @Test
-    public void login() {
-        Map<String, String> headers = new LinkedHashMap<>();
-        headers.put("username", "juan");
-        headers.put("password", "secret");
+    public void connect() throws Exception {
+        mockMvc.perform(get("/connect"))
+                .andExpect(status().isOk());
+    }
 
-        httpHeaders.setAll(headers);
+    @Test
+    public void downloadFile() throws Exception {
+
+        File file = new File(fileUploadDir.concat("/downloadFile.txt"));
+
+        writeInFile(file, "This is download file content.");
+
+        ResultActions result = mockMvc.perform(MockMvcRequestBuilders.get("/downloadFile/"+file.getName()))
+                .andExpect(status().isOk()).andExpect(header().string("Content-Disposition",
+                        "attachment; filename=\"downloadFile.txt\""));
+
+        deleteFile(file);
+    }
+
+    private void writeInFile(File file, String content){
+        BufferedWriter bw = null;
         try {
-            ResultActions result = mockMvc.perform(MockMvcRequestBuilders.multipart("/auth/login")
-                    .headers(httpHeaders)
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .accept(MediaType.APPLICATION_JSON))
-                    .andExpect(status().isOk());
+            bw = new BufferedWriter(new FileWriter(file));
+            bw.write(content);
+            bw.close();
 
-            result.andReturn().getResponse().getContentAsString();
-
-        } catch (Exception e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
+    private void deleteFile(File fileToDelete){
+        if (!fileToDelete.delete()){
+            System.out.println("file has not been deleted");
+        }
+    }
+
+//                .characterEncoding("UTF-8").with(SecurityMockMvcRequestPostProcessors.csrf()).header(HttpHeaders.AUTHORIZATION,
+//                        "Basic 4a7dce31-b0c4-4887-8ddf-08d405f3836c" ))
+//                .andExpect(jsonPath("$.fileName", is("Foo")))
 }

@@ -1,6 +1,6 @@
-package systemkern;
+package systemkern.service;
 
-
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -9,10 +9,8 @@ import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.mock.web.MockMultipartFile;
-import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 import systemkern.configuration.FileStorageProperties;
-import systemkern.service.FileStorageService;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -23,17 +21,17 @@ import java.io.FileWriter;
 @EnableConfigurationProperties(FileStorageProperties.class)
 @SpringBootTest
 @SpringBootConfiguration
-public class FileUploadApplicationTest {
+public class FileStorageServiceTest {
 
     @Autowired
     private FileStorageProperties fileStorageProperties;
 
-	private FileStorageService fileStorageService;
+    private FileStorageService fileStorageService;
 
-	@Before
-	public void setUp() {
+    @Before
+    public void setUp() {
         fileStorageService = new FileStorageService(fileStorageProperties);
-	}
+    }
 
     @Test
     public void upload() throws Exception {
@@ -56,12 +54,15 @@ public class FileUploadApplicationTest {
 
         fileStorageService.storeFile(avatar);
 
-        Long aux = 1L;
-        assert(aux.equals(1L));
+        File fileToCheck = new File(fileStorageProperties.getUploadDir()+"/"+avatar.getOriginalFilename());
+        Assert.assertTrue(fileToCheck.exists());
+
+        deleteFile(fileToCheck);
     }
 
-//    @After
-//    public void cleanUp(){
-//
-//    }
+    private void deleteFile(File fileToDelete){
+        if (!fileToDelete.delete()){
+            System.out.println("file has not been deleted");
+        }
+    }
 }
