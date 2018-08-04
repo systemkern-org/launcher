@@ -17,6 +17,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.util.Objects;
 
 @Service
 @EnableConfigurationProperties({FileStorageProperties.class})
@@ -38,7 +39,7 @@ public class FileStorageService {
 
 	public String storeFile(MultipartFile file) {
 		// Normalize file name
-		String fileName = StringUtils.cleanPath(file.getOriginalFilename());
+		String fileName = StringUtils.cleanPath(Objects.requireNonNull(file.getOriginalFilename()));
 
 		try {
 			// Check if the file's name contains invalid characters

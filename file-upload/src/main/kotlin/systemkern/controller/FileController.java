@@ -1,6 +1,5 @@
 package systemkern.controller;
 
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +28,7 @@ public class FileController {
 	private FileStorageService fileStorageService;
 
 	@PostMapping("/uploadFile")
-	public UploadFileResponse uploadFile(@RequestParam("file") MultipartFile file) {
+	private UploadFileResponse uploadFile(@RequestParam("file") MultipartFile file) {
 		String fileName = fileStorageService.storeFile(file);
 
 		String fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath()
@@ -41,18 +40,17 @@ public class FileController {
 				file.getContentType(), file.getSize());
 	}
 
+    @GetMapping("/connect")
+    public String connect() {
+        return "Kotlin - Java connection is done!!";
+    }
+
 	@PostMapping("/uploadMultipleFiles")
 	public List<UploadFileResponse> uploadMultipleFiles(@RequestParam("files") MultipartFile[] files) {
 		return Arrays.stream(files)
 				.map(this::uploadFile)
 				.collect(Collectors.toList());
 	}
-
-    @PostMapping("/hello1")
-    public void hello() {
-        System.out.println("hello post");
-    }
-
 
     @GetMapping("/downloadFile/{fileName:.+}")
 	public ResponseEntity<Resource> downloadFile(@PathVariable String fileName, HttpServletRequest request) {

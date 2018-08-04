@@ -1,8 +1,11 @@
 package systemkern.profile
 
 import org.springframework.context.annotation.Configuration
-import org.springframework.http.HttpMethod.*
-import org.springframework.http.HttpStatus
+import org.springframework.http.HttpMethod.DELETE
+import org.springframework.http.HttpMethod.POST
+import org.springframework.http.HttpMethod.PUT
+import org.springframework.http.HttpMethod.GET
+import org.springframework.http.HttpStatus.NOT_FOUND
 import org.springframework.security.access.AccessDeniedException
 import org.springframework.security.authentication.AuthenticationProvider
 import org.springframework.security.authentication.InternalAuthenticationServiceException
@@ -30,6 +33,10 @@ import javax.servlet.http.HttpServletResponse.SC_OK
 internal class CustomWebSecurityConfigurerAdapter(
     val service: AuthenticationService
 ) : WebSecurityConfigurerAdapter() {
+    val patternVerifyEmailId: String = "/verify-email/{\\d+}"
+    val patternVerifyEmail: String = "/verify-email/{\\d+}"
+    val patternPasswordResetId: String = "/password-reset/{\\d+}"
+    val patternPasswordReset: String = "/password-reset"
     val pattern: String = "/user-profiles"
     val pattern1: String = "/user-profiles/"
     val pattern2: String = "/user-profiles/{\\d+}"
@@ -45,24 +52,27 @@ internal class CustomWebSecurityConfigurerAdapter(
                 /*Probably not needed*/ "/swagger.json")
             .permitAll()
 
-        http.csrf().disable()
-
-        return
         http.csrf()
             .disable()
             .authorizeRequests()
-            .antMatchers(DELETE, pattern, pattern1, pattern2)
+            .antMatchers(DELETE, pattern, pattern1, pattern2, patternPasswordReset, patternVerifyEmail)
             .denyAll()
 
             .antMatchers(PUT, pattern2)
             .authenticated()
-            .antMatchers(PUT, pattern, pattern1)
+            .antMatchers(PUT, pattern, pattern1, patternPasswordReset)
             .denyAll()
 
             .antMatchers(GET, pattern2)
             .authenticated()
-            .antMatchers(GET, pattern, pattern1)
+            .antMatchers(GET, pattern, pattern1, patternPasswordReset, patternVerifyEmail)
             .denyAll()
+
+            .antMatchers(POST,patternPasswordResetId)
+            .permitAll()
+
+            .antMatchers(POST,patternVerifyEmailId)
+            .permitAll()
 
             .and()
             .addFilterBefore(
@@ -96,10 +106,13 @@ internal class AuthenticationFilter(
                 getContext().authentication = authRes
             }
         } catch (E: IllegalStateException) {
+
             val headerNames = request.headerNames.toList()
-            if (headerNames.contains("username") && headerNames.contains("password")) {
-                procUsernamePasswordAuth(
-                    request,
+            if (
+                headerNames.contains("username") &&
+                headerNames.contains("password")
+            ) {
+                procUsernamePasswordAuth(request,
                     response,
                     request.getHeader("username"),
                     request.getHeader("password")
@@ -126,7 +139,9 @@ internal class AuthenticationFilter(
         httpResponse.status = SC_OK
     }
 
-    private fun tryToAuthenticate(requestAuthentication: Authentication): Authentication {
+    private fun tryToAuthenticate(
+        requestAuthentication: Authentication
+    ): Authentication {
         val responseAuthentication: Authentication =
             authenticationProvider.authenticate(requestAuthentication)
         if (!responseAuthentication.isAuthenticated) {
@@ -136,8 +151,9 @@ internal class AuthenticationFilter(
         return responseAuthentication
     }
 
-    private fun usernamePasswordAuth(username: String,
-                                     password: String
+    private fun usernamePasswordAuth(
+        username: String,
+        password: String
     ): Authentication {
         val requestAuthentication = UsernamePasswordAuthenticationToken(username, password)
         return tryToAuthenticate(requestAuthentication)
@@ -163,5 +179,5 @@ internal class UPAuthenticationProvider : AuthenticationProvider {
 
 }
 
-@ResponseStatus(HttpStatus.NOT_FOUND)
+@ResponseStatus(NOT_FOUND)
 internal class MissingDataException(message: String?) : AccessDeniedException(message)
