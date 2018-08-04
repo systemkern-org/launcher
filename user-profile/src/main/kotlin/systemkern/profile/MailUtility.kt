@@ -12,7 +12,7 @@ internal class MailUtility(
     internal var urlToVerify: String = "",
     internal val message: SimpleMailMessage = SimpleMailMessage()
 ) {
-
+  
     internal fun createEmailMessage(
         emailAddress: String,
         tokenId: UUID,

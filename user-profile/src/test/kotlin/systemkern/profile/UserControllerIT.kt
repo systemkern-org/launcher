@@ -37,13 +37,15 @@ internal class UserControllerIT : IntegrationTest() {
     private val restUrl = "/user-profiles"
     private val restLogin = "/auth"
     private var token: String = ""
-    val headers: HashMap<String, String> = HashMap()
+    private val headers: HashMap<String, String> = HashMap()
     private var usernameDesc = "Username to log in"
     private var username = "username"
     private var urlToVerifyUserProfile = ""
+    private val emailChangeURL = "/email-change"
+    private var emailChangeToken = ""
     private var passwordResetEntityId: String = ""
     private val passwordResetUrl = "/password-reset"
-
+  
     private val entityResponseFields = listOf(
         fieldWithPath("name").description("Name of the user").type(STRING),
         fieldWithPath(username).description(usernameDesc).type(STRING),
@@ -53,8 +55,11 @@ internal class UserControllerIT : IntegrationTest() {
         fieldWithPath("_links.passwordResetList.href")
             .description("Link to access password reset children").type(STRING),
         fieldWithPath("_links.emailVerificationList.href")
-            .description("Link to access Email verification children").type(STRING)
+            .description("Link to access Email verification children").type(STRING),
+          fieldWithPath("_links.emailChangeList.href")
+            .description("Link to access Email Change children").type(STRING)
     )
+
     private val loginResponseFields = responseFields(listOf(
         fieldWithPath("token").description("Token to authenticate the next requests").type(STRING),
         fieldWithPath(username).description(usernameDesc).type(STRING),
@@ -237,6 +242,44 @@ internal class UserControllerIT : IntegrationTest() {
             .andExpect(status().isForbidden)
             .andDo(document("user_delete"))
     }
+
+    @Test
+    fun `Can change User email`() {
+        createUser(TestUser(
+            name = nameExample,
+            password = passwordExample,
+            username = usernameExample,
+            email = emailExample
+        ))
+
+       this.mockMvc.perform(post(emailChangeURL)
+            .content(objectMapper.writeValueAsString(
+                EmailChangeRequest(
+                    newEmailAddress = "testChangeEmail@gmail.com",
+                    userProfileId = userId
+                )))
+            .contentType(APPLICATION_JSON)
+            .accept(APPLICATION_JSON))
+            .andExpect(status().isOk)
+            .andDo(document("user_email_change",
+                responseFields(listOf(
+                fieldWithPath("emailChangeReqId").description("Token of email change request").type(STRING),
+                fieldWithPath("validUntil").description("Time until token is valid").type(STRING)))))
+            .andReturn().response.contentAsString.let {
+                emailChangeToken = JSONObject(it).get("emailChangeReqId").toString()
+            }
+
+        this.mockMvc.perform(post("$emailChangeURL/$emailChangeToken")
+            .contentType(APPLICATION_JSON)
+            .accept(APPLICATION_JSON))
+            .andExpect(status().isOk)
+            .andDo(document("user_email_change_confirmation",
+            responseFields(listOf(
+            fieldWithPath("token").description("Token to authenticate future request").type(STRING),
+            fieldWithPath("username").description("User name of user profile").type(STRING),
+            fieldWithPath("userId").description("Id of user profile entity").type(STRING),
+            fieldWithPath("validUntil").description("Time until token is valid").type(STRING)))))
+    }
 }
 
 private data class TestUser(
@@ -244,4 +287,9 @@ private data class TestUser(
     val name: String,
     val password: String,
     val email: String
+)
+
+internal data class EmailChangeRequest(
+    val newEmailAddress: String,
+    val userProfileId: UUID
 )
