@@ -1,6 +1,7 @@
 package systemkern.controller;
 
 
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +23,7 @@ import static org.hamcrest.core.Is.is;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.httpBasic;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 //@AutoConfigureMockMvc(secure = false)
@@ -41,7 +43,7 @@ public class FileControllerTest {
 
         final String noSuffixInFile = ".tmp";
 
-        File tempFile = File.createTempFile("tempfile", ".tmp");
+        File tempFile = File.createTempFile("tempfile", noSuffixInFile);
         tempFile.deleteOnExit();
 
         writeInFile(tempFile, "This is temp file content.");
@@ -50,12 +52,14 @@ public class FileControllerTest {
 
         final MockMultipartFile avatar = new MockMultipartFile("file", "test.dat", "application/octet-stream", fi1);
 
-        mockMvc.perform(MockMvcRequestBuilders.multipart("/uploadFile")
+        ResultActions resultActions = mockMvc.perform(multipart("/uploadFile")
                 .file(avatar)
                 .with(httpBasic("user", "password")).with(csrf())
                 .characterEncoding("UTF-8"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.fileName", is(avatar.getOriginalFilename())));
+
+        Assert.assertNotNull(resultActions.toString());
 
         File convFile = new File(fileUploadDir.concat("/").concat(Objects.requireNonNull(avatar.getOriginalFilename())));
 
@@ -64,8 +68,10 @@ public class FileControllerTest {
 
     @Test
     public void connect() throws Exception {
-        mockMvc.perform(get("/connect"))
+        ResultActions resultActions = mockMvc.perform(get("/connect"))
                 .andExpect(status().isOk());
+
+        Assert.assertNotNull(resultActions.toString());
     }
 
     @Test
@@ -75,9 +81,11 @@ public class FileControllerTest {
 
         writeInFile(file, "This is download file content.");
 
-        ResultActions result = mockMvc.perform(MockMvcRequestBuilders.get("/downloadFile/"+file.getName()))
+        ResultActions result = mockMvc.perform(get("/downloadFile/"+file.getName()))
                 .andExpect(status().isOk()).andExpect(header().string("Content-Disposition",
                         "attachment; filename=\"downloadFile.txt\""));
+
+        Assert.assertNotNull(result.toString());
 
         deleteFile(file);
     }
