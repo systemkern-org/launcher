@@ -6,18 +6,23 @@ language: java
 services:
   - docker
 
-# -B batch mode makes Maven less verbose
+before_install:
+  - docker pull djfarrelly/maildev
+
+install:
+  - docker run -d -p 1080:80 -p 1025:25 djfarrelly/maildev
+
 script:
+# -B batch mode makes Maven less verbose
   - mvn -B clean verify
 
-git:
-  if: branch IS master
-    after_success:
-      # copy generated documentation to github pages directory
-      - cp $TRAVIS_BUILD_DIR/integration-tests/target/generated-docs/readme.html $TRAVIS_BUILD_DIR/docs/index.html
-      - git config user.name "${GH_USER_NAME}"
-      - git config user.email "${GH_USER_EMAIL}"
-      - git checkout master
-      - git add .
-      - git commit -m "Deploy to GitHub Pages number ${TRAVIS_BUILD_NUMBER} [ci skip]"
-      - git push --quiet "https://${GH_TOKEN}@${GH_REF}"
+after_success:
+- cp $TRAVIS_BUILD_DIR/integration-tests/target/generated-docs/readme.html $TRAVIS_BUILD_DIR/index.html
+
+deploy:
+  provider: pages
+  skip-cleanup: true
+  github-token: $GITHUB_TOKEN  # Set in the settings page of your repository, as a secure variable
+  keep-history: true
+  on:
+    branch: master

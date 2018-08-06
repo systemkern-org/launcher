@@ -4,8 +4,8 @@ services:
   mailsender:
     image: djfarrelly/maildev
     ports:
-      - '25:25'
-      - '4085:80'
+    - '1025:25'
+    - '4085:80'
 
   database:
     image: postgres:9.6.3-alpine

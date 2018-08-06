@@ -22,5 +22,6 @@ internal fun createTestUser() =
     UserProfile(
         username = "userTest",
         name = "Test User",
-        password = "s3cret"
+        password = "s3cret",
+        email = "userTest@gmail.com"
     )
