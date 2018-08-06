@@ -70,7 +70,7 @@ paths:
         - name: id
           in: path
           required: true
-          description: The person's id
+          description: The user's id
           type: string
       responses:
         200:

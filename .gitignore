@@ -36,3 +36,6 @@ maven-wrapper.properties
 #.bak files
 *.bak
 user-profile/src/main/kotlin/systemkern/profile/UserProfileRepository.kt___jb_tmp___
+*.txt
+*.xml
+*.html
