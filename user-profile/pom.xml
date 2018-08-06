@@ -19,7 +19,6 @@
         <start.class>systemkern.CliEntryPointKt</start.class>
     </properties>
 
-
     <dependencies>
         <!-- project internal dependencies -->
         <dependency>
