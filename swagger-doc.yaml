@@ -1,6 +1,8 @@
-openapi: "3.0.0"
+swagger: "2.0"
 info:
-  description: "This is a template built in Spring framework and Kotlin language, which let startint"
+  description: "This is the swagger documentation of System kern launcher,
+      it provides information about usage, requests supported and supplies a swagger document,
+      which can be used to generate an api for tests"
   version: "1.0.0"
   title: "System kern Launcher"
   contact:
@@ -13,9 +15,6 @@ tags:
     description: "Operations about users"
 schemes:
 - "http"
-host:
-- "192.168.99.1:8080"
-type: string
 paths:
   /user-profiles:
     post:
@@ -24,6 +23,10 @@ paths:
       summary: Create a new user
       description: ""
       operationId: "addUser"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
       parameters:
         - name: user
           in: body
@@ -59,13 +62,16 @@ paths:
       summary: Read an user by id
       description: ""
       operationId: "readUser"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
       parameters:
         - name: id
           in: path
           required: true
-          description: The person's id
+          description: The user's id
           type: string
-          pattern: "[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}"
       responses:
         200:
           description: "The user has been read successfully"
@@ -95,6 +101,10 @@ paths:
       summary: Update an user already existing
       description: ""
       operationId: "updateUser"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
       parameters:
         - name: id
           in: path
@@ -148,6 +158,10 @@ paths:
       summary: Delete an user by id
       description: ""
       operationId: "deleteUser"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
       parameters:
         - name: id
           in: path
@@ -165,6 +179,10 @@ paths:
       summary: Verify email
       description: "Verify if user provided a valid email"
       operationId: "verifyEmail"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
       parameters:
         - name: verify-token
           in: path
@@ -182,6 +200,10 @@ paths:
       summary: Login
       description: "Login user to system by providing username and password"
       operationId: "login"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
       parameters:
       - name: username
         in: header
@@ -215,6 +237,10 @@ paths:
       summary: Change user's email
       description: "Change user's email request which responds with an Url to verify user change, emails to old user's email and new one are sent"
       operationId: "changeUserEmail"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
       responses:
         200:
           description: "Email verification request has succeeded, url is verify it was sent to email address"
@@ -266,6 +292,10 @@ paths:
       description: "A request to reset password is generated,
         an email is sent to user to verify it"
       operationId: "passwordReset"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
       responses:
         200:
           description: ""
@@ -301,4 +331,3 @@ paths:
       responses:
         200:
           description: "Password has been reset"
-                
