@@ -9,8 +9,8 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 import systemkern.configuration.FileStorageProperties;
 import systemkern.exception.FileStorageException;
-import systemkern.exception.MyFileNotFoundException;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.nio.file.Files;
@@ -26,7 +26,7 @@ public class FileStorageService {
 	private final Path fileStorageLocation;
 
 	@Autowired
-	public FileStorageService(FileStorageProperties fileStorageProperties) {
+    FileStorageService(FileStorageProperties fileStorageProperties) {
 		this.fileStorageLocation = Paths.get(fileStorageProperties.getUploadDir())
 				.toAbsolutePath().normalize();
 
@@ -57,17 +57,18 @@ public class FileStorageService {
 		}
 	}
 
-	public Resource loadFileAsResource(String fileName) {
+	public Resource loadFileAsResource(String fileName) throws FileNotFoundException, MalformedURLException {
 		try {
 			Path filePath = this.fileStorageLocation.resolve(fileName).normalize();
 			Resource resource = new UrlResource(filePath.toUri());
 			if(resource.exists()) {
 				return resource;
 			} else {
-				throw new MyFileNotFoundException("File not found " + fileName);
+				throw new FileNotFoundException();
 			}
 		} catch (MalformedURLException ex) {
-			throw new MyFileNotFoundException("File not found " + fileName, ex);
+			throw new MalformedURLException();
 		}
 	}
+
 }

@@ -14,7 +14,9 @@ import systemkern.service.FileStorageService;
 import systemkern.utils.UploadFileResponse;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -54,25 +56,30 @@ public class FileController {
 
     @GetMapping("/downloadFile/{fileName:.+}")
 	public ResponseEntity<Resource> downloadFile(@PathVariable String fileName, HttpServletRequest request) {
-		// Load file as Resource
-		Resource resource = fileStorageService.loadFileAsResource(fileName);
+		Resource resource;
+        String contentType;
 
-		// Try to determine file's content type
-		String contentType = null;
 		try {
-			contentType = request.getServletContext().getMimeType(resource.getFile().getAbsolutePath());
-		} catch (IOException ex) {
-			logger.info("Could not determine file type.");
+			resource = fileStorageService.loadFileAsResource(fileName);
+
+			// Try to determine file's content type
+			try {
+                contentType = request.getServletContext().getMimeType(resource.getFile().getAbsolutePath());
+            } catch (IOException ex) {
+                logger.info("Could not determine file type.");
+                // Fallback to the default content type if type could not be determined
+                contentType = "application/octet-stream";
+            }
+
+        } catch (MalformedURLException | FileNotFoundException fileException) {
+			logger.info("File: "+ fileName + " not found or path is malformed.");
+            return ResponseEntity.notFound().build();
 		}
 
-		// Fallback to the default content type if type could not be determined
-		if(contentType == null) {
-			contentType = "application/octet-stream";
-		}
-
-		return ResponseEntity.ok()
-				.contentType(MediaType.parseMediaType(contentType))
-				.header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + resource.getFilename() + "\"")
-				.body(resource);
+        return ResponseEntity.ok()
+                .contentType(MediaType.parseMediaType(contentType))
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + resource.getFilename() + "\"")
+                .body(resource);
 	}
+
 }

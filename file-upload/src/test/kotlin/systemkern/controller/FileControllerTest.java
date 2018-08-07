@@ -1,6 +1,5 @@
 package systemkern.controller;
 
-
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -25,7 +24,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-//@AutoConfigureMockMvc(secure = false)
 @RunWith(SpringRunner.class)
 @WebMvcTest(FileController.class)
 @ContextConfiguration(classes = {FileController.class, FileStorageService.class, FileStorageProperties.class})
@@ -37,11 +35,10 @@ public class FileControllerTest {
     @Value("${file.upload-dir}")
     private String fileUploadDir;
 
+    private final static String noSuffixInFile = ".tmp";
+
     @Test
     public void uploadFile() throws Exception {
-
-        final String noSuffixInFile = ".tmp";
-
         File tempFile = File.createTempFile("tempfile", noSuffixInFile);
         tempFile.deleteOnExit();
 
@@ -75,6 +72,8 @@ public class FileControllerTest {
 
     @Test
     public void downloadFile() throws Exception {
+        File tempFile = File.createTempFile(fileUploadDir.concat("/downloadFile.txt"), noSuffixInFile);
+        tempFile.deleteOnExit();
 
         File file = new File(fileUploadDir.concat("/downloadFile.txt"));
 
@@ -90,7 +89,7 @@ public class FileControllerTest {
     }
 
     private void writeInFile(File file, String content){
-        BufferedWriter bw = null;
+        BufferedWriter bw;
         try {
             bw = new BufferedWriter(new FileWriter(file));
             bw.write(content);
@@ -107,7 +106,4 @@ public class FileControllerTest {
         }
     }
 
-//                .characterEncoding("UTF-8").with(SecurityMockMvcRequestPostProcessors.csrf()).header(HttpHeaders.AUTHORIZATION,
-//                        "Basic 4a7dce31-b0c4-4887-8ddf-08d405f3836c" ))
-//                .andExpect(jsonPath("$.fileName", is("Foo")))
 }

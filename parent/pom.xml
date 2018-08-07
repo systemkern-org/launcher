@@ -87,12 +87,19 @@
             </dependency>
             <dependency>
                 <groupId>${project.groupId}</groupId>
+                <artifactId>core</artifactId>
+                <version>${project.version}</version>
+                <type>test-jar</type>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
                 <artifactId>file-upload</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>${project.groupId}</groupId>
-                <artifactId>core</artifactId>
+                <artifactId>file-upload</artifactId>
                 <version>${project.version}</version>
                 <type>test-jar</type>
                 <scope>test</scope>
@@ -100,11 +107,6 @@
             <dependency>
                 <groupId>${project.parent.groupId}</groupId>
                 <artifactId>runtime-cli</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>${project.parent.groupId}</groupId>
-                <artifactId>fileupload</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
@@ -157,7 +159,7 @@
         <sourceDirectory>${project.basedir}/src/main/kotlin</sourceDirectory>
         <testSourceDirectory>${project.basedir}/src/test/kotlin</testSourceDirectory>
         <plugins>
-             <!--Kotlin compiler-->
+            <!-- Kotlin compiler -->
             <plugin>
                 <artifactId>kotlin-maven-plugin</artifactId>
                 <groupId>org.jetbrains.kotlin</groupId>
@@ -182,7 +184,7 @@
                 </dependencies>
             </plugin>
 
-             <!--create test jars-->
+            <!-- create test jars -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
