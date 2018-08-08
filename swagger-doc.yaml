@@ -62,7 +62,7 @@ paths:
           required: true
           description: The person's id
           schema:
-            $ref: components/schemas/id
+            $ref: "#/components/schemas/id"
       responses:
         200:
           description: "The user has been read successfully"
@@ -100,7 +100,7 @@ paths:
           required: true
           description: The person's id
           schema:
-            $ref: components/schemas/id
+            $ref: "#/components/schemas/id"
       requestBody:
         required: true
         content:
@@ -171,7 +171,7 @@ paths:
           required: true
           description: Identifies the verify email request
           schema:
-            $ref: components/schemas/verify_token
+            $ref: "#/components/schemas/verify_token"
       responses:
         200:
           description: "User account verified"
@@ -189,13 +189,13 @@ paths:
         required: true
         description: name chosen by user to login
         schema:
-            $ref: components/schemas/username
+            $ref: "#/components/schemas/username"
       - name: password
         in: header
         required: true
         description: password chosen by user to access and establish session
         schema:
-            $ref: components/schemas/password
+            $ref: "#/components/schemas/password"
       responses:
         200:
           description: "User logged in the system"
@@ -249,7 +249,7 @@ paths:
           required: true
           description: Identifies email change request
           schema:
-            $ref: components/schemas/email_change_token
+            $ref: "#/components/schemas/email_change_token"
       responses:
         200:
           description: "Email changed successfully"
@@ -281,7 +281,7 @@ paths:
           required: true
           description: name chosen by user to login easily
           schema:
-            $ref: components/schemas/username
+            $ref: "#/components/schemas/username"
 
       responses:
         200:
@@ -313,7 +313,7 @@ paths:
           required: true
           description: Identifies the password reset request
           schema:
-            $ref: components/schemas/password_reset_token
+            $ref: "#/components/schemas/password_reset_token"
       requestBody:
         required: true
         content:
