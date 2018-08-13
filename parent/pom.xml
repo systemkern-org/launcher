@@ -90,6 +90,11 @@
             </dependency>
             <dependency>
                 <groupId>${project.parent.groupId}</groupId>
+                <artifactId>hermes</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${project.parent.groupId}</groupId>
                 <artifactId>runtime-cli</artifactId>
                 <version>${project.version}</version>
             </dependency>
