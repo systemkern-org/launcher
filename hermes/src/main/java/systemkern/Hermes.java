@@ -1,36 +1,34 @@
 package systemkern;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
-
-import javax.annotation.PostConstruct;
-import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 @Component
-public class hermes extends TelegramLongPollingBot {
+public class Hermes extends TelegramLongPollingBot {
 
-    private static final Logger logger = Logger.getLogger(hermes.class.getName());
+    private static final Logger logger = Logger.getLogger(Hermes.class.getName());
 
-  /*  @Value("${bot.token}")
+    @Value("${hermesToken}")
     private String token;
 
-    @Value("${bot.username}")
-    private String username;*/
+    @Value("${hermesBotName}")
+    private String botName;
 
     @Override
     public String getBotToken() {
-        return "692420469:AAE2ykxmFEpF9Kl9EveP051N_SVm2cTLuTI";
+        return token;
     }
 
     @Override
     public String getBotUsername() {
-        return "hermes11Bot";
+        return botName;
     }
 
     @Override
@@ -41,8 +39,8 @@ public class hermes extends TelegramLongPollingBot {
             Long chatId = message.getChatId();
             String text = message.getText();
             response.setChatId(chatId);
-            String responseText = "Mensaje enviado: " + message.getText();
-            logger.log(Level.INFO,"Mensaje enviado: " + message.getText());
+            String responseText = "Sent message: " + message.getText();
+            logger.log(Level.INFO,"Sent message: " + message.getText());
             response.setText("Sent: " + text);
             try {
                 execute(response);
@@ -51,10 +49,4 @@ public class hermes extends TelegramLongPollingBot {
             }
         }
     }
-
-   /* @PostConstruct
-    public void start() {
-        logger.info("username: {}, token: {}", username, token);
-    }*/
-
 }
