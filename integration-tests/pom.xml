@@ -62,7 +62,6 @@
         <dependency>
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-test</artifactId>
-            <version>${org.springframework.security.ver}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>

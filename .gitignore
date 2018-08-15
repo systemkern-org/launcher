@@ -39,3 +39,4 @@ user-profile/src/main/kotlin/systemkern/profile/UserProfileRepository.kt___jb_tm
 *.html
 *.txt
 *.xml
+*.lck
