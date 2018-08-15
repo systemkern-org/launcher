@@ -38,5 +38,5 @@ maven-wrapper.properties
 user-profile/src/main/kotlin/systemkern/profile/UserProfileRepository.kt___jb_tmp___
 *.html
 *.txt
-*.xml
 *.lck
+parent/detekt/detekt-checkstyle.xml
