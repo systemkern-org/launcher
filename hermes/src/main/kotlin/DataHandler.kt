@@ -1,35 +1,50 @@
 package systemkern
 
-import java.io.BufferedReader
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import java.io.File
+import java.io.InputStream
 
-class DataHandler(private var bufferedReader: BufferedReader){
-    var pathToFile: String = ""
+class DataHandler(private val gson : Gson = Gson()){
 
-    fun loadLines() : MutableMap<String,String>{
-        var line: List<String>
-        this.bufferedReader = File(pathToFile).bufferedReader()
-        val idToLine = mutableMapOf<String,String>()
-        this.bufferedReader.useLines {
-            lines -> lines.forEach{
-            line = it.split(" +++$+++ ")
-                if(line.size == 5){
-                    idToLine[line[0]] = line[4]
+    fun loadJsonFile(pathFileToFile: String) : List<Intent>{
+        val inputStream: InputStream = File(pathFileToFile).inputStream()
+        val dataJson = inputStream.bufferedReader().use { it.readText() }
+        return gson.fromJson(dataJson, object : TypeToken<List<Intent>>() {}.type)
+    }
+
+    fun tokenizeWordsInIntents(intents : List<Intent>){
+        var tokens : List<String>
+        val documents : MutableList<MutableMap<String,String>> = mutableListOf()
+        for(intent in intents){
+            for (pattern in intent.patterns){
+                tokens = pattern.split(" ")
+                for(token in tokens){
+                    documents.add(mutableMapOf(Pair(cleanText(token),intent.tag)))
                 }
             }
         }
-        return idToLine
-    }
-
-    fun loadConversations()/*: MutableList<String>*/{
-        this.bufferedReader = File(pathToFile).bufferedReader()
-        val conversation_ids: MutableList<String>
-
-        this.bufferedReader.useLines {
-            lines -> lines.forEach{
-
-            }
-        }
-
     }
 }
+
+private fun cleanText(text: String) : String {
+    var text = text
+    text = text.toLowerCase()
+    text = text.replace("i'm", "i am")
+    text = text.replace("\'s", " is")
+    text = text.replace("\'ll", " will")
+    text = text.replace("\'ve", " have")
+    text = text.replace("\'re", " are")
+    text = text.replace("\'d", " would")
+    text = text.replace("won't", "will not")
+    text = text.replace("can't", "cannot")
+    text = text.replace("don't", " do not")
+    text = text.replace("doesn't", " does not")
+    return text.replace("[-()\"#/@;:<>{}+=~|.?,]", "")
+}
+
+data class Intent(
+    val tag : String,
+    val patterns : List<String>,
+    val responses : List<String>,
+    val context_set : String)
