@@ -95,6 +95,18 @@
                 <scope>test</scope>
             </dependency>
             <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>file-upload</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>file-upload</artifactId>
+                <version>${project.version}</version>
+                <type>test-jar</type>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
                 <groupId>${project.parent.groupId}</groupId>
                 <artifactId>runtime-cli</artifactId>
                 <version>${project.version}</version>

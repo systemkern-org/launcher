@@ -20,6 +20,7 @@
 
     <modules>
         <module>core</module>
+        <module>file-upload</module>
         <module>main-service</module>
         <module>parent</module>
         <module>user-profile</module>
