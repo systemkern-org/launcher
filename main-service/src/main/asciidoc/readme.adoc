@@ -6,7 +6,7 @@ VERSION, {localdate} {localtime}
 :source-highlighter: highlightjs
 :highlightjs-theme: github
 :toc: left
-:toclevels: 4
+:toclevels: 2
 :sectlinks:
 :sectnums:
 
@@ -36,20 +36,6 @@ java -jar {final-name}.jar --spring.profiles.active=myprofile2
 For more information please refer to the https://docs.spring.io/spring-boot/docs/current/reference/html/howto-properties-and-configuration.html#howto-set-active-spring-profiles[Spring Boot Documentation].
 
 
-= API Requests
-== Additional API Requests
-
-=== Echo
-Echo is a sample post request which returns exactly the same object as the one provided.
-It can be used to test Json Object mapper implementations
-
-operation::echo[snippets='curl-request,http-request,http-response,response-fields']
-
-=== Ping
-As simple ping signal which returns the current system timestamp
-
-operation::ping[snippets='curl-request,http-request,http-response,response-fields']
-
 === User
 User is a module created to answer CRUD(Create,read,update and delete) requests,
 it does not always return a json, but a Http code that show if was successful. The base url
@@ -64,11 +50,13 @@ access the user that have been created.
 
 operation::user_create[snippets='curl-request,http-request,http-response']
 
+
 ==== Login
 To login and access system, username and password must be sent to Url + /login. Some data is returned including
 an access token, which must be added in the header of future read and update requests.
 
 operation::user_login[snippets='curl-request,http-response']
+
 
 ==== Read
 The "id" of user should be added at the end of URL, the Http verb of request is GET but
@@ -78,8 +66,8 @@ then web service sends 200 ok status code and the body of response contains the 
 Remember to add the access token in a header called Authorization,the syntax is
 for example: "Bearer [token]"
 
-
 operation::user_read[snippets='curl-request,http-request,http-response,response-fields']
+
 
 ==== Update
 To update an user, the url is equal to the Read case. The difference is in the verb which is
@@ -90,6 +78,7 @@ Remember to add the access token in a header called Authorization,the syntax is
 for example: "Bearer [token]"
 
 operation::user_update[snippets='curl-request,http-request,http-response']
+
 
 ==== Delete
 User delete is forbidden
