@@ -18,16 +18,19 @@ import org.springframework.http.ResponseEntity
 import org.springframework.http.converter.HttpMessageConverter
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.stereotype.Component
-import org.springframework.web.bind.annotation.*
+import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.RequestBody
+import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.servlet.mvc.method.annotation.ExceptionHandlerExceptionResolver
-import java.time.LocalDateTime
 import java.time.Duration
-import java.util.*
-import javax.persistence.*
-import javax.servlet.http.HttpSessionEvent
-import javax.servlet.http.HttpSessionListener
+import java.time.LocalDateTime
+import java.util.UUID
 import java.util.regex.Pattern
 import java.util.zip.DataFormatException
+import javax.persistence.PrePersist
+import javax.persistence.PreUpdate
+import javax.servlet.http.HttpSessionEvent
+import javax.servlet.http.HttpSessionListener
 
 @RepositoryRestController
 internal class UserProfileController(

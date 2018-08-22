@@ -3,13 +3,16 @@ package systemkern.profile
 import org.springframework.data.repository.CrudRepository
 import org.springframework.http.HttpStatus.UNAUTHORIZED
 import org.springframework.stereotype.Service
-import org.springframework.web.bind.annotation.*
-import java.time.LocalDateTime.now
+import org.springframework.web.bind.annotation.PathVariable
+import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.ResponseStatus
+import org.springframework.web.bind.annotation.RestController
 import java.time.LocalDateTime
+import java.time.LocalDateTime.now
 import java.util.UUID
 import javax.persistence.Entity
-import javax.persistence.ManyToOne
 import javax.persistence.Id
+import javax.persistence.ManyToOne
 
 @RestController
 internal class EmailVerificationController(

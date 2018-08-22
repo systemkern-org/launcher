@@ -4,7 +4,7 @@ import org.springframework.mail.SimpleMailMessage
 import org.springframework.mail.javamail.JavaMailSender
 import org.springframework.stereotype.Component
 import java.net.InetAddress
-import java.util.*
+import java.util.UUID
 
 @Component
 internal class MailUtility(

@@ -2,12 +2,18 @@ package systemkern.profile
 
 import org.springframework.data.repository.CrudRepository
 import org.springframework.stereotype.Service
-import org.springframework.web.bind.annotation.*
-import java.time.LocalDateTime.now
+import org.springframework.web.bind.annotation.PathVariable
+import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.RequestBody
+import org.springframework.web.bind.annotation.RequestHeader
+import org.springframework.web.bind.annotation.RestController
 import java.time.LocalDateTime
-import java.util.UUID.randomUUID
+import java.time.LocalDateTime.now
 import java.util.UUID
-import javax.persistence.*
+import java.util.UUID.randomUUID
+import javax.persistence.Entity
+import javax.persistence.Id
+import javax.persistence.ManyToOne
 
 
 @RestController
@@ -53,22 +59,22 @@ internal class PasswordResetController(
 
     @PostMapping("/password-reset/{id}")
     internal fun confirmPasswordReset(
-       @PathVariable("id") passwordResetId: UUID,
-       @RequestBody newPasswordResetBody: NewPasswordResetBody
-    ) : AuthenticationResponse {
+        @PathVariable("id") passwordResetId: UUID,
+        @RequestBody newPasswordResetBody: NewPasswordResetBody
+    ): AuthenticationResponse {
         val passwordResetEntity = passwordResetService.findById(passwordResetId).get()
         val last = passwordResetEntity.userProfile.emailVerificationList.last()
 
         val completionDate = now()
-        if(completionDate <= passwordResetEntity.validUntil
-             && last.creationDate < last.completionDate //This line checks if userProfile is verified
+        if (completionDate <= passwordResetEntity.validUntil
+            && last.creationDate < last.completionDate //This line checks if userProfile is verified
         ) {
             passwordResetEntity.completionDate = completionDate
             passwordResetEntity.userProfile.password = newPasswordResetBody.password
             passwordResetService.save(passwordResetEntity)
             userProfileService.save(passwordResetEntity.userProfile)
 
-            return authenticationService.authProcessPasswordReset(passwordResetEntity,completionDate)
+            return authenticationService.authProcessPasswordReset(passwordResetEntity, completionDate)
         }
         throw ExpiredTokenException()
     }
@@ -79,7 +85,7 @@ internal data class NewPasswordResetBody(val password: String)
 @Service
 internal class PasswordResetService(private val repo: PasswordResetRepository) {
 
-    internal fun save(passwordResetEntity : PasswordResetEntity) {
+    internal fun save(passwordResetEntity: PasswordResetEntity) {
         repo.save(passwordResetEntity)
     }
 
