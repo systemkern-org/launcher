@@ -31,6 +31,7 @@
         <org.zalando.jackson-datatype-money.version>1.0.0-RC2</org.zalando.jackson-datatype-money.version>
         <version.eye>3.11.4</version.eye>
         <spring-integration-core>5.1.0.BUILD-SNAPSHOT</spring-integration-core>
+        <spring-statemachine-core.version>1.2.8.RELEASE</spring-statemachine-core.version>
         <org.zalando.jackson-datatype-money.version>1.0.2</org.zalando.jackson-datatype-money.version>
         <telegram-spring-boot-starter>0.18</telegram-spring-boot-starter>
         <telegram-bots-ver>4.0.1</telegram-bots-ver>
@@ -128,6 +129,11 @@
                 <groupId>org.javamoney</groupId>
                 <artifactId>moneta</artifactId>
                 <version>${org.javamoney.moneta.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.statemachine</groupId>
+                <artifactId>spring-statemachine-core</artifactId>
+                <version>${spring-statemachine-core.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.zalando</groupId>
