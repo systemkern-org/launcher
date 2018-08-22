@@ -15,12 +15,16 @@ class DataHandler(private val gson : Gson = Gson()){
 
     fun tokenizeWordsInIntents(intents : List<Intent>){
         var tokens : List<String>
+        var classes : MutableList<String> = mutableListOf()
         val documents : MutableList<MutableMap<String,String>> = mutableListOf()
         for(intent in intents){
             for (pattern in intent.patterns){
                 tokens = pattern.split(" ")
                 for(token in tokens){
                     documents.add(mutableMapOf(Pair(cleanText(token),intent.tag)))
+                    if(!classes.contains(intent.tag)){
+                        classes.add(intent.tag)
+                    }
                 }
             }
         }
