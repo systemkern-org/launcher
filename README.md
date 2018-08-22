@@ -9,6 +9,7 @@ It is to be used and applied on an 'as is' basis with no guarantee of functional
 [![Build Status](https://travis-ci.org/systemkern/launcher.svg?branch=master)](https://travis-ci.org/systemkern/launcher)
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/1223c155302d4815a262b3c192158901)](https://www.codacy.com/app/systemkern/launcher?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=systemkern/launcher&amp;utm_campaign=Badge_Grade)
 [![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fsystemkern%2Flauncher.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2Fsystemkern%2Flauncher?ref=badge_shield)
+[![Awesome Kotlin Badge](https://kotlin.link/awesome-kotlin.svg)](https://github.com/KotlinBy/awesome-kotlin)
 
 
 Table of Contents
