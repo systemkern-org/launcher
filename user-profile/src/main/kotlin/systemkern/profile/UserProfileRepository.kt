@@ -39,7 +39,7 @@ internal class UserProfileController(
     val mailUtility: MailUtility,
     val timeUntilTokenExpires: Long = 6
 ) {
-  
+
     //Url mapping must be here, because @PostMapping alone in two controllers give errors
     @PostMapping("/user-profiles")
     private fun saveUser(@RequestBody requestBody: UserProfile): ResponseEntity<SaveUserProfileResponse> {
@@ -63,7 +63,7 @@ internal class UserProfileController(
     }
 }
 
-private data class SaveUserProfileResponse(var url : String)
+private data class SaveUserProfileResponse(var url: String)
 
 @Api
 @RepositoryRestResource(path = "/user-profiles")
@@ -73,11 +73,11 @@ internal interface UserProfileRepository : CrudRepository<UserProfile, UUID> {
 
 @Component
 internal class UserProfileEntityListener(
-    internal val passwordEncoder : BCryptPasswordEncoder = BCryptPasswordEncoder()
+    internal val passwordEncoder: BCryptPasswordEncoder = BCryptPasswordEncoder()
 ) {
     private val emailPattern = Pattern.compile("^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*" +
         "@[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$")
-  
+
     private fun validateEmail(hex: String) = emailPattern.matcher(hex).matches()
 
     private fun executeValidation(emailToVal: String) {

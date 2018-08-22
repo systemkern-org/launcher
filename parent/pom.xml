@@ -191,26 +191,8 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-failsafe-plugin</artifactId>
             </plugin>
-
-            <!-- Detekt maven plugin -->
-            <plugin>
-                <groupId>com.github.ozsie</groupId>
-                <artifactId>detekt-maven-plugin</artifactId>
-                <version>${detekt-maven-plugin-version}</version>
-                <executions>
-                    <execution>
-                        <phase>verify</phase>
-                        <goals><goal>check</goal></goals>
-                        <configuration>
-                            <!--next path is for linux or travis-->
-                            <input>"${basedir}/../user-profile/src/main/kotlin"</input>
-                            <!--next path is for windows-->
-                            <!--<input>"${basedir}\..\user-profile\src\main\kotlin"</input>-->
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
         </plugins>
+
         <pluginManagement>
             <plugins>
                 <plugin>
@@ -218,6 +200,7 @@
                     <artifactId>asciidoctor-maven-plugin</artifactId>
                     <version>${asciidoctor-maven-plugin.version}</version>
                 </plugin>
+
                 <plugin>
                     <groupId>com.google.code.maven-replacer-plugin</groupId>
                     <artifactId>replacer</artifactId>
