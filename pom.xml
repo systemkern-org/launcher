@@ -35,7 +35,9 @@
         <finalName>${project.parent.build.finalName}</finalName>
         <defaultGoal>clean verify</defaultGoal>
         <plugins>
-            <!-- Detekt maven plugin for Code Analysis -->
+            <!-- Detekt plugin for Kotlin Code Analysis
+                 https://github.com/arturbosch/detekt
+            -->
             <plugin>
                 <groupId>com.github.ozsie</groupId>
                 <artifactId>detekt-maven-plugin</artifactId>
