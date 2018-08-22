@@ -20,9 +20,9 @@
 
     <modules>
         <module>core</module>
+        <module>file-upload</module>
+        <module>main-service</module>
         <module>parent</module>
-        <module>integration-tests</module>
-        <module>runtime-cli</module>
         <module>user-profile</module>
     </modules>
 
@@ -132,7 +132,7 @@
             <extension>
                 <groupId>org.apache.maven.wagon</groupId>
                 <artifactId>wagon-ftp</artifactId>
-                <version>${wagon-ftp.version}</version>
+                <version>${wagon-ftp-maven-plugin.version}</version>
             </extension>
         </extensions>
     </build>

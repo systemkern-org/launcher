@@ -1,0 +1,348 @@
+openapi: "3.0.0"
+info:
+  description: "This is a template built in Spring framework and Kotlin language, which let startint"
+  version: "1.0.0"
+  title: "System kern Launcher"
+  contact:
+    email: "rainer@systemkern.com"
+  license:
+    name: "Apache 2.0"
+    url: "http://www.apache.org/licenses/LICENSE-2.0.html"
+tags:
+  - name: "users"
+    description: "Operations about users"
+servers:
+  - url: http://192.168.0.24:8080
+    description: Basic direction to test launcher in localhost
+paths:
+  /user-profiles:
+    post:
+      tags:
+      - "users"
+      summary: Create a new user
+      description: ""
+      operationId: "addUser"
+
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                name:
+                  type: string
+                password:
+                  type: string
+                email:
+                  type: string
+      responses:
+        200:
+          description: "User created successfully"
+          content:
+            application/json:
+             schema:
+              type: object
+              properties:
+                url:
+                  type: string
+
+  /user-profiles/{id}:
+    get:
+      tags:
+      - "users"
+      summary: Read an user by id
+      description: ""
+      operationId: "readUser"
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: The person's id
+          schema:
+            $ref: "#/components/schemas/id"
+      responses:
+        200:
+          description: "The user has been read successfully"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  name:
+                    type: string
+                  username:
+                    type: string
+                  email:
+                    type: string
+                  _links.self.href:
+                    type: string
+                  _links.userProfile.href:
+                    type: string
+                  _links.passwordResetList.href:
+                    type: string
+                  _links.emailVerificationList.href:
+                    type: string
+                  _links.emailChangeList.href:
+                    type: string
+
+    put:
+      tags:
+      - "users"
+      summary: Update an user already existing
+      description: ""
+      operationId: "updateUser"
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: The person's id
+          schema:
+            $ref: "#/components/schemas/id"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                password:
+                  type: string
+                username:
+                  type: string
+                email:
+                  type: string
+      responses:
+        200:
+          description: "User updated successfully"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                    name:
+                      type: string
+                    username:
+                      type: string
+                    email:
+                      type: string
+                    _links.self.href:
+                      type: string
+                    _links.userProfile.href:
+                      type: string
+                    _links.passwordResetList.href:
+                      type: string
+                    _links.emailVerificationList.href:
+                      type: string
+                    _links.emailChangeList.href:
+                      type: string
+
+    delete:
+      tags:
+      - "users"
+      summary: Delete an user by id
+      description: ""
+      operationId: "deleteUser"
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: The person's id
+          schema:
+            $ref: components/schemas/id
+      responses:
+        403:
+          description: "User deletion is forbidden"
+
+  /verify-email/{verify_token}:
+    post:
+      tags:
+      - "users"
+      summary: Verify email
+      description: "Verify if user provided a valid email"
+      operationId: "verifyEmail"
+      parameters:
+        - name: verify_token
+          in: path
+          required: true
+          description: Identifies the verify email request
+          schema:
+            $ref: "#/components/schemas/verify_token"
+      responses:
+        200:
+          description: "User account verified"
+
+  /auth:
+    post:
+      tags:
+      - "users"
+      summary: Login
+      description: "Login user to system by providing username and password"
+      operationId: "login"
+      parameters:
+      - name: username
+        in: header
+        required: true
+        description: name chosen by user to login
+        schema:
+            $ref: "#/components/schemas/username"
+      - name: password
+        in: header
+        required: true
+        description: password chosen by user to access and establish session
+        schema:
+            $ref: "#/components/schemas/password"
+      responses:
+        200:
+          description: "User logged in the system"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+                  username:
+                    type: string
+                  userId:
+                    type: string
+                  validUntil:
+                    type: string
+
+  /email-change:
+    post:
+      tags:
+      - "users"
+      summary: Change user's email
+      description: "Change user's email request which responds with an Url
+                    to verify user change, emails to old user's email and
+                    new one are sent"
+      operationId: "changeUserEmail"
+      responses:
+        200:
+          description: "Email verification request has succeeded, url is verify
+                        it was sent to email address"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  emailChangeReqId:
+                    type: string
+                  validUntil:
+                    type: string
+
+  /email-change/{email_change_token}:
+    post:
+      tags:
+      - "users"
+      summary: Change email verification
+      description: "User's email is changed if token is valid"
+      operationId: "changeUserEmailVerification"
+      parameters:
+        - name: email_change_token
+          in: path
+          required: true
+          description: Identifies email change request
+          schema:
+            $ref: "#/components/schemas/email_change_token"
+      responses:
+        200:
+          description: "Email changed successfully"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+                  username:
+                    type: string
+                  userId:
+                    type: string
+                  validUntil:
+                    type: string
+
+  /password-reset:
+    post:
+      tags:
+      - "users"
+      summary: Password reset
+      description: "A request to reset password is generated,
+        an email is sent to user to verify it"
+      operationId: "passwordReset"
+      parameters:
+        - name: username
+          in: header
+          required: true
+          description: name chosen by user to login easily
+          schema:
+            $ref: "#/components/schemas/username"
+
+      responses:
+        200:
+          description: ""
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                  creationDate:
+                    type: string
+                  validUntil:
+                    type: string
+                  completionDate:
+                    type: string
+
+  /password-reset/{password_reset_token}:
+    post:
+      tags:
+      - "users"
+      summary: Password reset
+      description: "If token is valid, the request is verified and password is changed"
+      operationId: "passwordResetVerification"
+      parameters:
+        - name: password_reset_token
+          in: path
+          required: true
+          description: Identifies the password reset request
+          schema:
+            $ref: "#/components/schemas/password_reset_token"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                password:
+                  type: string
+      responses:
+        200:
+          description: "Password has been reset"
+
+components:
+  schemas:
+    id:
+      type: string
+      pattern: '[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}'
+    verify_token:
+      type: string
+      pattern: '[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}'
+    email_change_token:
+      type: string
+      pattern: '[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}'
+    password_reset_token:
+      type: string
+      pattern: '[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}'
+    username:
+      type: string
+    password:
+      type: string
+      
