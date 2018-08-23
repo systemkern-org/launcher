@@ -2,10 +2,19 @@ package systemkern
 
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import systemkern.utils.Utils
 import java.io.File
 import java.io.InputStream
+import java.util.ArrayList
 
-class DataHandler(private val gson : Gson = Gson()){
+class DataHandler(
+    private val gson : Gson = Gson(),
+    private var classes : MutableList<String> = mutableListOf(),
+    private val documents : MutableList<MutableMap<ArrayList<String>?,String>> = mutableListOf()){
+    var utils : Utils? = null
+    init{
+        utils = Utils()
+    }
 
     fun loadJsonFile(pathFileToFile: String) : List<Intent>{
         val inputStream: InputStream = File(pathFileToFile).inputStream()
@@ -13,20 +22,33 @@ class DataHandler(private val gson : Gson = Gson()){
         return gson.fromJson(dataJson, object : TypeToken<List<Intent>>() {}.type)
     }
 
+    private fun tokenizePhrases(phrase : String) : ArrayList<String>? {
+       return utils?.tokenize(phrase)
+    }
+
     fun tokenizeWordsInIntents(intents : List<Intent>){
-        var tokens : List<String>
-        var classes : MutableList<String> = mutableListOf()
-        val documents : MutableList<MutableMap<String,String>> = mutableListOf()
+        var tokens : ArrayList<String>?
         for(intent in intents){
             for (pattern in intent.patterns){
-                tokens = pattern.split(" ")
-                for(token in tokens){
-                    documents.add(mutableMapOf(Pair(cleanText(token),intent.tag)))
-                    if(!classes.contains(intent.tag)){
-                        classes.add(intent.tag)
+                tokens = tokenizePhrases(cleanText(pattern))
+                if (tokens != null) {
+                    for(token in tokens){
+                        documents.add(mutableMapOf(Pair(tokens,intent.tag)))
+                        if(!classes.contains(intent.tag)){
+                            classes.add(intent.tag)
+                        }
                     }
                 }
             }
+        }
+        createArrayOfZerosAndOnes()
+    }
+
+    private fun createArrayOfZerosAndOnes(){
+        for(doc in documents){
+            var bag = listOf<Int>()
+            val pattern_words = doc[doc.keys.first()]
+            print(pattern_words)
         }
     }
 }
