@@ -6,12 +6,16 @@ import systemkern.utils.Utils
 import java.io.File
 import java.io.InputStream
 import java.util.ArrayList
+import java.util.Collections.sort
 
 class DataHandler(
     private val gson : Gson = Gson(),
     private var classes : MutableList<String> = mutableListOf(),
     private val documents : MutableList<MutableMap<ArrayList<String>?,String>> = mutableListOf()){
-    var utils : Utils? = null
+
+    private var words : MutableList<String>? = null
+    private var utils : Utils? = null
+
     init{
         utils = Utils()
     }
@@ -27,13 +31,17 @@ class DataHandler(
     }
 
     fun tokenizeWordsInIntents(intents : List<Intent>){
+        words = mutableListOf()
         var tokens : ArrayList<String>?
         for(intent in intents){
             for (pattern in intent.patterns){
                 tokens = tokenizePhrases(cleanText(pattern))
                 if (tokens != null) {
+                    documents.add(mutableMapOf(Pair(tokens,intent.tag)))
                     for(token in tokens){
-                        documents.add(mutableMapOf(Pair(tokens,intent.tag)))
+                        if (!(words?.contains(token) as Boolean)){
+                            words?.add(token)
+                        }
                         if(!classes.contains(intent.tag)){
                             classes.add(intent.tag)
                         }
@@ -41,16 +49,44 @@ class DataHandler(
                 }
             }
         }
-        createArrayOfZerosAndOnes()
+        sort(words)
+        createArrayOfZerosAndOnes(words)
     }
 
-    private fun createArrayOfZerosAndOnes(){
+    private fun createArrayOfZerosAndOnes(words : MutableList<String>?){
+
         for(doc in documents){
-            var bag = listOf<Int>()
-            val pattern_words = doc[doc.keys.first()]
-            print(pattern_words)
+            var bag = arrayListOf<Int>()
+            val patterWords = doc[doc.keys.first() ]
+            if (words != null){
+                for (word in words){
+                    if(patterWords?.contains(word) as Boolean){
+                        bag.add(1)
+                    }else {
+                        bag.add(0)
+                    }
+                }
+            }
+            val outputRow = createArrayListOfZeros()
+            outputRow[classes.indexOf(doc[doc.keys.first()])] = 1
+
         }
     }
+
+    private fun createArrayListOfZeros() : MutableList<Int>{
+        val listToFill = mutableListOf<Int>()
+        for (i in 0..(classes.size - 1)){
+            listToFill.add(0)
+        }
+        return listToFill
+    }
+
+    private fun createAndTrainNeuralNetwork(){
+        //In this method i receive the arrays
+        //generated from files, then create and }
+        // train neural network.
+    }
+
 }
 
 private fun cleanText(text: String) : String {
