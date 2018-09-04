@@ -15,7 +15,26 @@ public class Utils {
         return result;
     }
 
- /*   public ArrayList<String> sortArrayOfWords(ArrayList<String> insumo){
+    //To create arrays of words from phrases,spaces and tokens of language are deleted
+    public ArrayList<String> tokenizeSentence(String sentence) {
+        return tokenize(cleanText(sentence));
+    }
 
-    }*/
+    // To delete contractions and useless tokens from phrases
+    private String cleanText(String text) {
+        String finalText = text;
+        finalText = finalText.toLowerCase();
+        finalText = finalText.replace("i'm", "i am");
+        finalText = finalText.replace("\'s", " is");
+        finalText = finalText.replace("\'ll", " will");
+        finalText = finalText.replace("\'ve", " have");
+        finalText = finalText.replace("\'re", " are");
+        finalText = finalText.replace("\'d", " would");
+        finalText = finalText.replace("won't", "will not");
+        finalText = finalText.replace("can't", "cannot");
+        finalText = finalText.replace("don't", " do not");
+        finalText = finalText.replace("doesn't", " does not");
+        return finalText.replace("[-()\"#/@;:<>{}+=~|.?,]", "");
+    }
+
 }

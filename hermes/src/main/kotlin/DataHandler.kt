@@ -17,11 +17,6 @@ class DataHandler(
     private var words : ArrayList<String> = arrayListOf(),
     private var utils : Utils = Utils()) {
 
-
-    //TODO: the next element will be moved when tests are finished
-    //private var nnImpl : NeuralNetworkImplementation? = null
-    //TODO:-------------------------------------------------------
-
     var bagLength = 0
 
     // To load file where structured text is located
@@ -31,18 +26,13 @@ class DataHandler(
             return googleJson.fromJson(dataJson, object : TypeToken<List<Intent>>() {}.type)
         }
 
-        //To create arrays of words from phrases,spaces and tokens of language are deleted
-        private fun tokenizePhrases(phrase : String) : ArrayList<String>? {
-           return utils.tokenize(cleanText(phrase))
-        }
-
         // To create arrays of documents,words and classes, classes are useful to classify words into categories,
         // documents gather tokens(words in sentences) and classes.
         fun tokenizeWordsInIntents(intents : List<Intent>){
             var tokens : ArrayList<String>?
             for(intent in intents){
                 for (pattern in intent.patterns){
-                    tokens = tokenizePhrases(pattern)
+                    tokens = utils.tokenizeSentence(pattern)
                     if (tokens != null) {
                         documents.add(mutableMapOf(Pair(tokens,intent.tag)))
                         for(token in tokens){
@@ -59,7 +49,6 @@ class DataHandler(
             sort(words)
             createArrayOfZerosAndOnes()
         }
-
 
         private fun createArrayOfZerosAndOnes(){
             var bag : DoubleArray = doubleArrayOf()
@@ -80,14 +69,9 @@ class DataHandler(
             }
             bagLength = bags[0].size
 
-
-
-            //nnImpl = NeuralNetworkImplementation(NeuralNetwork.ActivationFunction.LOGISTIC_SIGMOID,words.size)
-            trainNeuralNetwork(bags,outPutRows)
-            //val res = testsSentences()
         }
 
-        //Utility to create arrays filled out with zeros
+        //Utility to create array filled out with zeros
         private fun createArrayListOfZeros(arraySize : Int) : DoubleArray{
             var listToFill = doubleArrayOf()
             for (i in 0..(arraySize - 1)){
@@ -96,14 +80,9 @@ class DataHandler(
             return listToFill
         }
 
-        private fun trainNeuralNetwork(train_x : Array<DoubleArray>,train_y : Array<DoubleArray>){
-            for (y in train_y) {
-                //nnImpl?.learn(arrayOf(train_x[train_y.indexOf(y)]),train_y[train_y.indexOf(y)])
-            }
-        }
-
-        private fun checkSentenceInDictionary(sentence : String) : DoubleArray {
-            val wordsInSentence = tokenizePhrases(sentence)
+        // Sentence representation of zeros and ones
+        private fun sentence2array(sentence : String) : DoubleArray {
+            val wordsInSentence = utils.tokenizeSentence(sentence)
             var zerosAndOnesArray = createArrayListOfZeros(bagLength)
 
             if(wordsInSentence  !== null) {
@@ -113,31 +92,9 @@ class DataHandler(
                     }
                 }
             }
-
             return zerosAndOnesArray
         }
 
-      /*  private fun testsSentences() : DoubleArray? {
-            val testSentence = "Hello how are you?"
-            return nnImpl?.predict(arrayOf(checkSentenceInDictionary(testSentence)))
-        }*/
-
-        // To delete contractions and useless tokens from phrases
-        private fun cleanText(text: String) : String {
-            var finalText = text
-            finalText = finalText.toLowerCase()
-            finalText = finalText.replace("i'm", "i am")
-            finalText = finalText.replace("\'s", " is")
-            finalText = finalText.replace("\'ll", " will")
-            finalText = finalText.replace("\'ve", " have")
-            finalText = finalText.replace("\'re", " are")
-            finalText = finalText.replace("\'d", " would")
-            finalText = finalText.replace("won't", "will not")
-            finalText = finalText.replace("can't", "cannot")
-            finalText = finalText.replace("don't", " do not")
-            finalText = finalText.replace("doesn't", " does not")
-            return finalText.replace("[-()\"#/@;:<>{}+=~|.?,]", "")
-        }
     }
 
 //Representation of json file structure
