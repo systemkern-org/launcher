@@ -2,8 +2,6 @@ package systemkern
 
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
-import smile.regression.NeuralNetwork
-import systemkern.hermes.NeuralNetworkImplementation
 import systemkern.utils.Utils
 import java.io.File
 import java.io.InputStream
@@ -21,7 +19,7 @@ class DataHandler(
 
 
     //TODO: the next element will be moved when tests are finished
-    private var nnImpl : NeuralNetworkImplementation? = null
+    //private var nnImpl : NeuralNetworkImplementation? = null
     //TODO:-------------------------------------------------------
 
     var bagLength = 0
@@ -81,10 +79,12 @@ class DataHandler(
                 bag = doubleArrayOf()
             }
             bagLength = bags[0].size
-            nnImpl = NeuralNetworkImplementation(NeuralNetwork.ActivationFunction.LOGISTIC_SIGMOID,words.size)
+
+
+
+            //nnImpl = NeuralNetworkImplementation(NeuralNetwork.ActivationFunction.LOGISTIC_SIGMOID,words.size)
             trainNeuralNetwork(bags,outPutRows)
-            val res = testsSentences()
-            print(res)
+            //val res = testsSentences()
         }
 
         //Utility to create arrays filled out with zeros
@@ -98,7 +98,7 @@ class DataHandler(
 
         private fun trainNeuralNetwork(train_x : Array<DoubleArray>,train_y : Array<DoubleArray>){
             for (y in train_y) {
-                nnImpl?.learn(arrayOf(train_x[train_y.indexOf(y)]),train_y[train_y.indexOf(y)])
+                //nnImpl?.learn(arrayOf(train_x[train_y.indexOf(y)]),train_y[train_y.indexOf(y)])
             }
         }
 
@@ -117,10 +117,10 @@ class DataHandler(
             return zerosAndOnesArray
         }
 
-        private fun testsSentences() : DoubleArray? {
+      /*  private fun testsSentences() : DoubleArray? {
             val testSentence = "Hello how are you?"
             return nnImpl?.predict(arrayOf(checkSentenceInDictionary(testSentence)))
-        }
+        }*/
 
         // To delete contractions and useless tokens from phrases
         private fun cleanText(text: String) : String {

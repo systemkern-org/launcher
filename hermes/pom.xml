@@ -24,7 +24,12 @@
             <groupId>org.deeplearning4j</groupId>
             <artifactId>deeplearning4j-parent</artifactId>
             <version>0.9.1</version>
-            <type>pom</type>
+        </dependency>
+
+        <dependency>
+            <groupId>org.deeplearning4j</groupId>
+            <artifactId>deeplearning4j-nn</artifactId>
+            <version>0.9.1</version>
         </dependency>
 
         <dependency>
