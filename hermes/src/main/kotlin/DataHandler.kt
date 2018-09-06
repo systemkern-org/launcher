@@ -10,14 +10,13 @@ import java.util.Collections.sort
 
 class DataHandler(
     private val googleJson : Gson = Gson(),
-    private var classes : MutableList<String> = mutableListOf(),
+    var classes : MutableList<String> = mutableListOf(),
     private val documents : MutableList<MutableMap<ArrayList<String>?,String>> = mutableListOf(),
-    private var bags: Array<DoubleArray> = arrayOf(),
-    private var outPutRows: Array<DoubleArray> = arrayOf(),
-    private var words : ArrayList<String> = arrayListOf(),
-    private var utils : Utils = Utils()) {
-
-    var bagLength = 0
+    var bags: Array<DoubleArray> = arrayOf(),
+    var outPutRows: Array<DoubleArray> = arrayOf(),
+    var words : ArrayList<String> = arrayListOf(),
+    private var utils : Utils = Utils(),
+    private var bagLength : Int = 0) {
 
     // To load file where structured text is located
         fun loadJsonFile(pathFileToFile: String) : List<Intent>{
@@ -68,7 +67,6 @@ class DataHandler(
                 bag = doubleArrayOf()
             }
             bagLength = bags[0].size
-
         }
 
         //Utility to create array filled out with zeros
@@ -81,7 +79,7 @@ class DataHandler(
         }
 
         // Sentence representation of zeros and ones
-        private fun sentence2array(sentence : String) : DoubleArray {
+        fun sentence2array(sentence : String) : DoubleArray {
             val wordsInSentence = utils.tokenizeSentence(sentence)
             var zerosAndOnesArray = createArrayListOfZeros(bagLength)
 

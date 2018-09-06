@@ -1,6 +1,5 @@
 package systemkern.systemkern.hermes
 
-import org.deeplearning4j.nn.conf.MultiLayerConfiguration
 import org.deeplearning4j.nn.conf.NeuralNetConfiguration
 import org.deeplearning4j.nn.conf.layers.DenseLayer
 import org.deeplearning4j.nn.conf.layers.OutputLayer
@@ -9,55 +8,48 @@ import org.deeplearning4j.nn.weights.WeightInit
 import org.nd4j.linalg.activations.Activation
 import org.nd4j.linalg.api.ndarray.INDArray
 import org.nd4j.linalg.learning.config.Nesterovs
-import org.nd4j.linalg.lossfunctions.LossFunctions
+import org.nd4j.linalg.lossfunctions.LossFunctions.LossFunction.NEGATIVELOGLIKELIHOOD
 import org.slf4j.Logger
-import org.slf4j.LoggerFactory
+import org.slf4j.LoggerFactory.getLogger
 
 
 class NeuralNetworkImplementation(
-    activation: Activation,
-    argumentToLayers: Int,
-    private var conf : MultiLayerConfiguration?,
-    private var log : Logger = LoggerFactory.getLogger(NeuralNetworkImplementation::class.java),
-    var numEpochs : Int,
-    var model : MultiLayerNetwork?,
-    val rngSeed : Int,
-    val rate : Double /* 0.0015 -- learning rate*/ ,
-    val numRows : Int,
-    val numColumns : Int,
-    val outputNum : Int) {
+    private val numEpochs : Int, // learning rate*/
+    inputRows : Int,
+    outputNum : Int) {
 
-    fun configure(){
-        conf = NeuralNetConfiguration.Builder()
+    private var log : Logger = getLogger(NeuralNetworkImplementation::class.java)
+    private var model : MultiLayerNetwork? = null
+    private val rngSeed : Int = 123
+    private val rate : Double = 0.2
+
+    init {
+        model = MultiLayerNetwork(
+        NeuralNetConfiguration.Builder()
         .seed(rngSeed.toLong()) //include a random seed for reproducibility
         // use stochastic gradient descent as an optimization algorithm
 
         .activation(Activation.RELU)
         .weightInit(WeightInit.XAVIER)
         .updater(Nesterovs(rate, 0.98)) //specify the rate of change of the learning rate.
-        .l2(rate * 0.005) // regularize learning model
+        .l2(rate) // regularize learning model
         .list()
         .layer(0, DenseLayer.Builder() //create the first input layer.
-            .nIn(numRows * numColumns)
-            .nOut(500)
+            .nIn(inputRows)
+            .nOut(30)
             .build())
         .layer(1, DenseLayer.Builder() //create the second input layer
-            .nIn(500)
-            .nOut(100)
+            .nIn(30)
+            .nOut(15)
             .build())
-        .layer(2, OutputLayer.Builder(LossFunctions.LossFunction.NEGATIVELOGLIKELIHOOD) //create hidden layer
+        .layer(2, OutputLayer.Builder(NEGATIVELOGLIKELIHOOD) //create hidden layer
             .activation(Activation.SOFTMAX)
-            .nIn(100)
+            .nIn(15)
             .nOut(outputNum)
             .build())
         .pretrain(false).backprop(true) //use backpropagation to adjust weights
-        .build()
-    }
-
-    fun createMultilayerNeuralNetwork(){
-        model = MultiLayerNetwork(conf)
+        .build())
         model?.init()
-        //model.setListeners(ScoreIterationListener(5))  //print the score with every iteration
     }
 
     fun trainMNN(examples : INDArray,labels : INDArray){
@@ -66,5 +58,9 @@ class NeuralNetworkImplementation(
             log.info("Epoch $i")
             model?.fit(examples,labels)
         }
+    }
+
+    fun predict(sentenceToVector : INDArray) : IntArray? {
+        return model?.predict(sentenceToVector)
     }
 }
