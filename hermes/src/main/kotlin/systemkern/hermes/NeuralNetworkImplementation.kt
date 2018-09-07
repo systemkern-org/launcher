@@ -32,7 +32,7 @@ class NeuralNetworkImplementation(
 
         .activation(Activation.RELU)
         .weightInit(WeightInit.XAVIER)
-        .updater(Nesterovs(rate, 0.9)) //specify the rate of change of the learning rate.
+        .updater(Nesterovs(rate, 0.000001)) //specify the rate of change of the learning rate.
         .l2(rate * 0.005) // regularize learning model
         .list()
         .layer(0, DenseLayer.Builder() //create the first input layer.

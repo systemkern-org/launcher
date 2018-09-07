@@ -11,12 +11,13 @@ import java.util.Collections.sort
 class DataHandler(
     private val googleJson : Gson = Gson(),
     var classes : MutableList<String> = mutableListOf(),
-    private val documents : MutableList<MutableMap<ArrayList<String>?,String>> = mutableListOf(),
+    private val documents : MutableList<MutableMap<String,ArrayList<String>?>> = mutableListOf(),
     var bags: Array<DoubleArray> = arrayOf(),
     var outPutRows: Array<DoubleArray> = arrayOf(),
     var words : ArrayList<String> = arrayListOf(),
     private var utils : Utils = Utils(),
-    private var bagLength : Int = 0) {
+    private var bagLength : Int = 0,
+    var patterWords : ArrayList<String>? = null) {
 
     // To load file where structured text is located
         fun loadJsonFile(pathFileToFile: String) : List<Intent>{
@@ -33,7 +34,7 @@ class DataHandler(
                 for (pattern in intent.patterns){
                     tokens = utils.tokenizeSentence(pattern)
                     if (tokens != null) {
-                        documents.add(mutableMapOf(Pair(tokens,intent.tag)))
+                        documents.add(mutableMapOf(Pair(intent.tag,tokens)))
                         for(token in tokens){
                             if (!(words.contains(token))){
                                 words.add(token)
@@ -52,7 +53,7 @@ class DataHandler(
         private fun createArrayOfZerosAndOnes(){
             var bag : DoubleArray = doubleArrayOf()
             for(doc in documents){
-                val patterWords = doc[doc.keys.first()]
+                patterWords = doc[doc.keys.first()]
                     for (word in words){
                         if(patterWords?.contains(word) as Boolean){
                             bag = bag.plus(1.0)
@@ -62,7 +63,7 @@ class DataHandler(
                     }
                 bags = bags.plus(bag)
                 val outputRow = createArrayListOfZeros(classes.size)
-                outputRow[classes.indexOf(doc[doc.keys.first()])] = 1.0
+                outputRow[classes.indexOf(doc.keys.first())] = 1.0
                 outPutRows = outPutRows.plus(outputRow)
                 bag = doubleArrayOf()
             }
