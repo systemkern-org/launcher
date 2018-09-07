@@ -6,7 +6,7 @@ import java.util.ArrayList;
 public class Utils {
     private LancasterStemmer stemmer = new LancasterStemmer();
 
-    public ArrayList<String> tokenize(String phrase){
+    private ArrayList<String> tokenize(String phrase){
         ArrayList<String> result = new ArrayList<>();
 
         String[] aux = phrase.split(" ");

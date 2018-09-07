@@ -1,5 +1,6 @@
 package systemkern;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
@@ -7,6 +8,8 @@ import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
+import systemkern.systemkern.hermes.NeuralNetworkImplementation;
+
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -26,6 +29,9 @@ public class Hermes extends TelegramLongPollingBot {
         return token;
     }
 
+    @Autowired
+    private NeuralNetworkImplementation nnImpl;
+
     @Override
     public String getBotUsername() {
         return botName;
@@ -37,11 +43,11 @@ public class Hermes extends TelegramLongPollingBot {
             Message message = update.getMessage();
             SendMessage response = new SendMessage();
             Long chatId = message.getChatId();
-            String text = message.getText();
             response.setChatId(chatId);
-            String responseText = "Sent message: " + message.getText();
+            String responseText = nnImpl.answerToMessage(message.getText());
             logger.log(Level.INFO,"Sent message: " + message.getText());
-            response.setText("Sent: " + text);
+            logger.log(Level.INFO,"Response: " + responseText);
+            response.setText(responseText);
             try {
                 execute(response);
             } catch (TelegramApiException e) {

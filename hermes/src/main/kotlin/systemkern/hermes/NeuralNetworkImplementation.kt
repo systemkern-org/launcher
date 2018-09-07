@@ -5,24 +5,28 @@ import org.deeplearning4j.nn.conf.layers.DenseLayer
 import org.deeplearning4j.nn.conf.layers.OutputLayer
 import org.deeplearning4j.nn.multilayer.MultiLayerNetwork
 import org.deeplearning4j.nn.weights.WeightInit
+import org.deeplearning4j.util.ModelSerializer
 import org.nd4j.linalg.activations.Activation
-import org.nd4j.linalg.api.ndarray.INDArray
 import org.nd4j.linalg.factory.Nd4j
 import org.nd4j.linalg.learning.config.Nesterovs
 import org.nd4j.linalg.lossfunctions.LossFunctions.LossFunction.NEGATIVELOGLIKELIHOOD
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory.getLogger
+import systemkern.NaturalLanguagePreProcessor
+import java.io.File
+import java.util.Random
 
 
 class NeuralNetworkImplementation(
     private val numEpochs : Int, // learning rate*/
-    inputRows : Int,
-    outputNum : Int) {
+    private val nlpProcessor : NaturalLanguagePreProcessor,
 
-    private var log : Logger = getLogger(NeuralNetworkImplementation::class.java)
-    private var model : MultiLayerNetwork? = null
-    private val rngSeed : Int = 12345
-    private val rate : Double = 0.0015
+    private var log : Logger = getLogger(NeuralNetworkImplementation::class.java),
+    private var model : MultiLayerNetwork? = null,
+    rngSeed : Int = 12345,
+    rate : Double = 0.0015,
+    private val savedModelPath : String = "",
+    private val randomGenerator : Random = Random() ) {
 
     init {
         model = MultiLayerNetwork(
@@ -36,7 +40,7 @@ class NeuralNetworkImplementation(
         .l2(rate * 0.005) // regularize learning model
         .list()
         .layer(0, DenseLayer.Builder() //create the first input layer.
-            .nIn(inputRows)
+            .nIn(nlpProcessor.words.size)
             .nOut(30)
             .build())
         .layer(1, DenseLayer.Builder() //create the second input layer
@@ -46,24 +50,36 @@ class NeuralNetworkImplementation(
         .layer(2, OutputLayer.Builder(NEGATIVELOGLIKELIHOOD) //create hidden layer
             .activation(Activation.SOFTMAX)
             .nIn(15)
-            .nOut(outputNum)
+            .nOut(nlpProcessor.classes.size)
             .build())
         .pretrain(false).backprop(true) //use backpropagation to adjust weights
         .build())
         model?.init()
     }
 
-    fun trainMNN(examples : Array<DoubleArray>,labels : Array<DoubleArray>){
+    fun trainMNN(){
         log.info("Train model....")
         for (i in 0..numEpochs.minus(1)) {
-            for (i in 0..examples.size.minus(1)) {
-                log.info("Epoch $i")
-                model?.fit( Nd4j.create(examples[i]), Nd4j.create(labels[i]))
+            for (j in 0..nlpProcessor.bags.size.minus(1)) {
+                log.info("Epoch: $j")
+                model?.fit( Nd4j.create(nlpProcessor.bags[j]), Nd4j.create(nlpProcessor.classesIntoArrays[j]))
             }
         }
     }
 
-    fun predict(sentenceToVector : INDArray) : IntArray? {
-        return model?.predict(sentenceToVector)
+    fun answerToMessage(messageReceived : String) : String{
+        val contextTag = model?.predict(Nd4j.create(nlpProcessor.sentence2array(messageReceived)))
+        val intent = nlpProcessor.intentList!![contextTag!![0]]
+
+        return intent.responses[( randomGenerator.nextInt( intent.responses.size - 1))]
+    }
+
+    fun saveTrainedModel(){
+
+        log.info("SAVE TRAINED MODEL")
+        val locationToSave = File("$savedModelPath/trained_model.zip")
+        // ModelSerializer needs model, saveUpdater, Location
+        ModelSerializer.writeModel(model as MultiLayerNetwork, locationToSave, false)
+
     }
 }
