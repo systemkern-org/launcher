@@ -35,6 +35,7 @@ public class Utils {
         finalText = finalText.replace("can't", "cannot");
         finalText = finalText.replace("don't", " do not");
         finalText = finalText.replace("doesn't", " does not");
+        finalText = finalText.replace("?", "");
         return finalText.replace("[-()\"#/@;:<>{}+=~|.?,]", "");
     }
 

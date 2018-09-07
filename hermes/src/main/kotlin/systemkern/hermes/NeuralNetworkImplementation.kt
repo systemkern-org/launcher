@@ -7,6 +7,7 @@ import org.deeplearning4j.nn.multilayer.MultiLayerNetwork
 import org.deeplearning4j.nn.weights.WeightInit
 import org.nd4j.linalg.activations.Activation
 import org.nd4j.linalg.api.ndarray.INDArray
+import org.nd4j.linalg.factory.Nd4j
 import org.nd4j.linalg.learning.config.Nesterovs
 import org.nd4j.linalg.lossfunctions.LossFunctions.LossFunction.NEGATIVELOGLIKELIHOOD
 import org.slf4j.Logger
@@ -20,8 +21,8 @@ class NeuralNetworkImplementation(
 
     private var log : Logger = getLogger(NeuralNetworkImplementation::class.java)
     private var model : MultiLayerNetwork? = null
-    private val rngSeed : Int = 123
-    private val rate : Double = 0.2
+    private val rngSeed : Int = 12345
+    private val rate : Double = 0.0015
 
     init {
         model = MultiLayerNetwork(
@@ -31,8 +32,8 @@ class NeuralNetworkImplementation(
 
         .activation(Activation.RELU)
         .weightInit(WeightInit.XAVIER)
-        .updater(Nesterovs(rate, 0.98)) //specify the rate of change of the learning rate.
-        .l2(rate) // regularize learning model
+        .updater(Nesterovs(rate, 0.9)) //specify the rate of change of the learning rate.
+        .l2(rate * 0.005) // regularize learning model
         .list()
         .layer(0, DenseLayer.Builder() //create the first input layer.
             .nIn(inputRows)
@@ -52,11 +53,13 @@ class NeuralNetworkImplementation(
         model?.init()
     }
 
-    fun trainMNN(examples : INDArray,labels : INDArray){
+    fun trainMNN(examples : Array<DoubleArray>,labels : Array<DoubleArray>){
         log.info("Train model....")
         for (i in 0..numEpochs.minus(1)) {
-            log.info("Epoch $i")
-            model?.fit(examples,labels)
+            for (i in 0..examples.size.minus(1)) {
+                log.info("Epoch $i")
+                model?.fit( Nd4j.create(examples[i]), Nd4j.create(labels[i]))
+            }
         }
     }
 
