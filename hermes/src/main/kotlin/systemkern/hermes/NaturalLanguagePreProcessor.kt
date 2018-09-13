@@ -17,7 +17,7 @@ class NaturalLanguagePreProcessor(
     var words : ArrayList<String> = arrayListOf(),
     private var utils : Utils = Utils(),
     private var bagLength : Int = 0,
-    var patternWords : ArrayList<String>? = null,
+    private var patternWords : ArrayList<String>? = null,
     var intentList : List<Intent>? = null) {
 
     // To load file where structured text is located

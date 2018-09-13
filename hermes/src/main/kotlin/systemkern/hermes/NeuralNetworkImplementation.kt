@@ -12,6 +12,7 @@ import org.nd4j.linalg.learning.config.Nesterovs
 import org.nd4j.linalg.lossfunctions.LossFunctions.LossFunction.NEGATIVELOGLIKELIHOOD
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory.getLogger
+import systemkern.Intent
 import systemkern.NaturalLanguagePreProcessor
 import java.io.File
 import java.util.Random
@@ -20,7 +21,7 @@ import java.util.Random
 class NeuralNetworkImplementation(
     private val numEpochs : Int, // learning rate*/
     private val nlpProcessor : NaturalLanguagePreProcessor,
-
+    internal var intent : Intent? = null,
     private var log : Logger = getLogger(NeuralNetworkImplementation::class.java),
     private var model : MultiLayerNetwork? = null,
     rngSeed : Int = 12345,
@@ -69,9 +70,9 @@ class NeuralNetworkImplementation(
 
     fun answerToMessage(messageReceived : String) : String{
         val contextTag = model?.predict(Nd4j.create(nlpProcessor.sentence2array(messageReceived)))
-        val intent = nlpProcessor.intentList!![contextTag!![0]]
-
-        return intent.responses[( randomGenerator.nextInt( intent.responses.size - 1))]
+        intent = nlpProcessor.intentList!![contextTag!![0]]
+        val bound = intent!!.responses.size.minus(1)
+        return intent!!.responses[ randomGenerator.nextInt( if((bound) > 0) bound else 1 ) ]
     }
 
     fun saveTrainedModel(){

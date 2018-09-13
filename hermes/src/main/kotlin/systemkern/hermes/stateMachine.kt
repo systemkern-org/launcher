@@ -1,6 +1,5 @@
 package systemkern.hermes
 
-
 import org.slf4j.LoggerFactory
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.ComponentScan
@@ -19,52 +18,31 @@ import org.springframework.statemachine.listener.StateMachineListener
 import org.springframework.statemachine.state.State
 import org.springframework.statemachine.transition.Transition
 import org.springframework.stereotype.Component
-import systemkern.systemkern.hermes.InitializeAction
 import java.lang.Exception
-import java.time.ZonedDateTime
 import java.time.ZonedDateTime.now
 import java.util.*
 
 internal enum class Events {
-    ABORT,
-    RECEIVE_JOKE_REQUEST,
-    RECEIVE_CONFIRMATION,
-    RECEIVE_PAYMENT,
-    USER_ABORTS
+    RECEIVE_GREETING,
+    RECEIVE_GOODBYE,
+    RECEIVE_THANKS,
+    REQUEST_RENT,
+    REQUEST_GENERAL_INFO
 }
 
 internal enum class States {
-    INITIAL,
-    JOKE_REQUESTED,
-    REQUEST_CONFIRMED,
-    DONE
+    GREETING_RECEIVED,
+    GOODBYE_RECEIVED,
+    RENT_REQUESTED,
+    GENERAL_INFO_REQUESTED,
+    THANKS_RECEIVED
 }
 
-
-internal data class Context(
-    val start: ZonedDateTime = now(),
-    var state: States = States.INITIAL,
-    var jokesSent: Int = 0,
-    var mySessionInfo: String = ""
-)
-
-private const val contextIdentifier = "context"
-/** This extension property provides easy access our custom Context data storage */
-internal var StateMachine<States, Events>.context: Context
-    get() = (this.extendedState.variables[contextIdentifier] as Context?)
-        ?: Context()
-    set(value) {
-        this.extendedState.variables[contextIdentifier] = value
-    }
-
-/** This extension property provides easy access our custom Context data storage */
-internal var StateContext<States, Events>.context: Context
-    get() = (this.extendedState.variables[contextIdentifier] as Context?)
-        ?: Context()
-    set(value) {
-        this.extendedState.variables[contextIdentifier] = value
-    }
-
+internal class Context {
+    var start = now()
+    var state = States.GREETING_RECEIVED
+    var userId = 0
+}
 
 @Configuration
 @ComponentScan(basePackages = ["systemkern.hermes"])
@@ -72,6 +50,10 @@ internal var StateContext<States, Events>.context: Context
 internal class StateMachineConfiguration(
     private val listener: StateMachineListener<States, Events>
 ) : EnumStateMachineConfigurerAdapter<States, Events>() {
+
+    companion object {
+        internal const val contextIdentifier = "context"
+    }
 
     private val log = LoggerFactory.getLogger(StateMachineConfiguration::class.java)
 
@@ -87,61 +69,43 @@ internal class StateMachineConfiguration(
 
     override fun configure(states: StateMachineStateConfigurer<States, Events>) {
         states.withStates()
-            .initial(States.INITIAL, initialize())
-            .end(States.DONE)
+            .initial(States.GREETING_RECEIVED)
+            .end(States.GOODBYE_RECEIVED)
+            .end(States.THANKS_RECEIVED)
             .states(EnumSet.allOf(States::class.java))
-
     }
 
     override fun configure(transitions: StateMachineTransitionConfigurer<States, Events>) {
         transitions.withExternal()
-            // Joke Sending Path
-            .source(States.INITIAL)
-            .event(Events.RECEIVE_JOKE_REQUEST)
-            .action(initialize())
-            .target(States.JOKE_REQUESTED)
+            // Initial state
+            .source(States.GREETING_RECEIVED) // STATE IN WHICH STATE MACHINE IS LOCATED RIGHT NOW
+            .event(Events.REQUEST_RENT)
+            .target(States.RENT_REQUESTED)
 
             .and().withExternal()
-            .source(States.JOKE_REQUESTED)
-            .event(Events.RECEIVE_CONFIRMATION)
-            .action(askForSecondConfirmation())
-            .target(States.REQUEST_CONFIRMED)
+            .source(States.GREETING_RECEIVED)
+            .event(Events.REQUEST_GENERAL_INFO)
+            .target(States.GENERAL_INFO_REQUESTED )
+           /* .action(sendJoke())*/
+
+            // General info state
+            .and().withExternal()
+            .source(States.GENERAL_INFO_REQUESTED)
+            .event(Events.RECEIVE_GOODBYE )
 
             .and().withExternal()
-            .source(States.REQUEST_CONFIRMED)
-            .event(Events.RECEIVE_PAYMENT)
-            .target(States.DONE)
-            .action(sendJoke())
+            .source(States.GENERAL_INFO_REQUESTED)
+            .event(Events.RECEIVE_THANKS)
 
-            // Aborts for Joke Sending Path
+            // Rent state
             .and().withExternal()
-            .source(States.JOKE_REQUESTED)
-            .event(Events.USER_ABORTS)
-            .action(userAborted())
-            .target(States.DONE)
-
-            .and().withExternal()
-            .source(States.REQUEST_CONFIRMED)
-            .event(Events.ABORT)
-            .action(userAborted())
-            .target(States.DONE)
+            .source(States.RENT_REQUESTED)
+            .event(Events.RECEIVE_THANKS)
 
     }
 
-    @Bean fun initialize(): Action<States, Events> =
-        InitializeAction()
-
     @Bean fun askForSecondConfirmation(): Action<States, Events> =
         Action { log.info("askForSecondConfirmation()") }
-
-    @Bean fun askForPayment(): Action<States, Events> =
-        Action { log.info("askForPayment()") }
-
-    @Bean fun sendJoke(): Action<States, Events> =
-        Action {
-            it.context.jokesSent++
-            log.info("sendJoke()")
-        }
 
     @Bean fun userAborted(): Action<States, Events> =
         Action { log.info("userAborted()") }

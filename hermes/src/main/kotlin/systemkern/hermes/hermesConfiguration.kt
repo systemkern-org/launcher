@@ -13,7 +13,6 @@ internal class HermesConfiguration(
 
     @Bean
     fun loadAndTrainModel() : NeuralNetworkImplementation{
-
         nlpProcessor.loadJsonFile(
             "D:/Documentos/proyectosFreelance/SystemKern-launcher/" +
                 "real/launcher/hermes/src/main/resources/trainin_doc.txt")
@@ -25,7 +24,6 @@ internal class HermesConfiguration(
 
         nnImpl.trainMNN()
         return nnImpl
-
     }
 
 }
