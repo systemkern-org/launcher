@@ -1,4 +1,4 @@
-package systemkern.systemkern.hermes
+package systemkern.hermes
 
 import org.deeplearning4j.nn.conf.NeuralNetConfiguration
 import org.deeplearning4j.nn.conf.layers.DenseLayer
@@ -21,7 +21,8 @@ import java.util.Random
 class NeuralNetworkImplementation(
     private val numEpochs : Int, // learning rate*/
     private val nlpProcessor : NaturalLanguagePreProcessor,
-    internal var intent : Intent? = null,
+    private var intent : Intent? = null,
+    var contextTag : IntArray? = null,
     private var log : Logger = getLogger(NeuralNetworkImplementation::class.java),
     private var model : MultiLayerNetwork? = null,
     rngSeed : Int = 12345,
@@ -69,7 +70,7 @@ class NeuralNetworkImplementation(
     }
 
     fun answerToMessage(messageReceived : String) : String{
-        val contextTag = model?.predict(Nd4j.create(nlpProcessor.sentence2array(messageReceived)))
+        contextTag = model!!.predict(Nd4j.create(nlpProcessor.sentence2array(messageReceived)))
         intent = nlpProcessor.intentList!![contextTag!![0]]
         val bound = intent!!.responses.size.minus(1)
         return intent!!.responses[ randomGenerator.nextInt( if((bound) > 0) bound else 1 ) ]

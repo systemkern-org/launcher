@@ -69,7 +69,9 @@ internal class StateMachineIT {
 
     // https://youtu.be/M4Aa45Gpc4w?t=40m minute 41
     @Test fun `Can continue from persisted context`() {
-        val persistedContext = /*getFromRepo**/ Context(state = States.REQUEST_CONFIRMED)
+        val persistedContext =
+getFromRepo*
+ Context(state = States.REQUEST_CONFIRMED)
 
         stateMachine.stop()
         stateMachine.stateMachineAccessor.doWithAllRegions {

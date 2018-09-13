@@ -10,7 +10,7 @@ import java.util.HashMap
 @Component
 internal class UserContextController(
     @Autowired
-    private val factory: StateMachineFactory<States, Events>,
+    private val factory : StateMachineFactory<States, Events>,
     private val userMap : HashMap<Int, StateMachine<States, Events>> = HashMap()){
 
     fun checkUserId(userId : Int) : Boolean
@@ -26,6 +26,17 @@ internal class UserContextController(
         userMap [userId] = stateMachine
     }
 
-    fun getStateMachine(userId: Int) : StateMachine<States, Events> =
-        userMap[userId]!!
+    fun isEventPossible(userId : Int,event : Events) : Boolean {
+        val stateMachine = userMap[userId]
+        return stateMachine!!.transitions
+            .filter { transition -> transition.source == stateMachine.state }
+            .any { transition -> transition.trigger.event == event }
+    }
+
+    fun sendEvent(userId : Int, event: Events) {
+        val stateMachine = userMap[userId]
+        if (isEventPossible(userId, event)) {
+            stateMachine!!.sendEvent(event)
+        }
+    }
 }
