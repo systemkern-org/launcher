@@ -62,7 +62,7 @@ public class Hermes extends TelegramLongPollingBot {
             Message message = update.getMessage();
             SendMessage response = new SendMessage();
             response.setChatId(message.getChatId());
-            String responseText = nnImpl. answerToMessage(message.getText());
+            String responseText = nnImpl.answerToMessage(message.getText());
 
             if (userContextController.checkUserId(message.getFrom().getId())){
                 userContextController.createStateForUser(message.getFrom().getId());

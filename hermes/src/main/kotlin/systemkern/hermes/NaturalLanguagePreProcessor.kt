@@ -1,14 +1,22 @@
-package systemkern
+package systemkern.hermes
 
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import org.springframework.data.jpa.repository.Query
+import org.springframework.data.repository.CrudRepository
+import org.springframework.stereotype.Component
+import org.springframework.stereotype.Repository
 import systemkern.utils.Utils
 import java.io.File
 import java.io.InputStream
-import java.util.ArrayList
+import java.util.*
 import java.util.Collections.sort
+import javax.persistence.Entity
+import javax.persistence.Id
 
-class NaturalLanguagePreProcessor(
+@Component
+internal class NaturalLanguagePreProcessor(
+    private val wordRepository: WordRepository,
     private val googleJson : Gson = Gson(),
     var classes : MutableList<String> = mutableListOf(),
     private val documents : MutableList<MutableMap<String,ArrayList<String>?>> = mutableListOf(),
@@ -20,7 +28,13 @@ class NaturalLanguagePreProcessor(
     private var patternWords : ArrayList<String>? = null,
     var intentList : List<Intent>? = null) {
 
-    // To load file where structured text is located
+        fun loadDictionary() : Boolean{
+            words = wordRepository.returnArrayOfWords()
+            bagLength = words.size
+            return words.isEmpty()
+        }
+
+        // To load file where structured text is located
         fun loadJsonFile(pathFileToFile: String){
             val inputStream: InputStream = File(pathFileToFile).inputStream()
             val dataJson = inputStream.bufferedReader().use { it.readText() }
@@ -38,6 +52,7 @@ class NaturalLanguagePreProcessor(
                     for(token in tokens){
                         if (!(words.contains(token))){
                             words.add(token)
+                            persistDictionary(token,words.lastIndex)
                         }
                         if(!classes.contains(intent.tag)){
                             classes.add(intent.tag)
@@ -47,6 +62,10 @@ class NaturalLanguagePreProcessor(
             }
             sort(words)
             createArrayOfZerosAndOnes()
+        }
+
+        fun persistDictionary(word : String,index : Int){
+            wordRepository.save(Word(index,word))
         }
 
         private fun createArrayOfZerosAndOnes(){
@@ -98,3 +117,16 @@ data class Intent(
     val patterns : List<String>,
     val responses : List<String>,
     val context_set : String)
+
+@Repository
+internal interface WordRepository : CrudRepository<Word, Int> {
+    @Query(value = "Select value from Word")
+    fun returnArrayOfWords() : ArrayList<String>
+}
+
+@Entity
+internal data class Word(
+    @Id
+    val id : Int,
+    val value : String
+)

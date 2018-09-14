@@ -55,7 +55,7 @@ internal class StateMachineConfiguration(
         internal const val contextIdentifier = "context"
     }
 
-    private val log = LoggerFactory.getLogger(StateMachineConfiguration::class.java)
+    //private val log = LoggerFactory.getLogger(StateMachineConfiguration::class.java)
 
     override fun configure(config: StateMachineConfigBuilder<States, Events>) {
 
@@ -86,7 +86,6 @@ internal class StateMachineConfiguration(
             .source(States.GREETING_RECEIVED)
             .event(Events.REQUEST_GENERAL_INFO)
             .target(States.GENERAL_INFO_REQUESTED )
-           /* .action(sendJoke())*/
 
             // General info state
             .and().withExternal()
@@ -104,11 +103,11 @@ internal class StateMachineConfiguration(
 
     }
 
-    @Bean fun askForSecondConfirmation(): Action<States, Events> =
+ /*   @Bean fun askForSecondConfirmation(): Action<States, Events> =
         Action { log.info("askForSecondConfirmation()") }
 
     @Bean fun userAborted(): Action<States, Events> =
-        Action { log.info("userAborted()") }
+        Action { log.info("userAborted()") }*/
 
 }
 
