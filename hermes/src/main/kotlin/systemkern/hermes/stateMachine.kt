@@ -39,8 +39,6 @@ internal enum class States {
 }
 
 internal class Context {
-    var start = now()
-    var state = States.GREETING_RECEIVED
     var userId = 0
 }
 

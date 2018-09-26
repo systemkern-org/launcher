@@ -24,7 +24,7 @@ internal class NeuralNetworkImplementation(
     internal var model : MultiLayerNetwork? = null,
     private val rngSeed : Int = 12345,
     private val rate : Double = 0.0015,
-    private val randomGenerator : Random = Random() ) {
+    private val randomGenerator : Random = Random()) {
 
     fun configureModel(){
         //NeuralNetConfiguration.fromJson()
@@ -66,19 +66,19 @@ internal class NeuralNetworkImplementation(
         }
     }
 
-    fun answerToMessage(messageReceived : String) : String{
+    fun generateAnswerToMessage(messageReceived : String) : String{
         contextTag = model!!.predict(Nd4j.create(nlpProcessor!!.sentence2array(messageReceived)))
         intent = nlpProcessor!!.intentList!![contextTag!![0]]
         val bound = intent!!.responses.size.minus(1)
         return intent!!.responses[ randomGenerator.nextInt( if(bound > 0) bound else 1 ) ]
     }
 
-    fun saveTrainedModel(savedModelPath : String){
+    /*fun saveTrainedModel(savedModelPath : String){
         log.info("Save trained model")
         val locationToSave = File(savedModelPath)
         // ModelSerializer needs model, saveUpdater, Location
         ModelSerializer.writeModel(model as MultiLayerNetwork, locationToSave, false)
-    }
+    }*/
 
     fun loadModel(savedModelPath : String){
         model = ModelSerializer.restoreMultiLayerNetwork(File(savedModelPath))

@@ -11,7 +11,21 @@ import java.util.HashMap
 internal class UserContextController(
     @Autowired
     private val factory : StateMachineFactory<States, Events>,
-    private val userMap : HashMap<Int, StateMachine<States, Events>> = HashMap()){
+    private val userMap : HashMap<Int, StateMachine<States, Events>> = HashMap(),
+    private val events : HashMap<Int, Events> = HashMap()){
+
+    init {
+        events[0] = Events.RECEIVE_GREETING
+        events[1] = Events.RECEIVE_GOODBYE
+        events[2] = Events.RECEIVE_THANKS
+        events[3] = Events.REQUEST_GENERAL_INFO
+        events[4] = Events.REQUEST_GENERAL_INFO
+        events[5] = Events.REQUEST_GENERAL_INFO
+        events[6] = Events.REQUEST_GENERAL_INFO
+        events[7] = Events.REQUEST_GENERAL_INFO
+        events[8] = Events.REQUEST_RENT
+        events[9] = Events.REQUEST_GENERAL_INFO
+    }
 
     fun checkUserId(userId : Int) : Boolean
         = userMap.size == 0 || !userMap.contains(userId)
@@ -26,6 +40,9 @@ internal class UserContextController(
         userMap [userId] = stateMachine
     }
 
+    fun getStateByUserId(userId: Int) : States
+        = userMap[userId]!!.state.id
+
     fun isEventPossible(userId : Int,event : Events) : Boolean {
         val stateMachine = userMap[userId]
         return stateMachine!!.transitions
@@ -33,9 +50,10 @@ internal class UserContextController(
             .any { transition -> transition.trigger.event == event }
     }
 
-    fun sendEvent(userId : Int, event: Events) {
+    fun sendEvent(userId : Int, tag : Int) {
         val stateMachine = userMap[userId]
-        if (isEventPossible(userId, event)) {
+        val event = events[tag]
+        if (isEventPossible(userId, event as Events)) {
             stateMachine!!.sendEvent(event)
         }
     }

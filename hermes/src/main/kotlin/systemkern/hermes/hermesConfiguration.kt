@@ -9,18 +9,18 @@ import java.io.InputStream
 import java.io.FileNotFoundException
 
 @Configuration
-@ConfigurationProperties("systemkern.hermes")
+@ConfigurationProperties("hermes")
 internal class HermesConfiguration(
     private val numberOfEpochsRequiredForTraining : Int = 100,
     private var pathToPackage : String = "",
-    var pathToTrainedModel : Array<String> = arrayOf("src","main","resources"),
-    var pathToJson : Array<String> = pathToTrainedModel.plus("training_doc.txt"),
-    var pathToJsonString : String? = null,
-    var pathToTrainedModelString : String? = null,
-    var nnImpl : NeuralNetworkImplementation? = null,
-    var inputStream : InputStream? = null,
-    val fileName : String = "trained_model.zip",
-    val pathSeparator : String = System.getProperty("file.separator")) {
+    private var pathToTrainedModel : Array<String> = arrayOf("src","main","resources"),
+    private var pathToJson : Array<String> = pathToTrainedModel.plus("training_doc.txt"),
+    private var pathToJsonString : String? = null,
+    private var pathToTrainedModelString : String? = null,
+    private var nnImpl : NeuralNetworkImplementation? = null,
+/*    private var inputStream : InputStream? = null,
+    private val fileName : String = "trained_model.zip",*/
+    private val pathSeparator : String = System.getProperty("file.separator")) {
 
     @Autowired
     internal var nlpProcessor : NaturalLanguagePreProcessor? = null
@@ -31,6 +31,7 @@ internal class HermesConfiguration(
         nnImpl = NeuralNetworkImplementation(numberOfEpochsRequiredForTraining)
         nlpProcessor!!.loadJsonFile(pathToJsonString as String)
         nnImpl!!.nlpProcessor = nlpProcessor
+        /*
         try {
             if(!nlpProcessor!!.loadDictionary()){
                 inputStream = File(pathToTrainedModelString + pathSeparator + fileName).inputStream()
@@ -39,12 +40,12 @@ internal class HermesConfiguration(
             {
                 throw NotLoadedDictionaryException()
             }
-        }catch (e : Exception){
+        }catch (e : Exception){*/
             nlpProcessor!!.tokenizeWordsInIntents()
             nnImpl!!.configureModel()
             nnImpl!!.trainMNN()
-            nnImpl!!.saveTrainedModel(pathToTrainedModelString + pathSeparator + fileName)
-        }
+            //nnImpl!!.saveTrainedModel(pathToTrainedModelString + pathSeparator + fileName)
+        //}
         return nnImpl as NeuralNetworkImplementation
     }
 

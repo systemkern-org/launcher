@@ -1,4 +1,3 @@
-/*
 package systemkern.hermes
 
 import org.assertj.core.api.Assertions.assertThat
@@ -6,34 +5,55 @@ import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.statemachine.StateMachine
-import org.springframework.statemachine.config.StateMachineFactory
-import org.springframework.statemachine.support.DefaultStateMachineContext
+import org.springframework.context.annotation.ComponentScan
+import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.junit4.SpringRunner
-import java.time.ZonedDateTime.now
+import org.springframework.test.web.servlet.MockMvc
+import org.springframework.test.web.servlet.setup.MockMvcBuilders
+import org.springframework.web.context.WebApplicationContext
 
 @RunWith(SpringRunner::class)
 @SpringBootTest(classes = [StateMachineConfiguration::class])
+@ComponentScan(basePackages = ["systemkern"])
+@EnableAutoConfiguration
 internal class StateMachineIT {
 
+    private val userId : Int = 123
+
     @Autowired
-    private lateinit var stateMachineFactory: StateMachineFactory<States, Events>
-    private lateinit var stateMachine: StateMachine<States, Events>
+    lateinit var context: WebApplicationContext
+    lateinit var mockMvc: MockMvc
+    @Autowired
+    private lateinit var nnImpl : NeuralNetworkImplementation
+    @Autowired
+    private lateinit var userContextController: UserContextController
 
     @Before
-    fun setup() {
-        stateMachine = stateMachineFactory.stateMachine
-        stateMachine. = Context(mySessionInfo = "Foo Info")
-
+    fun setUp() {
+        this.mockMvc = MockMvcBuilders.webAppContextSetup(this.context)
+            .build()
     }
 
+    private fun generateAnswerNnImpl(message : String){
+        nnImpl.generateAnswerToMessage(message)
+        userContextController.sendEvent(userId, nnImpl.contextTag!![0])
+    }
 
     @Test fun `Can do happy flow transitions`() {
-        stateMachine.start()
-        assertThat(stateMachine.context.mySessionInfo).isEqualToIgnoringCase("Foo Info")
-        assertThat(stateMachine.context.start).isBeforeOrEqualTo(now())
-        assertThat(stateMachine.context.jokesSent).isEqualTo(0)
+        userContextController.createStateForUser(userId)
+
+        generateAnswerNnImpl("hi")
+        assertThat(userContextController
+            .getStateByUserId(userId))
+            .isEqualTo(States.GREETING_RECEIVED)
+
+        generateAnswerNnImpl("hours are you open?")
+        assertThat(userContextController
+            .getStateByUserId(userId))
+            .isEqualTo(States.GENERAL_INFO_REQUESTED)
+        /*
 
         // this is triggered by input from the user / external events
         // for example: user says "Hey! send me a joke"
@@ -64,12 +84,12 @@ internal class StateMachineIT {
         assertThat(stateMachine.context.jokesSent).isEqualTo(1)
 
         assertThat(stateMachine.state.id).isEqualTo(States.DONE)
-        assertThat(stateMachine.isComplete).isTrue()
+        assertThat(stateMachine.isComplete).isTrue()*/
     }
 
 
     // https://youtu.be/M4Aa45Gpc4w?t=40m minute 41
-    @Test fun `Can continue from persisted context`() {
+    /*@Test fun `Can continue from persisted context`() {
         val persistedContext =
 getFromRepo
  Context(state = States.REQUEST_CONFIRMED)
@@ -102,5 +122,5 @@ getFromRepo
 
         assertThat(stateMachine.state.id).isEqualTo(States.DONE)
         assertThat(stateMachine.isComplete).isTrue()
-    }
-}*/
+    }*/
+}

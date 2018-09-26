@@ -40,6 +40,8 @@
         <gson-ver>2.8.0</gson-ver>
         <dl4j-ver>0.9.1</dl4j-ver>
         <nd4j-ver>0.9.1</nd4j-ver>
+        <hibernate-javax-persistence-ver>1.0.2.Final</hibernate-javax-persistence-ver>
+
     </properties>
 
     <dependencies>
