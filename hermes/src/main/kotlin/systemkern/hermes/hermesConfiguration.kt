@@ -18,8 +18,8 @@ internal class HermesConfiguration(
     private var pathToJsonString : String? = null,
     private var pathToTrainedModelString : String? = null,
     private var nnImpl : NeuralNetworkImplementation? = null,
-/*    private var inputStream : InputStream? = null,
-    private val fileName : String = "trained_model.zip",*/
+    private var inputStream : InputStream? = null,
+    private val fileName : String = "trained_model.zip",
     private val pathSeparator : String = System.getProperty("file.separator")) {
 
     @Autowired
@@ -31,7 +31,7 @@ internal class HermesConfiguration(
         nnImpl = NeuralNetworkImplementation(numberOfEpochsRequiredForTraining)
         nlpProcessor!!.loadJsonFile(pathToJsonString as String)
         nnImpl!!.nlpProcessor = nlpProcessor
-        /*
+
         try {
             if(!nlpProcessor!!.loadDictionary()){
                 inputStream = File(pathToTrainedModelString + pathSeparator + fileName).inputStream()
@@ -40,12 +40,12 @@ internal class HermesConfiguration(
             {
                 throw NotLoadedDictionaryException()
             }
-        }catch (e : Exception){*/
+        }catch (e : Exception){
             nlpProcessor!!.tokenizeWordsInIntents()
             nnImpl!!.configureModel()
             nnImpl!!.trainMNN()
             //nnImpl!!.saveTrainedModel(pathToTrainedModelString + pathSeparator + fileName)
-        //}
+        }
         return nnImpl as NeuralNetworkImplementation
     }
 

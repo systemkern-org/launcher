@@ -1,7 +1,6 @@
 package systemkern;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
@@ -20,7 +19,7 @@ public class Hermes extends TelegramLongPollingBot {
 
     @Override
     public String getBotToken() {
-        return "{hermesToken}";
+        return "692420469:AAE2ykxmFEpF9Kl9EveP051N_SVm2cTLuTI";
     }
 
     @Override
