@@ -20,8 +20,9 @@ internal class HermesConfiguration(
     @Autowired
     internal lateinit var nlpProcessor: NaturalLanguagePreProcessor
     private lateinit var pathToJson: String
+    private lateinit var pathElements : ArrayList<String>
 
-    @Bean
+        @Bean
     fun loadAndTrainModel(): NeuralNetworkImplementation {
         initializeConstants()
         nnImpl = NeuralNetworkImplementation(numberOfEpochsRequiredForTraining)
@@ -44,8 +45,12 @@ internal class HermesConfiguration(
     }
 
     fun initializeConstants() {
-        val pathElements = arrayListOf("hermes","src","main","resources")
         pathToJson = System.getProperty("user.dir")
+        if(pathToJson.contains("hermes")){
+            pathElements = arrayListOf("src","main","resources")
+        } else {
+            pathElements = arrayListOf("hermes","src","main","resources")
+        }
         for(element in pathElements){
             pathToJson = pathToJson.plus(pathSeparator)
             pathToJson = pathToJson.plus(element)
