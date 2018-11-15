@@ -27,13 +27,7 @@
 
         <dependency>
             <groupId>org.deeplearning4j</groupId>
-            <artifactId>deeplearning4j-nn</artifactId>
-            <version>${dl4j-ver}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.deeplearning4j</groupId>
-            <artifactId>deeplearning4j-parent</artifactId>
+            <artifactId>deeplearning4j-core</artifactId>
             <version>${dl4j-ver}</version>
         </dependency>
 

@@ -53,74 +53,7 @@ internal class StateMachineIT {
         assertThat(userContextController
             .getStateByUserId(userId))
             .isEqualTo(States.GENERAL_INFO_REQUESTED)
-        /*
 
-        // this is triggered by input from the user / external events
-        // for example: user says "Hey! send me a joke"
-        // the Natural Language Processor (NLP) processes this and sends the correct event to the state machine
-        stateMachine.sendEvent(Events.RECEIVE_JOKE_REQUEST)
-        // assert that state machine transition was triggered
-        assertThat(stateMachine.state.id).isEqualTo(States.JOKE_REQUESTED)
-        assertThat(stateMachine.context.jokesSent).isEqualTo(0)
-
-        // action is to ask for confirmation "Do you really want a joke?"
-        // user answers with for example: "yes"
-        stateMachine.sendEvent(Events.RECEIVE_CONFIRMATION)
-        // so we got the first confirmation
-
-        // this will trigger a new action an
-        // and we should land in States Step 2
-        assertThat(stateMachine.state.id).isEqualTo(States.REQUEST_CONFIRMED)
-        assertThat(stateMachine.context.jokesSent).isEqualTo(0)
-
-        // the action was to ask the user for a payment
-        // user answers again with for example: "100$"
-        stateMachine.sendEvent(Events.RECEIVE_PAYMENT)
-        // so we got the second payment
-        // this will trigger the sending of the joke
-        // and we should land in the done state
-        assertThat(stateMachine.state.id).isEqualTo(States.DONE)
-        // check that the joke has been sent now
-        assertThat(stateMachine.context.jokesSent).isEqualTo(1)
-
-        assertThat(stateMachine.state.id).isEqualTo(States.DONE)
-        assertThat(stateMachine.isComplete).isTrue()*/
     }
-
-
-    // https://youtu.be/M4Aa45Gpc4w?t=40m minute 41
-    /*@Test fun `Can continue from persisted context`() {
-        val persistedContext =
-getFromRepo
- Context(state = States.REQUEST_CONFIRMED)
-
-        stateMachine.stop()
-        stateMachine.stateMachineAccessor.doWithAllRegions {
-            it.resetStateMachine(DefaultStateMachineContext(
-                persistedContext.state, null, null, null
-            ))
-        }
-        stateMachine.start()
-
-
-        // so we got the first confirmation
-
-        // this will trigger a new action an
-        // and we should land in States Step 2
-        assertThat(stateMachine.state.id).isEqualTo(States.REQUEST_CONFIRMED)
-        assertThat(stateMachine.context.jokesSent).isEqualTo(0)
-
-        // the action was to ask the user for a payment
-        // user answers again with for example: "100$"
-        stateMachine.sendEvent(Events.RECEIVE_PAYMENT)
-        // so we got the second payment
-        // this will trigger the sending of the joke
-        // and we should land in the done state
-        assertThat(stateMachine.state.id).isEqualTo(States.DONE)
-        // check that the joke has been sent now
-        assertThat(stateMachine.context.jokesSent).isEqualTo(1)
-
-        assertThat(stateMachine.state.id).isEqualTo(States.DONE)
-        assertThat(stateMachine.isComplete).isTrue()
-    }*/
+    
 }
