@@ -25,7 +25,7 @@
         <asciidoctor-maven-plugin.version>1.5.6</asciidoctor-maven-plugin.version>
         <replacer-maven-plugin.version>1.5.3</replacer-maven-plugin.version>
         <swagger-maven-plugin-version>3.1.0</swagger-maven-plugin-version>
-        <wagon-ftp-maven-plugin.version>3.1.0</wagon-ftp-maven-plugin.version>
+        <wagon-ftp-maven-plugin.version>3.2.0</wagon-ftp-maven-plugin.version>
 
         <!-- dependency versions-->
         <hibernate-core.version>5.0.12.Final</hibernate-core.version>
