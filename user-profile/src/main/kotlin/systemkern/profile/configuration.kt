@@ -41,6 +41,7 @@ internal class CustomWebSecurityConfigurerAdapter(
     val pattern: String = "/user-profiles"
     val pattern1: String = "/user-profiles/"
     val pattern2: String = "/user-profiles/{\\d+}"
+    val patrernEmailChangeUrl = "/email-change"
 
     @Throws(Exception::class)
     override fun configure(http: HttpSecurity) {
@@ -85,7 +86,6 @@ internal class CustomWebSecurityConfigurerAdapter(
                 BasicAuthenticationFilter::class.java
             )
     }
-
 }
 
 internal class AuthenticationFilter(
@@ -156,7 +156,7 @@ internal class AuthenticationFilter(
         return responseAuthentication
     }
 
-    private fun usernamePasswordAuth(username: String, password: String): Authentication {
+  private fun usernamePasswordAuth(username: String, password: String): Authentication {
         val requestAuthentication = UsernamePasswordAuthenticationToken(username, password)
         return tryToAuthenticate(requestAuthentication)
     }
@@ -173,14 +173,12 @@ internal class UPAuthenticationProvider : AuthenticationProvider {
                 PreAuthenticatedAuthenticationToken(auth?.principal.toString(),
                     UUID.randomUUID())
             authRes.isAuthenticated = true
-
             return authRes
         }
         throw MissingDataException("No login data found")
     }
 
     override fun supports(p0: Class<*>?): Boolean = true
-
 }
 
 @ResponseStatus(NOT_FOUND)

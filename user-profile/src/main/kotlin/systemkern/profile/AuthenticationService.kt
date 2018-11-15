@@ -12,11 +12,12 @@ import java.time.LocalDateTime
 
 @Service
 internal class AuthenticationService(
-    val userProfileRepository : UserProfileRepository,
-    val emailVerificationRepository : EmailVerificationRepository,
-    val passwordEncoder : BCryptPasswordEncoder,
-    val sessionTimeOut : Duration,
-    val auxNumToConvertSecstoMillis : Int = 1000
+    val userProfileRepository: UserProfileRepository,
+    val emailVerificationRepository: EmailVerificationRepository,
+    val emailChangeRepository: EmailChangeRepository,
+    val passwordEncoder: BCryptPasswordEncoder,
+    val sessionTimeOut: Duration,
+    val auxNumToConvertSecstoMillis: Int = 1000
 ) {
 
     val tokens : HashMap<UUID, AuthenticationResponse> = HashMap()
@@ -34,6 +35,7 @@ internal class AuthenticationService(
 
     internal fun saveToken(token : UUID, auth : AuthenticationResponse) {
          tokens[token] = auth
+
     }
 
     internal fun deleteToken(token : UUID) {
@@ -69,7 +71,18 @@ internal class AuthenticationService(
             validUntil = now().plusMinutes(sessionTimeOut.toMinutes()))
     }
 
-    internal fun authProcessPasswordReset(
+    internal fun authProcessEmailChange(emailChangeToken: UUID) : AuthenticationResponse {
+        val emailChangeEntity = emailChangeRepository.findById(emailChangeToken).get()
+        val userProfile = emailChangeEntity.userProfile
+
+        return buildResponseAndSave(
+            authenticationToken = UUID.randomUUID(),
+            username = userProfile.username,
+            userId = userProfile.id,
+            validUntil = now().plusMinutes(sessionTimeOut.toMinutes()))
+    }
+
+        internal fun authProcessPasswordReset(
         passwordResetEntity : PasswordResetEntity,
         completionDate : LocalDateTime
     ) : AuthenticationResponse {
@@ -96,5 +109,5 @@ internal class AuthenticationService(
          saveToken(authenticationToken, authResp)
          return authResp
     }
-
 }
+
