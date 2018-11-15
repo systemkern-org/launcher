@@ -11,10 +11,6 @@ import java.io.InputStream
 @ConfigurationProperties("hermes")
 internal class HermesConfiguration(
     private val numberOfEpochsRequiredForTraining: Int = 100,
-    private var pathToPackage: String = "",
-    private var pathToTrainedModel: Array<String> = arrayOf("src", "main", "resources"),
-    private var pathToJson: Array<String> = pathToTrainedModel.plus("training_doc.txt"),
-    private var pathToJsonString: String? = null,
     private var pathToTrainedModelString: String? = null,
     private var nnImpl: NeuralNetworkImplementation? = null,
     private var inputStream: InputStream? = null,
@@ -22,55 +18,39 @@ internal class HermesConfiguration(
     private val pathSeparator: String = System.getProperty("file.separator")) {
 
     @Autowired
-    internal var nlpProcessor: NaturalLanguagePreProcessor? = null
+    internal lateinit var nlpProcessor: NaturalLanguagePreProcessor
+    private lateinit var pathToJson: String
 
     @Bean
     fun loadAndTrainModel(): NeuralNetworkImplementation {
         initializeConstants()
         nnImpl = NeuralNetworkImplementation(numberOfEpochsRequiredForTraining)
-        nlpProcessor!!.loadJsonFile(pathToJsonString as String)
+        nlpProcessor.loadJsonFile(pathToJson)
         nnImpl!!.nlpProcessor = nlpProcessor
 
         try {
-            if (!nlpProcessor!!.loadDictionary()) {
+            if (!nlpProcessor.loadDictionary()) {
                 inputStream = File(pathToTrainedModelString + pathSeparator + fileName).inputStream()
                 nnImpl!!.loadModel(pathToTrainedModelString + pathSeparator + fileName)
             } else {
                 throw NotLoadedDictionaryException()
             }
         } catch (e: Exception) {
-            nlpProcessor!!.tokenizeWordsInIntents()
+            nlpProcessor.tokenizeWordsInIntents()
             nnImpl!!.configureModel()
             nnImpl!!.trainMNN()
-            //nnImpl!!.saveTrainedModel(pathToTrainedModelString + pathSeparator + fileName)
         }
         return nnImpl as NeuralNetworkImplementation
     }
 
     fun initializeConstants() {
-        pathToPackage =
-            HermesConfiguration::class
-                .java
-                .protectionDomain
-                .codeSource
-                .location
-                .path
-                .split("target")[0]
-        pathToPackage = pathToPackage.subSequence(1, pathToPackage.length.minus(1)) as String
-        pathToPackage = pathToPackage.replace("/", pathSeparator)
-        pathToPackage = pathToPackage.replace("\"", pathSeparator)
-        pathToJson[0] = pathToPackage + pathSeparator + pathToJson[0]
-        pathToTrainedModel[0] = pathToPackage + pathSeparator + pathToTrainedModel[0]
-        pathToJsonString = joinPathParts(pathToJson)
-        pathToTrainedModelString = joinPathParts(pathToTrainedModel)
-    }
-
-    private fun joinPathParts(arrayOfStringParts: Array<String>): String {
-        var fullPath = ""
-        for (part in arrayOfStringParts) {
-            fullPath = fullPath + pathSeparator + part
+        val pathElements = arrayListOf("hermes","src","main","resources")
+        pathToJson = System.getProperty("user.dir")
+        for(element in pathElements){
+            pathToJson = pathToJson.plus(pathSeparator)
+            pathToJson = pathToJson.plus(element)
         }
-        return fullPath.substring(1, fullPath.length)
+        pathToJson = pathToJson.plus(pathSeparator + "training_doc.txt")
     }
 }
 
