@@ -35,10 +35,7 @@ maven-wrapper.properties
 
 #.bak files
 *.bak
-*.kt___jb_tmp___
-*.html
+user-profile/src/main/kotlin/systemkern/profile/UserProfileRepository.kt___jb_tmp___
 *.txt
-!training_doc.txt
-*.lck
-parent/detekt/detekt-checkstyle.xml
-hermes/src/main/kotlin/MAIN.kt
+*.xml
+*.html

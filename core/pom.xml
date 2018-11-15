@@ -42,4 +42,14 @@
         </dependency>
     </dependencies>
 
+    <build>
+        <plugins>
+            <!-- post processing of ascii snippets -->
+            <plugin>
+                <groupId>org.asciidoctor</groupId>
+                <artifactId>asciidoctor-maven-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
+
 </project>

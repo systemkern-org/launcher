@@ -24,24 +24,21 @@
         <wagon-ftp.version>3.1.0</wagon-ftp.version>
         <asciidoctor-maven-plugin.version>1.5.6</asciidoctor-maven-plugin.version>
         <replacer-maven-plugin.version>1.5.3</replacer-maven-plugin.version>
+        <swagger-maven-plugin-version>3.1.0</swagger-maven-plugin-version>
 
         <!-- dependency versions-->
         <com.nhaarman.mockito-kotlin.version>1.6.0</com.nhaarman.mockito-kotlin.version>
+        <hibernate-core-ver>5.0.12.Final</hibernate-core-ver>
         <org.javamoney.moneta.version>1.1</org.javamoney.moneta.version>
-        <org.zalando.jackson-datatype-money.version>1.0.0-RC2</org.zalando.jackson-datatype-money.version>
-        <version.eye>3.11.4</version.eye>
-        <spring-integration-core>5.1.0.BUILD-SNAPSHOT</spring-integration-core>
-        <spring-statemachine-core.version>1.2.8.RELEASE</spring-statemachine-core.version>
+        <org.zalando.jackson-datatype-money.version>1.1.0</org.zalando.jackson-datatype-money.version>
+        <org.springframework.security.ver>5.1.0.BUILD-SNAPSHOT</org.springframework.security.ver>
         <org.zalando.jackson-datatype-money.version>1.0.2</org.zalando.jackson-datatype-money.version>
-        <telegram-spring-boot-starter>0.18</telegram-spring-boot-starter>
-        <telegram-bots-ver>4.0.1</telegram-bots-ver>
-        <telegram-api-ver>66.2</telegram-api-ver>
-        <smile-nlp-ver>1.5.1</smile-nlp-ver>
-        <gson-ver>2.8.0</gson-ver>
-        <dl4j-ver>0.9.1</dl4j-ver>
-        <nd4j-ver>0.9.1</nd4j-ver>
-        <hibernate-javax-persistence-ver>1.0.2.Final</hibernate-javax-persistence-ver>
-
+        <spring-integration-core>5.1.0.BUILD-SNAPSHOT</spring-integration-core>
+        <spring-context-support-ver>5.1.0.BUILD-SNAPSHOT</spring-context-support-ver>
+        <spring-beans-ver>5.1.0.BUILD-SNAPSHOT</spring-beans-ver>
+        <spring-boot-starter-mail>1.4.3.RELEASE</spring-boot-starter-mail>
+        <swagger.version>2.9.2</swagger.version>
+        <version-eye.version>3.11.4</version-eye.version>
     </properties>
 
     <dependencies>
@@ -98,9 +95,16 @@
                 <scope>test</scope>
             </dependency>
             <dependency>
-                <groupId>${project.parent.groupId}</groupId>
-                <artifactId>hermes</artifactId>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>file-upload</artifactId>
                 <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>file-upload</artifactId>
+                <version>${project.version}</version>
+                <type>test-jar</type>
+                <scope>test</scope>
             </dependency>
             <dependency>
                 <groupId>${project.parent.groupId}</groupId>
@@ -124,6 +128,12 @@
             <dependency>
                 <groupId>commons-net</groupId>
                 <artifactId>commons-net</artifactId>
+                <version>${commons-net.commons-net.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.springfox</groupId>
+                <artifactId>springfox-swagger2</artifactId>
+                <version>${swagger.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.jetbrains.kotlin</groupId>
@@ -134,11 +144,6 @@
                 <groupId>org.javamoney</groupId>
                 <artifactId>moneta</artifactId>
                 <version>${org.javamoney.moneta.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework.statemachine</groupId>
-                <artifactId>spring-statemachine-core</artifactId>
-                <version>${spring-statemachine-core.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.zalando</groupId>
@@ -211,6 +216,25 @@
                     <groupId>org.asciidoctor</groupId>
                     <artifactId>asciidoctor-maven-plugin</artifactId>
                     <version>${asciidoctor-maven-plugin.version}</version>
+                    <executions>
+                        <execution>
+                            <id>generate-docs</id>
+                            <phase>post-integration-test</phase>
+                            <goals>
+                                <goal>process-asciidoc</goal>
+                            </goals>
+                            <configuration>
+                                <backend>html</backend>
+                                <doctype>book</doctype>
+                                <attributes>
+                                    <!-- see readme.adoc -->
+                                    <project-name>${project.name}</project-name>
+                                    <project-version>${project.version}</project-version>
+                                    <final-name>${project.build.finalName}</final-name>
+                                </attributes>
+                            </configuration>
+                        </execution>
+                    </executions>
                 </plugin>
                 <plugin>
                     <groupId>com.google.code.maven-replacer-plugin</groupId>

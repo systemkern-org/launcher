@@ -20,9 +20,9 @@
 
     <modules>
         <module>core</module>
+        <module>file-upload</module>
+        <module>main-service</module>
         <module>parent</module>
-        <module>integration-tests</module>
-        <module>runtime-cli</module>
         <module>user-profile</module>
         <module>hermes</module>
     </modules>
