@@ -20,13 +20,18 @@
         <java.version>1.8</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <org.apache.maven.wagon.wagon-ftp.version>1.0-beta-6</org.apache.maven.wagon.wagon-ftp.version>
-        <wagon-ftp.version>3.1.0</wagon-ftp.version>
+
+        <detekt-maven-plugin-version>1.0.0.RC7-3</detekt-maven-plugin-version>
         <asciidoctor-maven-plugin.version>1.5.6</asciidoctor-maven-plugin.version>
         <replacer-maven-plugin.version>1.5.3</replacer-maven-plugin.version>
         <swagger-maven-plugin-version>3.1.0</swagger-maven-plugin-version>
+        <wagon-ftp-maven-plugin.version>3.1.0</wagon-ftp-maven-plugin.version>
 
         <!-- dependency versions-->
+        <hibernate-core.version>5.0.12.Final</hibernate-core.version>
+        <jackson-datatype-money.version>1.0.2</jackson-datatype-money.version>
+        <javamoney.moneta.version>1.1</javamoney.moneta.version>
+        <mockito-kotlin.version>1.6.0</mockito-kotlin.version>
         <com.nhaarman.mockito-kotlin.version>1.6.0</com.nhaarman.mockito-kotlin.version>
         <hibernate-core-ver>5.0.12.Final</hibernate-core-ver>
         <org.javamoney.moneta.version>1.1</org.javamoney.moneta.version>
@@ -143,19 +148,19 @@
             <dependency>
                 <groupId>org.javamoney</groupId>
                 <artifactId>moneta</artifactId>
-                <version>${org.javamoney.moneta.version}</version>
+                <version>${javamoney.moneta.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.zalando</groupId>
                 <artifactId>jackson-datatype-money</artifactId>
-                <version>${org.zalando.jackson-datatype-money.version}</version>
+                <version>${jackson-datatype-money.version}</version>
             </dependency>
 
             <!-- testing dependencies -->
             <dependency>
                 <groupId>com.nhaarman</groupId>
                 <artifactId>mockito-kotlin</artifactId>
-                <version>${com.nhaarman.mockito-kotlin.version}</version>
+                <version>${mockito-kotlin.version}</version>
                 <scope>test</scope>
             </dependency>
         </dependencies>
@@ -210,6 +215,7 @@
                 <artifactId>maven-failsafe-plugin</artifactId>
             </plugin>
         </plugins>
+
         <pluginManagement>
             <plugins>
                 <plugin>
@@ -236,6 +242,7 @@
                         </execution>
                     </executions>
                 </plugin>
+
                 <plugin>
                     <groupId>com.google.code.maven-replacer-plugin</groupId>
                     <artifactId>replacer</artifactId>
@@ -274,6 +281,15 @@
 
     <pluginRepositories>
         <pluginRepository>
+            <id>bintray-ozsie-maven</id>
+            <name>Bintray Plugins Detekt</name>
+            <url>https://dl.bintray.com/ozsie/maven</url>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </pluginRepository>
+
+        <pluginRepository>
             <id>spring-milestones</id>
             <name>Spring Milestones</name>
             <url>https://repo.spring.io/milestone</url>
@@ -281,6 +297,7 @@
                 <enabled>false</enabled>
             </snapshots>
         </pluginRepository>
+
         <pluginRepository>
             <id>spring-snapshots</id>
             <name>Spring Snapshots</name>
