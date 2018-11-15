@@ -55,5 +55,5 @@ internal class StateMachineIT {
             .isEqualTo(States.GENERAL_INFO_REQUESTED)
 
     }
-    
+
 }

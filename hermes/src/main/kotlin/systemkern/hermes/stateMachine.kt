@@ -1,13 +1,11 @@
 package systemkern.hermes
 
 import org.slf4j.LoggerFactory
-import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.ComponentScan
 import org.springframework.context.annotation.Configuration
 import org.springframework.messaging.Message
 import org.springframework.statemachine.StateContext
 import org.springframework.statemachine.StateMachine
-import org.springframework.statemachine.action.Action
 import org.springframework.statemachine.config.EnableStateMachineFactory
 import org.springframework.statemachine.config.EnumStateMachineConfigurerAdapter
 import org.springframework.statemachine.config.builders.StateMachineConfigBuilder
@@ -19,7 +17,6 @@ import org.springframework.statemachine.state.State
 import org.springframework.statemachine.transition.Transition
 import org.springframework.stereotype.Component
 import java.lang.Exception
-import java.time.ZonedDateTime.now
 import java.util.*
 
 internal enum class Events {
@@ -83,12 +80,12 @@ internal class StateMachineConfiguration(
             .and().withExternal()
             .source(States.GREETING_RECEIVED)
             .event(Events.REQUEST_GENERAL_INFO)
-            .target(States.GENERAL_INFO_REQUESTED )
+            .target(States.GENERAL_INFO_REQUESTED)
 
             // General info state
             .and().withExternal()
             .source(States.GENERAL_INFO_REQUESTED)
-            .event(Events.RECEIVE_GOODBYE )
+            .event(Events.RECEIVE_GOODBYE)
 
             .and().withExternal()
             .source(States.GENERAL_INFO_REQUESTED)
@@ -101,11 +98,11 @@ internal class StateMachineConfiguration(
 
     }
 
- /*   @Bean fun askForSecondConfirmation(): Action<States, Events> =
-        Action { log.info("askForSecondConfirmation()") }
+    /*   @Bean fun askForSecondConfirmation(): Action<States, Events> =
+           Action { log.info("askForSecondConfirmation()") }
 
-    @Bean fun userAborted(): Action<States, Events> =
-        Action { log.info("userAborted()") }*/
+       @Bean fun userAborted(): Action<States, Events> =
+           Action { log.info("userAborted()") }*/
 
 }
 

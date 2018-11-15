@@ -1,9 +1,9 @@
-package systemkern.utils;
+package systemkern.hermes;
 
 import smile.nlp.stemmer.LancasterStemmer;
 import java.util.ArrayList;
 
-public class Utils {
+public class HermesUtils {
     private LancasterStemmer stemmer = new LancasterStemmer();
 
     private ArrayList<String> tokenize(String phrase){

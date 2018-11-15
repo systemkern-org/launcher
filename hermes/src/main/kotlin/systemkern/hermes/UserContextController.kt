@@ -10,9 +10,9 @@ import java.util.HashMap
 @Component
 internal class UserContextController(
     @Autowired
-    private val factory : StateMachineFactory<States, Events>,
-    private val userMap : HashMap<Int, StateMachine<States, Events>> = HashMap(),
-    private val events : HashMap<Int, Events> = HashMap()){
+    private val factory: StateMachineFactory<States, Events>,
+    private val userMap: HashMap<Int, StateMachine<States, Events>> = HashMap(),
+    private val events: HashMap<Int, Events> = HashMap()) {
 
     init {
         events[0] = Events.RECEIVE_GREETING
@@ -27,30 +27,28 @@ internal class UserContextController(
         events[9] = Events.REQUEST_GENERAL_INFO
     }
 
-    fun checkUserId(userId : Int) : Boolean
-        = userMap.size == 0 || !userMap.contains(userId)
+    fun checkUserId(userId: Int): Boolean = userMap.size == 0 || !userMap.contains(userId)
 
-    fun createStateForUser(userId : Int) {
+    fun createStateForUser(userId: Int) {
         val stateMachine = factory.stateMachine
         val context = Context()
         context.userId = userId
         stateMachine.extendedState.variables[contextIdentifier] = context
         stateMachine.start()
 
-        userMap [userId] = stateMachine
+        userMap[userId] = stateMachine
     }
 
-    fun getStateByUserId(userId: Int) : States
-        = userMap[userId]!!.state.id
+    fun getStateByUserId(userId: Int): States = userMap[userId]!!.state.id
 
-    fun isEventPossible(userId : Int,event : Events) : Boolean {
+    fun isEventPossible(userId: Int, event: Events): Boolean {
         val stateMachine = userMap[userId]
         return stateMachine!!.transitions
             .filter { transition -> transition.source == stateMachine.state }
             .any { transition -> transition.trigger.event == event }
     }
 
-    fun sendEvent(userId : Int, tag : Int) {
+    fun sendEvent(userId: Int, tag: Int) {
         val stateMachine = userMap[userId]
         val event = events[tag]
         if (isEventPossible(userId, event as Events)) {

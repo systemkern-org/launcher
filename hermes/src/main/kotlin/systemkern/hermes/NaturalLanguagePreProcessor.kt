@@ -6,7 +6,6 @@ import org.springframework.data.jpa.repository.Query
 import org.springframework.data.repository.CrudRepository
 import org.springframework.stereotype.Component
 import org.springframework.stereotype.Repository
-import systemkern.utils.Utils
 import java.io.File
 import java.io.InputStream
 import java.util.*
@@ -18,15 +17,16 @@ import javax.persistence.Id
 internal class NaturalLanguagePreProcessor(
     private val wordRepository: WordRepository,
     private val googleJson : Gson = Gson(),
-    var classes : MutableList<String> = mutableListOf(),
+    internal val classes : MutableList<String> = mutableListOf(),
     private val documents : MutableList<MutableMap<String,ArrayList<String>?>> = mutableListOf(),
     var bags: Array<DoubleArray> = arrayOf(),
-    var classesIntoArrays: Array<DoubleArray> = arrayOf(),
-    var words : ArrayList<String> = arrayListOf(),
-    private var utils : Utils = Utils(),
+    internal var classesIntoArrays: Array<DoubleArray> = arrayOf(),
+    private val hermesUtils : HermesUtils = HermesUtils(),
     private var bagLength : Int = 0,
     private var patternWords : ArrayList<String>? = null,
     var intentList : List<Intent>? = null) {
+
+    internal lateinit var words : ArrayList<String>
 
         fun loadDictionary() : Boolean{
             words = wordRepository.returnArrayOfWords()
@@ -47,7 +47,7 @@ internal class NaturalLanguagePreProcessor(
             var tokens : ArrayList<String>?
             for(intent in intentList!!){
                 for (pattern in intent.patterns){
-                    tokens = utils.tokenizeSentence(pattern)
+                    tokens = hermesUtils.tokenizeSentence(pattern)
                     documents.add(mutableMapOf(Pair(intent.tag,tokens!!)))
                     for(token in tokens){
                         if (!(words.contains(token))){
@@ -99,7 +99,7 @@ internal class NaturalLanguagePreProcessor(
 
         // Sentence representation of zeros and ones
         fun sentence2array(sentence : String) : DoubleArray {
-            val wordsInSentence = utils.tokenizeSentence(sentence)
+            val wordsInSentence = hermesUtils.tokenizeSentence(sentence)
             val zerosAndOnesArray = createArrayListOfZeros(bagLength)
             for (word in wordsInSentence!!) {
                 if(words.contains(word)){
