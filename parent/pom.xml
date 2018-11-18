@@ -44,6 +44,15 @@
         <spring-boot-starter-mail>1.4.3.RELEASE</spring-boot-starter-mail>
         <swagger.version>2.9.2</swagger.version>
         <version-eye.version>3.11.4</version-eye.version>
+        <spring-statemachine-core.version>1.2.8.RELEASE</spring-statemachine-core.version>
+        <telegram-spring-boot-starter>0.18</telegram-spring-boot-starter>
+        <telegram-bots-ver>4.0.1</telegram-bots-ver>
+        <telegram-api-ver>66.2</telegram-api-ver>
+        <smile-nlp-ver>1.5.1</smile-nlp-ver>
+        <gson-ver>2.8.0</gson-ver>
+        <dl4j-ver>0.9.1</dl4j-ver>
+        <nd4j-ver>0.9.1</nd4j-ver>
+        <hibernate-javax-persistence-ver>1.0.2.Final</hibernate-javax-persistence-ver>
     </properties>
 
     <dependencies>
@@ -106,6 +115,11 @@
             </dependency>
             <dependency>
                 <groupId>${project.groupId}</groupId>
+                <artifactId>hermes</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
                 <artifactId>file-upload</artifactId>
                 <version>${project.version}</version>
                 <type>test-jar</type>
@@ -133,7 +147,6 @@
             <dependency>
                 <groupId>commons-net</groupId>
                 <artifactId>commons-net</artifactId>
-                <version>${commons-net.commons-net.version}</version>
             </dependency>
             <dependency>
                 <groupId>io.springfox</groupId>
@@ -154,6 +167,11 @@
                 <groupId>org.zalando</groupId>
                 <artifactId>jackson-datatype-money</artifactId>
                 <version>${jackson-datatype-money.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.statemachine</groupId>
+                <artifactId>spring-statemachine-core</artifactId>
+                <version>${spring-statemachine-core.version}</version>
             </dependency>
 
             <!-- testing dependencies -->

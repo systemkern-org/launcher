@@ -24,6 +24,7 @@
         <module>main-service</module>
         <module>parent</module>
         <module>user-profile</module>
+        <module>hermes</module>
     </modules>
 
     <properties>
