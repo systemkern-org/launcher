@@ -2,6 +2,8 @@ package systemkern.profile
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import io.swagger.annotations.Api
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -18,16 +20,19 @@ import org.springframework.http.ResponseEntity
 import org.springframework.http.converter.HttpMessageConverter
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.stereotype.Component
-import org.springframework.web.bind.annotation.*
+import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.RequestBody
+import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.servlet.mvc.method.annotation.ExceptionHandlerExceptionResolver
-import java.time.LocalDateTime
 import java.time.Duration
-import java.util.*
-import javax.persistence.*
-import javax.servlet.http.HttpSessionEvent
-import javax.servlet.http.HttpSessionListener
+import java.time.LocalDateTime
+import java.util.UUID
 import java.util.regex.Pattern
 import java.util.zip.DataFormatException
+import javax.persistence.PrePersist
+import javax.persistence.PreUpdate
+import javax.servlet.http.HttpSessionEvent
+import javax.servlet.http.HttpSessionListener
 
 @RepositoryRestController
 internal class UserProfileController(
@@ -36,7 +41,7 @@ internal class UserProfileController(
     val mailUtility: MailUtility,
     val timeUntilTokenExpires: Long = 6
 ) {
-  
+
     //Url mapping must be here, because @PostMapping alone in two controllers give errors
     @PostMapping("/user-profiles")
     private fun saveUser(@RequestBody requestBody: UserProfile): ResponseEntity<SaveUserProfileResponse> {
@@ -60,7 +65,7 @@ internal class UserProfileController(
     }
 }
 
-private data class SaveUserProfileResponse(var url : String)
+private data class SaveUserProfileResponse(var url: String)
 
 @Api
 @RepositoryRestResource(path = "/user-profiles")
@@ -70,11 +75,11 @@ internal interface UserProfileRepository : CrudRepository<UserProfile, UUID> {
 
 @Component
 internal class UserProfileEntityListener(
-    internal val passwordEncoder : BCryptPasswordEncoder = BCryptPasswordEncoder()
+    internal val passwordEncoder: BCryptPasswordEncoder = BCryptPasswordEncoder()
 ) {
     private val emailPattern = Pattern.compile("^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*" +
         "@[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$")
-  
+
     private fun validateEmail(hex: String) = emailPattern.matcher(hex).matches()
 
     private fun executeValidation(emailToVal: String) {

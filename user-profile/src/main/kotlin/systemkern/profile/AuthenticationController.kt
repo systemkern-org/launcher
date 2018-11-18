@@ -2,13 +2,18 @@ package systemkern.profile
 
 import org.springframework.http.HttpStatus.NOT_FOUND
 import org.springframework.security.core.Authentication
-import org.springframework.web.bind.annotation.*
+import org.springframework.web.bind.annotation.DeleteMapping
+import org.springframework.web.bind.annotation.PathVariable
+import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.RequestHeader
+import org.springframework.web.bind.annotation.ResponseStatus
+import org.springframework.web.bind.annotation.RestController
 import java.time.LocalDateTime
 import java.util.UUID
 import javax.servlet.http.HttpServletRequest
 
-@RestController
 
+@RestController
 internal class AuthenticationController(val service : AuthenticationService) {
     @PostMapping("/auth")
     internal fun login(auth : Authentication, @RequestHeader password : String)

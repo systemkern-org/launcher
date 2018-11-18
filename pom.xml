@@ -24,6 +24,7 @@
         <module>main-service</module>
         <module>parent</module>
         <module>user-profile</module>
+        <module>hermes</module>
     </modules>
 
     <properties>
@@ -35,6 +36,27 @@
         <finalName>${project.parent.build.finalName}</finalName>
         <defaultGoal>clean verify</defaultGoal>
         <plugins>
+            <!-- Detekt plugin for Kotlin Code Analysis
+                 https://github.com/arturbosch/detekt
+            -->
+            <plugin>
+                <groupId>com.github.ozsie</groupId>
+                <artifactId>detekt-maven-plugin</artifactId>
+                <version>${detekt-maven-plugin-version}</version>
+                <executions>
+                    <execution>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                        <configuration>
+                            <input>"${basedir}/core/src/main/kotlin"</input>
+                            <input>"${basedir}/user-profile/src/main/kotlin"</input>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
             <!-- rewrite run scripts with correct application jar name -->
             <plugin>
                 <groupId>com.google.code.maven-replacer-plugin</groupId>
@@ -105,12 +127,13 @@
                 </configuration>
             </plugin>
         </plugins>
+
         <extensions>
             <!-- uploading the final product to ftp -->
             <extension>
                 <groupId>org.apache.maven.wagon</groupId>
                 <artifactId>wagon-ftp</artifactId>
-                <version>${wagon-ftp.version}</version>
+                <version>${wagon-ftp-maven-plugin.version}</version>
             </extension>
         </extensions>
     </build>

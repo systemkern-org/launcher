@@ -13,9 +13,8 @@
     <artifactId>integration-tests</artifactId>
 
     <properties>
-        <org.springframework.restdocs.spring-restdocs-asciidoctor.version>2.0.2.RELEASE</org.springframework.restdocs.spring-restdocs-asciidoctor.version>
+        <org.springframework.restdocs.spring-restdocs-asciidoctor.version>1.2.2.RELEASE</org.springframework.restdocs.spring-restdocs-asciidoctor.version>
     </properties>
-
 
     <dependencies>
         <!-- dependency on the production code-->
@@ -63,7 +62,6 @@
         <dependency>
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-test</artifactId>
-            <version>${org.springframework.security.ver}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
