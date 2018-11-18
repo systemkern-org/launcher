@@ -1,10 +1,10 @@
 package systemkern.profile
 
 import org.springframework.context.annotation.Configuration
-import org.springframework.http.HttpMethod.POST
-import org.springframework.http.HttpMethod.GET
-import org.springframework.http.HttpMethod.PUT
 import org.springframework.http.HttpMethod.DELETE
+import org.springframework.http.HttpMethod.GET
+import org.springframework.http.HttpMethod.POST
+import org.springframework.http.HttpMethod.PUT
 import org.springframework.http.HttpStatus.NOT_FOUND
 import org.springframework.security.access.AccessDeniedException
 import org.springframework.security.authentication.AuthenticationProvider
@@ -13,20 +13,20 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter
-import org.springframework.web.filter.GenericFilterBean
-import javax.servlet.FilterChain
-import javax.servlet.ServletRequest
-import javax.servlet.ServletResponse
-import javax.servlet.http.HttpServletRequest
 import org.springframework.security.core.Authentication
 import org.springframework.security.core.context.SecurityContextHolder.clearContext
 import org.springframework.security.core.context.SecurityContextHolder.getContext
 import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter
-import org.springframework.web.bind.annotation.*
-import java.util.*
-import javax.servlet.http.HttpServletResponse.SC_OK
+import org.springframework.web.bind.annotation.ResponseStatus
+import org.springframework.web.filter.GenericFilterBean
+import java.util.UUID
+import javax.servlet.FilterChain
+import javax.servlet.ServletRequest
+import javax.servlet.ServletResponse
+import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
+import javax.servlet.http.HttpServletResponse.SC_OK
 
 @Configuration
 @EnableWebSecurity

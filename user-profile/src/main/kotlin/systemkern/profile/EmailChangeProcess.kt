@@ -4,41 +4,48 @@ import org.springframework.data.repository.CrudRepository
 import org.springframework.http.HttpStatus.NOT_ACCEPTABLE
 import org.springframework.stereotype.Repository
 import org.springframework.stereotype.Service
-import org.springframework.web.bind.annotation.*
-import java.time.LocalDateTime.now
+import org.springframework.web.bind.annotation.PathVariable
+import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.RequestBody
+import org.springframework.web.bind.annotation.ResponseStatus
+import org.springframework.web.bind.annotation.RestController
 import java.time.LocalDateTime
-import java.util.*
-import javax.persistence.*
+import java.time.LocalDateTime.now
+import java.util.UUID
+import java.util.UUID.randomUUID
+import javax.persistence.Entity
+import javax.persistence.Id
+import javax.persistence.ManyToOne
 
 @RestController
 internal class EmailChangeController(
     val emailChangeService: EmailChangeService,
     val userProfileService: UserProfileService,
     val mailUtility: MailUtility,
-    val timeUntilTokenIsValid :Long = 6,
+    val timeUntilTokenIsValid: Long = 6,
     val authenticationService: AuthenticationService
 ) {
 
     @PostMapping("/email-change")
-    internal fun saveRequest(@RequestBody emailChangeRequest: EmailChangeRequest) : EmailChangeResponse {
+    internal fun saveRequest(@RequestBody emailChangeRequest: EmailChangeRequest): EmailChangeResponse {
         val now = now()
         val userProfile = userProfileService.findById(emailChangeRequest.userProfileId).get()
         val validUntil = now.plusHours(timeUntilTokenIsValid)
         val emailChangeRequestId = emailChangeService.save(
             EmailChangeEntity(
-            UUID.randomUUID(),
-            now,
-            validUntil,
-            now,
-            emailChangeRequest.newEmailAddress,
-            userProfile
-        )).id
-        sendEmails(userProfile.email,emailChangeRequestId)
-        sendEmails(emailChangeRequest.newEmailAddress,emailChangeRequestId)
-        return EmailChangeResponse(emailChangeRequestId,validUntil)
+                randomUUID(),
+                now,
+                validUntil,
+                now,
+                emailChangeRequest.newEmailAddress,
+                userProfile
+            )).id
+        sendEmails(userProfile.email, emailChangeRequestId)
+        sendEmails(emailChangeRequest.newEmailAddress, emailChangeRequestId)
+        return EmailChangeResponse(emailChangeRequestId, validUntil)
     }
 
-    internal fun sendEmails(emailAddress: String, id: UUID){
+    internal fun sendEmails(emailAddress: String, id: UUID) {
         mailUtility.createEmailMessage(
             emailAddress,
             id,
@@ -54,8 +61,8 @@ internal class EmailChangeController(
         val emailChangeEntity = emailChangeService.findById(emailChangeRequestId)
         val last = emailChangeEntity.userProfile.emailVerificationList.last()
         emailChangeEntity.completionDate = now()
-        if(emailChangeEntity.completionDate < emailChangeEntity.validUntil
-            && last.creationDate < last.completionDate){
+        if (emailChangeEntity.completionDate < emailChangeEntity.validUntil
+            && last.creationDate < last.completionDate) {
             emailChangeEntity.userProfile.email = emailChangeEntity.newEmailAddress
             emailChangeService.save(emailChangeEntity)
             return authenticationService.authProcessEmailChange(emailChangeRequestId)
@@ -65,13 +72,11 @@ internal class EmailChangeController(
 }
 
 @Service
-internal class EmailChangeService(private val emailChangeRepository : EmailChangeRepository) {
+internal class EmailChangeService(private val emailChangeRepository: EmailChangeRepository) {
 
-    internal fun save(emailChangeEntity : EmailChangeEntity)
-        = emailChangeRepository.save(emailChangeEntity)
+    internal fun save(emailChangeEntity: EmailChangeEntity) = emailChangeRepository.save(emailChangeEntity)
 
-    internal fun findById(id : UUID)
-        = emailChangeRepository.findById(id).get()
+    internal fun findById(id: UUID) = emailChangeRepository.findById(id).get()
 }
 
 @Repository
@@ -85,7 +90,7 @@ internal data class EmailChangeRequest(
 @Entity
 internal data class EmailChangeEntity(
     @Id
-    val id: UUID = UUID.randomUUID(),
+    val id: UUID = randomUUID(),
     val creationDate: LocalDateTime,
     val validUntil: LocalDateTime,
     var completionDate: LocalDateTime,
@@ -100,4 +105,4 @@ internal data class EmailChangeResponse(
 )
 
 @ResponseStatus(NOT_ACCEPTABLE)
-internal class EmailTokenExpired: RuntimeException()
+internal class EmailTokenExpired : RuntimeException()

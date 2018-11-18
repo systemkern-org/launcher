@@ -4,7 +4,7 @@ import org.springframework.mail.SimpleMailMessage
 import org.springframework.mail.javamail.JavaMailSender
 import org.springframework.stereotype.Component
 import java.net.InetAddress
-import java.util.*
+import java.util.UUID
 
 @Component
 internal class MailUtility(
@@ -12,7 +12,7 @@ internal class MailUtility(
     internal var urlToVerify: String = "",
     internal val message: SimpleMailMessage = SimpleMailMessage()
 ) {
-  
+
     internal fun createEmailMessage(
         emailAddress: String,
         tokenId: UUID,

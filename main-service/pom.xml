@@ -31,6 +31,7 @@
             <groupId>${project.groupId}</groupId>
             <artifactId>core</artifactId>
         </dependency>
+
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>file-upload</artifactId>
@@ -40,7 +41,17 @@
             <artifactId>user-profile</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>hermes</artifactId>
+        </dependency>
+
         <!-- External dependencies-->
+        <dependency>
+            <groupId>com.github.xabgesagtx</groupId>
+            <artifactId>telegram-spring-boot-starter</artifactId>
+            <version>${telegram-spring-boot-starter}</version>
+        </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.module</groupId>
             <artifactId>jackson-module-kotlin</artifactId>

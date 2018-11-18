@@ -90,3 +90,11 @@ subject line alone already offers enough explanation.
 Resolves: #1
 See also: #456, #789
 ````````````
+
+#Hermes
+
+1. Open a telegram account with a mobile phone number
+2. Type BotFather in search bar and send it the command /newbot
+3. Choose a name for bot(it must finish in bot)
+4. Copy token and chat bot name in the applications.properties file
+5. Run the project, send a message and you should receive an answer from hermes
