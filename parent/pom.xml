@@ -49,7 +49,7 @@
         <telegram-bots-ver>4.0.1</telegram-bots-ver>
         <telegram-api-ver>66.2</telegram-api-ver>
         <smile-nlp-ver>1.5.1</smile-nlp-ver>
-        <gson-ver>2.8.0</gson-ver>
+        <gson-ver>2.8.5</gson-ver>
         <dl4j-ver>0.9.1</dl4j-ver>
         <nd4j-ver>0.9.1</nd4j-ver>
         <hibernate-javax-persistence-ver>1.0.2.Final</hibernate-javax-persistence-ver>
