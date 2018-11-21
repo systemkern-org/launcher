@@ -12,13 +12,14 @@ import org.springframework.boot.test.context.TestComponent
 import org.springframework.data.jpa.domain.AbstractPersistable
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories
 import org.springframework.stereotype.Repository
+import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.context.junit4.SpringRunner
 import java.util.*
 import java.util.UUID.randomUUID
 import javax.persistence.Entity
 
 
-@SpringBootTest(classes = [KtCrudRepository::class])
+@ContextConfiguration(classes = [KtCrudRepository::class])
 @EntityScan("systemkern.data")
 @RunWith(SpringRunner::class)
 @DataJpaTest(showSql = false)

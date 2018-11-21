@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.0.2.RELEASE</version>
+        <version>2.1.0.RELEASE</version>
         <relativePath/>
     </parent>
     <packaging>pom</packaging>
@@ -43,7 +43,6 @@
         <spring-beans-ver>5.1.0.BUILD-SNAPSHOT</spring-beans-ver>
         <spring-boot-starter-mail>1.4.3.RELEASE</spring-boot-starter-mail>
         <swagger.version>2.9.2</swagger.version>
-        <version-eye.version>3.11.4</version-eye.version>
         <spring-statemachine-core.version>1.2.8.RELEASE</spring-statemachine-core.version>
         <telegram-spring-boot-starter>0.18</telegram-spring-boot-starter>
         <telegram-bots-ver>4.0.1</telegram-bots-ver>

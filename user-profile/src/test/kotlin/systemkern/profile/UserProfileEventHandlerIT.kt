@@ -9,11 +9,12 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories
 import org.springframework.test.context.ActiveProfiles
+import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.context.junit4.SpringRunner
 
 @RunWith(SpringRunner::class)
 @ActiveProfiles("integration-test")
-@SpringBootTest(classes = [
+@ContextConfiguration(classes = [
     UserProfileRepository::class,
     UserProfileEntityListener::class,
     UserProfileConfiguration::class,
