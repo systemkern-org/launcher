@@ -98,12 +98,6 @@ internal class StateMachineConfiguration(
 
     }
 
-    /*   @Bean fun askForSecondConfirmation(): Action<States, Events> =
-           Action { log.info("askForSecondConfirmation()") }
-
-       @Bean fun userAborted(): Action<States, Events> =
-           Action { log.info("userAborted()") }*/
-
 }
 
 @Component
