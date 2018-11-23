@@ -42,12 +42,18 @@ For more information please refer to the https://docs.spring.io/spring-boot/docs
 Echo is a sample post request which returns exactly the same object as the one provided.
 It can be used to test Json Object mapper implementations
 
-operation::echo[snippets='curl-request,http-request,http-response,response-fields']
+include::{snippets-core}/echo/curl-request.adoc[]
+include::{snippets-core}/echo/http-request.adoc[]
+include::{snippets-core}/echo/http-response.adoc[]
+include::{snippets-core}/echo/response-fields.adoc[]
 
 == Ping
 As simple ping signal which returns the current system timestamp
 
-operation::ping[snippets='curl-request,http-request,http-response,response-fields']
+include::{snippets-core}/ping/curl-request.adoc[]
+include::{snippets-core}/ping/http-request.adoc[]
+include::{snippets-core}/ping/http-response.adoc[]
+include::{snippets-core}/ping/response-fields.adoc[]
 
 == User
 User is a module created to answer CRUD(Create,read,update and delete) requests,
@@ -61,13 +67,18 @@ the following data: "name" and "password". If the request is right then status c
 be 201 created, the body of response contains the data provided plus 2 links, which can be used to
 access the user that have been created.
 
-operation::user_create[snippets='curl-request,http-request,http-response']
+include::{snippets-user}/user_create/curl-request.adoc[]
+include::{snippets-user}/user_create/http-request.adoc[]
+include::{snippets-user}/user_create/http-response.adoc[]
 
 === Login
 To login and access system, username and password must be sent to Url + /login. Some data is returned including
 an access token, which must be added in the header of future read and update requests.
 
-operation::user_login[snippets='curl-request,http-response']
+include::{snippets-user}/user_login/curl-request.adoc[]
+include::{snippets-user}/user_login/http-request.adoc[]
+include::{snippets-user}/user_login/http-response.adoc[]
+include::{snippets-user}/user_login/response-fields.adoc[]
 
 === Read
 The "id" of user should be added at the end of URL, the Http verb of request is GET but
@@ -77,7 +88,10 @@ then web service sends 200 ok status code and the body of response contains the 
 Remember to add the access token in a header called Authorization,the syntax is
 for example: "Bearer [token]"
 
-operation::user_read[snippets='curl-request,http-request,http-response,response-fields']
+include::{snippets-user}/user_read/curl-request.adoc[]
+include::{snippets-user}/user_read/http-request.adoc[]
+include::{snippets-user}/user_read/http-response.adoc[]
+include::{snippets-user}/user_read/response-fields.adoc[]
 
 === Update
 To update an user, the url is equal to the Read case. The difference is in the verb which is
@@ -87,9 +101,13 @@ to access the user that have been updated, the status should be 200 ok.
 Remember to add the access token in a header called Authorization,the syntax is
 for example: "Bearer [token]"
 
-operation::user_update[snippets='curl-request,http-request,http-response']
+include::{snippets-user}/user_read/curl-request.adoc[]
+include::{snippets-user}/user_read/http-request.adoc[]
+include::{snippets-user}/user_read/http-response.adoc[]
 
 === Delete
 User delete is forbidden
 
-operation::user_delete[snippets='curl-request,http-request,http-response']
+include::{snippets-user}/user_read/curl-request.adoc[]
+include::{snippets-user}/user_read/http-request.adoc[]
+include::{snippets-user}/user_read/http-response.adoc[]
