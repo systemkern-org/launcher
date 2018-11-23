@@ -254,6 +254,7 @@
                                     <project-name>${project.name}</project-name>
                                     <project-version>${project.version}</project-version>
                                     <final-name>${project.build.finalName}</final-name>
+                                    <snippets>${project.build.directory}/target/generated-snippets</snippets>
                                 </attributes>
                             </configuration>
                         </execution>
