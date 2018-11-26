@@ -255,7 +255,7 @@
                                     <project-version>${project.version}</project-version>
                                     <final-name>${project.build.finalName}</final-name>
                                     <snippets-core>${project.basedir}/target/generated-snippets</snippets-core>
-                                    <snippets-user>${project.basedir}/../user-profile/target/generated-snippets</snippets-user>
+                                    <snippets-user>${user.dir}/user-profile/target/generated-snippets</snippets-user>
                                 </attributes>
                             </configuration>
                         </execution>
