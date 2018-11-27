@@ -1,0 +1,94 @@
+= {project-name} Module Documentation
+Systemkern <office@systemkern.com>
+VERSION, {localdate} {localtime}
+:doctype: book
+:icons: font
+:source-highlighter: highlightjs
+:highlightjs-theme: github
+:toc: left
+:toclevels: 2
+:sectlinks:
+:sectnums:
+
+= Application Start
+To start {project-name} open your Unix shell or Windows command prompt, navigate to the {project-name} application
+directory and type or copy the following command:
+
+[subs="attributes+"]
+```
+java -jar {final-name}.jar
+```
+
+== Configuration and Startup
+The application is configured via two different configuration files. The Technical `application.properties` and
+the business oriented `application.yml`. The configuration for the so called default profile is called "application.yml".
+This is most likely the only configuration file that you will need to modify.
+
+== Multiple execution profiles
+This application supports multiple profiles which can be activated during startup.
+They are configured in separate configuration files which are named `application-PROFILENAME.yml`.
+If you want to use a profile called "myprofile2" you make a copy of application.yml named `application-myprofile2.yml` and start the application as follows:
+[subs="attributes+"]
+```
+java -jar {final-name}.jar --spring.profiles.active=myprofile2
+```
+For more information please refer to the https://docs.spring.io/spring-boot/docs/current/reference/html/howto-properties-and-configuration.html#howto-set-active-spring-profiles[Spring Boot Documentation].
+
+= API Requests
+
+== User
+User is a module created to answer CRUD(Create,read,update and delete) requests,
+it does not always return a json, but a Http code that show if was successful. The base url
+is http://host:[port]/users.
+Next examples of http requests and responses are exposed.
+
+=== Create
+To create an user is required to send a POST request to the base url. The body of request should contain
+the following data: "name" and "password". If the request is right then status code of response should
+be 201 created, the body of response contains the data provided plus 2 links, which can be used to
+access the user that have been created.
+
+include::{snippets-user}/user_create/curl-request.adoc[]
+include::{snippets-user}/user_create/http-request.adoc[]
+include::{snippets-user}/user_create/http-response.adoc[]
+
+=== Login
+To login and access system, username and password must be sent to Url + /login. Some data is returned including
+an access token, which must be added in the header of future read and update requests.
+
+include::{snippets-user}/user_login/curl-request.adoc[]
+include::{snippets-user}/user_login/http-request.adoc[]
+include::{snippets-user}/user_login/http-response.adoc[]
+include::{snippets-user}/user_login/response-fields.adoc[]
+
+=== Read
+The "id" of user should be added at the end of URL, the Http verb of request is GET but
+a body is not necessary.
+If the URL is correct and there is an user identified with the "id" provided,
+then web service sends 200 ok status code and the body of response contains the data of user.
+Remember to add the access token in a header called Authorization,the syntax is
+for example: "Bearer [token]"
+
+include::{snippets-user}/user_read/curl-request.adoc[]
+include::{snippets-user}/user_read/http-request.adoc[]
+include::{snippets-user}/user_read/http-response.adoc[]
+include::{snippets-user}/user_read/response-fields.adoc[]
+
+=== Update
+To update an user, the url is equal to the Read case. The difference is in the verb which is
+PUT http, the body of the request should contain the new values of "name" and "password".
+If the request is right then the response contains; the data provided in the request and 2 links
+to access the user that have been updated, the status should be 200 ok.
+Remember to add the access token in a header called Authorization,the syntax is
+for example: "Bearer [token]"
+
+include::{snippets-user}/user_read/curl-request.adoc[]
+include::{snippets-user}/user_read/http-request.adoc[]
+include::{snippets-user}/user_read/http-response.adoc[]
+
+=== Delete
+User delete is forbidden
+
+include::{snippets-user}/user_read/curl-request.adoc[]
+include::{snippets-user}/user_read/http-request.adoc[]
+include::{snippets-user}/user_read/http-response.adoc[]

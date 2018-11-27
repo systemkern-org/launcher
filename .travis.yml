@@ -18,6 +18,7 @@ script:
 
 after_success:
 - cp $TRAVIS_BUILD_DIR/core/target/generated-docs/module-core.html $TRAVIS_BUILD_DIR/index.html
+- cp $TRAVIS_BUILD_DIR/user-profile/target/generated-docs/user-profile.html $TRAVIS_BUILD_DIR/user-profile.html
 
 deploy:
   provider: pages
