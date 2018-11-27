@@ -19,7 +19,6 @@ directory and type or copy the following command:
 java -jar {final-name}.jar
 ```
 
-
 == Configuration and Startup
 The application is configured via two different configuration files. The Technical `application.properties` and
 the business oriented `application.yml`. The configuration for the so called default profile is called "application.yml".
