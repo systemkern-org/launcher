@@ -307,7 +307,6 @@
                             <artifactId>ktlint</artifactId>
                             <version>0.23.1</version>
                         </dependency>
-                        <!-- additional 3rd party ruleset(s) can be specified here -->
                     </dependencies>
                 </plugin>
 
