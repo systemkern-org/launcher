@@ -262,6 +262,54 @@
                     </executions>
                 </plugin>
 
+                <!-- Ktlint can check and reformat smelling code-->
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-antrun-plugin</artifactId>
+                    <version>1.8</version>
+                    <executions>
+                        <execution>
+                            <id>ktlint</id>
+                            <phase>verify</phase>
+                            <configuration>
+                                <target name="ktlint">
+                                    <java taskname="ktlint" dir="${basedir}" fork="true" failonerror="false"
+                                          classpathref="maven.plugin.classpath" classname="com.github.shyiko.ktlint.Main">
+                                        <arg value="src/**/*.kt"/>
+                                        <!-- to generate report in checkstyle format prepend following args: -->
+                                        <!--
+                                        <arg value="-reporter=plain"/>
+                                        <arg value="-reporter=checkstyle,output=${project.build.directory}/ktlint.xml"/>
+                                        -->
+                                        <!-- see https://github.com/shyiko/ktlint#usage for more -->
+                                    </java>
+                                </target>
+                            </configuration>
+                            <goals><goal>run</goal></goals>
+                        </execution>
+                        <execution>
+                            <id>ktlint-format</id>
+                            <configuration>
+                                <target name="ktlint">
+                                    <java taskname="ktlint" dir="${basedir}" fork="true" failonerror="false"
+                                          classpathref="maven.plugin.classpath" classname="com.github.shyiko.ktlint.Main">
+                                        <arg value="-F"/>
+                                        <arg value="src/**/*.kt"/>
+                                    </java>
+                                </target>
+                            </configuration>
+                            <goals><goal>run</goal></goals>
+                        </execution>
+                    </executions>
+                    <dependencies>
+                        <dependency>
+                            <groupId>com.github.shyiko</groupId>
+                            <artifactId>ktlint</artifactId>
+                            <version>0.23.1</version>
+                        </dependency>
+                    </dependencies>
+                </plugin>
+
                 <plugin>
                     <groupId>com.google.code.maven-replacer-plugin</groupId>
                     <artifactId>replacer</artifactId>
