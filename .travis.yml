@@ -27,3 +27,6 @@ deploy:
   keep-history: false
   on:
     branch: master
+
+# To generate GITHUB_TOKEN: Click in right upper options menu -> settings -> Developer settings ->
+  # Personal access tokens -> Generate new token
