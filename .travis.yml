@@ -16,17 +16,20 @@ script:
 # -B batch mode makes Maven less verbose
   - mvn -B clean verify
 
-after_success:
-- cp $TRAVIS_BUILD_DIR/core/target/generated-docs/module-core.html $TRAVIS_BUILD_DIR/index.html
-- cp $TRAVIS_BUILD_DIR/user-profile/target/generated-docs/module-core.html $TRAVIS_BUILD_DIR/user-profile.html
-
-deploy:
-  provider: pages
-  skip-cleanup: true
-  github-token: $GITHUB_TOKEN  # Set in the settings page of your repository, as a secure variable
-  keep-history: false
-  on:
-    branch: master
+if: branch IS OSS-9
+    after_success:
+      # copy generated documentation to github pages directory
+      - cp $TRAVIS_BUILD_DIR/core/target/generated-docs/module-core.html $TRAVIS_BUILD_DIR/index.html
+      - cp $TRAVIS_BUILD_DIR/user-profile/target/generated-docs/user-profile.html $TRAVIS_BUILD_DIR/user-profile.html
+      - cp $TRAVIS_BUILD_DIR/hermes/target/generated-docs/hermes.html $TRAVIS_BUILD_DIR/hermes.html
+      - git config user.name "${GH_USER_NAME}"
+      - git config user.email "${GH_USER_EMAIL}"
+      - git checkout gh-pages-doc
+      - git add index.html
+      - git add user-profile.html
+      - git add hermes.html
+      - git commit -m "Deploy to GitHub Pages number ${TRAVIS_BUILD_NUMBER} [ci skip]"
+      - git push --quiet "https://${GH_TOKEN}@${GH_REF}"
 
 # To generate GITHUB_TOKEN: Click in right upper options menu -> settings -> Developer settings ->
   # Personal access tokens -> Generate new token
