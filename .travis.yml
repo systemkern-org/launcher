@@ -16,18 +16,18 @@ script:
 # -B batch mode makes Maven less verbose
   - mvn -B clean verify
 
+after_success:
+# copy generated documentation to github pages directory
+  - cp $TRAVIS_BUILD_DIR/core/target/generated-docs/module-core.html $TRAVIS_BUILD_DIR/index.html
+  - cp $TRAVIS_BUILD_DIR/user-profile/target/generated-docs/user-profile.html $TRAVIS_BUILD_DIR/user-profile.html
+  - cp $TRAVIS_BUILD_DIR/hermes/target/generated-docs/hermes.html $TRAVIS_BUILD_DIR/hermes.html
 if: branch IS OSS-9
-    after_success:
-      # copy generated documentation to github pages directory
-      - cp $TRAVIS_BUILD_DIR/core/target/generated-docs/module-core.html $TRAVIS_BUILD_DIR/index.html
-      - cp $TRAVIS_BUILD_DIR/user-profile/target/generated-docs/user-profile.html $TRAVIS_BUILD_DIR/user-profile.html
-      - cp $TRAVIS_BUILD_DIR/hermes/target/generated-docs/hermes.html $TRAVIS_BUILD_DIR/hermes.html
-      - git config user.name "${GH_USER_NAME}"
-      - git config user.email "${GH_USER_EMAIL}"
-      - git add $TRAVIS_BUILD_DIR/index.html
-      - git add $TRAVIS_BUILD_DIR/user-profile.html
-      - git add $TRAVIS_BUILD_DIR/hermes.html
-      - git commit -m "Deploy number ${TRAVIS_BUILD_NUMBER} to GitHub Pages [ci skip]"
-      - git push --quiet "https://${GITHUB_TOKEN}@${GH_REF}" OSS-9:gh-pages > /dev/null 2>&1
+  - git config user.name "${GH_USER_NAME}"
+  - git config user.email "${GH_USER_EMAIL}"
+  - git add $TRAVIS_BUILD_DIR/index.html
+  - git add $TRAVIS_BUILD_DIR/user-profile.html
+  - git add $TRAVIS_BUILD_DIR/hermes.html
+  - git commit -m "Deploy number ${TRAVIS_BUILD_NUMBER} to GitHub Pages [ci skip]"
+  - git push --quiet "https://${GITHUB_TOKEN}@${GH_REF}" OSS-9:gh-pages > /dev/null 2>&1
 # To generate GITHUB_TOKEN: Click in right upper options menu -> settings -> Developer settings ->
-  # Personal access tokens -> Generate new token
+# Personal access tokens -> Generate new token
