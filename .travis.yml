@@ -17,7 +17,7 @@ script:
   - mvn -B clean verify
 
 git:
-  if: branch IS master
+  if: branch IS OSS-9
   after_success:
     # copy generated documentation to github pages directory
     - cp $TRAVIS_BUILD_DIR/core/target/generated-docs/module-core.html $TRAVIS_BUILD_DIR/index.html
