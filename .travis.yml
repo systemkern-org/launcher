@@ -24,12 +24,10 @@ if: branch IS OSS-9
       - cp $TRAVIS_BUILD_DIR/hermes/target/generated-docs/hermes.html $TRAVIS_BUILD_DIR/hermes.html
       - git config user.name "${GH_USER_NAME}"
       - git config user.email "${GH_USER_EMAIL}"
-      - git checkout gh-pages-doc
-      - git add index.html
-      - git add user-profile.html
-      - git add hermes.html
-      - git commit -m "Deploy to GitHub Pages number ${TRAVIS_BUILD_NUMBER} [ci skip]"
-      - git push --quiet "https://${GH_TOKEN}@${GH_REF}"
-
+      - git add $TRAVIS_BUILD_DIR/index.html
+      - git add $TRAVIS_BUILD_DIR/user-profile.html
+      - git add $TRAVIS_BUILD_DIR/hermes.html
+      - git commit -m "Deploy number ${TRAVIS_BUILD_NUMBER} to GitHub Pages [ci skip]"
+      - git push --quiet "https://${GITHUB_TOKEN}@${GH_REF}" OSS-9:gh-pages > /dev/null 2>&1
 # To generate GITHUB_TOKEN: Click in right upper options menu -> settings -> Developer settings ->
   # Personal access tokens -> Generate new token
