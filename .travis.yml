@@ -27,6 +27,6 @@ after_success:
   - git add $TRAVIS_BUILD_DIR/user-profile.html
   - git add $TRAVIS_BUILD_DIR/hermes.html
   - git commit -m "Deploy number ${TRAVIS_BUILD_NUMBER} to GitHub Pages [ci skip]"
-  - git push --quiet "https://${GITHUB_TOKEN}@${GH_REF}:gh-pages HEAD gh-pages"
+  - git push --quiet "https://${GITHUB_TOKEN}@${GH_REF}:gh-pages HEAD:gh-pages"
   # To generate GITHUB_TOKEN: Click in right upper options menu -> settings -> Developer settings ->
   # Personal access tokens -> Generate new token
