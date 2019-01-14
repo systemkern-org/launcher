@@ -19,6 +19,7 @@ script:
 after_success:
 - cp $TRAVIS_BUILD_DIR/core/target/generated-docs/module-core.html $TRAVIS_BUILD_DIR/docs/index.html
 - cp $TRAVIS_BUILD_DIR/user-profile/target/generated-docs/module-core.html $TRAVIS_BUILD_DIR/docs/user-profile.html
+- cp $TRAVIS_BUILD_DIR/hermes/target/generated-docs/module-core.html $TRAVIS_BUILD_DIR/hermes.html
 
 deploy:
   provider: pages
