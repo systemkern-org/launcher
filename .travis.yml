@@ -19,13 +19,12 @@ script:
 after_success:
 - cp $TRAVIS_BUILD_DIR/core/target/generated-docs/module-core.html $TRAVIS_BUILD_DIR/docs/index.html
 - cp $TRAVIS_BUILD_DIR/user-profile/target/generated-docs/module-core.html $TRAVIS_BUILD_DIR/docs/user-profile.html
-- cp $TRAVIS_BUILD_DIR/hermes/target/generated-docs/module-core.html $TRAVIS_BUILD_DIR/hermes.html
 
 deploy:
   provider: pages
-  local-dir: docs
+  local-dir: docs # set the folder which contains files that are going to be deployed...very important!!!
   skip-cleanup: true
   github-token: $GITHUB_TOKEN  # Set in the settings page of your repository, as a secure variable
   keep-history: false
   on:
-    branch: OSS-9
+    branch: master
