@@ -1,5 +1,7 @@
-# This is a sample build configuration for TravisCI
-sudo: required
+
+# To generate GITHUB_TOKEN go to:
+# "upper right corner options menu" -> settings -> Developer settings -> 
+# Personal access tokens -> Generate new tokensudo: required
 
 language: java
 
@@ -30,4 +32,3 @@ deploy:
     branch: master
   # To generate GITHUB_TOKEN: Click in right upper options menu -> settings -> Developer settings ->
   # Personal access tokens -> Generate new token
-  
