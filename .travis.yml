@@ -1,7 +1,8 @@
 
 # To generate GITHUB_TOKEN go to:
 # "upper right corner options menu" -> settings -> Developer settings -> 
-# Personal access tokens -> Generate new tokensudo: required
+# Personal access tokens -> Generate new token
+sudo: required
 
 language: java
 
@@ -19,11 +20,12 @@ script:
   - mvn -B clean verify
 
 after_success:
-- cp $TRAVIS_BUILD_DIR/core/target/generated-docs/module-core.html $TRAVIS_BUILD_DIR/index.html
-- cp $TRAVIS_BUILD_DIR/user-profile/target/generated-docs/module-core.html $TRAVIS_BUILD_DIR/user-profile.html
+- cp $TRAVIS_BUILD_DIR/core/target/generated-docs/module-core.html $TRAVIS_BUILD_DIR/docs/index.html
+- cp $TRAVIS_BUILD_DIR/user-profile/target/generated-docs/module-core.html $TRAVIS_BUILD_DIR/docs/user-profile.html
 
 deploy:
   provider: pages
+  local-dir: docs # set the folder which contains files that are going to be deployed...very important!!!
   skip-cleanup: true
   github-token: $GITHUB_TOKEN  # Set in the settings page of your repository, as a secure variable
   keep-history: false
