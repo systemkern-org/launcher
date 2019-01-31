@@ -4,14 +4,13 @@ Launcher is a template for Web technology based Applications.
 Based on Spring Boot it offers a specialised opinionated view on
 how to modularise, implement and deploy such applications.
 
-It is to be used and applied on an 'as is' basis with no guarantee of functionality.
+The concept of this template is that it can be used as the basis of a fork of a new project. The Launcher git:remote can be kept as a remote in the project to be updated via pull requests or merges.
+
+Launcher is to be used and applied on an 'as is' basis with no guarantee of functionality.
 
 [![Build Status](https://travis-ci.org/systemkern/launcher.svg?branch=master)](https://travis-ci.org/systemkern/launcher)
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/1223c155302d4815a262b3c192158901)](https://www.codacy.com/app/systemkern/launcher?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=systemkern/launcher&amp;utm_campaign=Badge_Grade)
 [![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fsystemkern%2Flauncher.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2Fsystemkern%2Flauncher?ref=badge_shield)
-
-
-
 
 
 Table of Contents
@@ -54,51 +53,15 @@ What is provided by this Template
   * travis ci (github) .travis.yml
   * assembly of distributable as zip
   * via ftp (see ./pom.xml)
-  * cli runtime for windows and linux
-  * google app engine runtime
-* integration testing of the REST api
-* documentation generation with SpringRestDocs through the integratoin tests
 * Template for a customer readme.html
 
 
-
-Backlog 
-================
-* Integration Tests
-* Project Setup
-  * CI 
-  * code analysis
-  * CD
-  * Runtime
-  * Externalised Configuration
-  * Modules
-  * Docker
-  * Security
-* Rest API 
-  * Documentation for Frontend Developers
-  * Automatic client generation with Swagger
-* Automatic Database Migration
-* User Module
-  * Registration & Confirmation
-  * Authentication Provider
-  * Password Reset
-  * GDPR / DSGVO Compliance
-  * Authentication Providers via Facebook, Google, Twitter, …
-* Web Frontend
-
-
-
-
-
-
-
-
-Application
+The Application
 ================
 
 ### Application Configuration
 Application configuration is done via standard spring-boot config providers
-* application.properties is used for technical configuration
+    * application.properties is used for technical configuration
 * application.yml can be used for business configuration
 
 ### Logging Configuration
