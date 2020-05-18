@@ -21,7 +21,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
-        <detekt-maven-plugin-version>1.0.0.RC9.2</detekt-maven-plugin-version>
+        <detekt-maven-plugin-version>1.8.0</detekt-maven-plugin-version>
         <asciidoctor-maven-plugin.version>1.5.7.1</asciidoctor-maven-plugin.version>
         <replacer-maven-plugin.version>1.5.3</replacer-maven-plugin.version>
         <swagger-maven-plugin-version>3.1.0</swagger-maven-plugin-version>
