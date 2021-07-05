@@ -45,7 +45,7 @@
         <swagger.version>2.9.2</swagger.version>
         <spring-statemachine-core.version>2.0.3.RELEASE</spring-statemachine-core.version>
         <telegram-spring-boot-starter>0.19</telegram-spring-boot-starter>
-        <telegram-bots-ver>4.1</telegram-bots-ver>
+        <telegram-bots-ver>5.3.0</telegram-bots-ver>
         <telegram-api-ver>66.2</telegram-api-ver>
         <smile-nlp-ver>1.5.2</smile-nlp-ver>
         <gson-ver>2.8.5</gson-ver>
